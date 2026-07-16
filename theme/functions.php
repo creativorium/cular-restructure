@@ -14,6 +14,7 @@ define( 'CULAR_VERSION', '0.1.0' );
 require_once CULAR_DIR . '/inc/enqueue.php';
 require_once CULAR_DIR . '/inc/block-category.php';
 require_once CULAR_DIR . '/inc/blocks.php';
+require_once CULAR_DIR . '/inc/site-chrome.php';
 
 /**
  * Theme supports.

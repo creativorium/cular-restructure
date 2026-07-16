@@ -2,65 +2,76 @@
 	position: relative;
 	display: grid;
 	place-items: center;
-	min-height: clamp(30rem, 80vh, 52rem);
-	padding: var(--wp--preset--spacing--50, 3rem);
-	background-size: cover;
-	background-position: center;
-	color: #fff;
+	min-height: clamp(34rem, 92vh, 56rem);
+	padding: clamp(2rem, 6vw, 5rem);
 	text-align: center;
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.55));
-		pointer-events: none;
-	}
+	overflow: hidden;
 
 	&__inner {
 		position: relative;
 		z-index: 1;
-		max-width: 48rem;
+		max-width: 52rem;
 		display: grid;
-		gap: 1.25rem;
+		gap: 1.5rem;
 		justify-items: center;
 	}
 
 	&__eyebrow {
 		margin: 0;
 		text-transform: uppercase;
-		letter-spacing: 0.18em;
+		letter-spacing: 0.2em;
 		font-size: 0.8rem;
-		opacity: 0.85;
 	}
 
 	&__heading {
 		margin: 0;
-		font-size: clamp(2.25rem, 6vw, 4.5rem);
-		line-height: 1.05;
-		font-weight: 700;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(2.75rem, 8vw, 6rem);
+		line-height: 1.03;
 	}
 
 	&__subtext {
 		margin: 0;
-		font-size: clamp(1rem, 2vw, 1.25rem);
-		max-width: 34rem;
+		font-size: clamp(1.05rem, 2vw, 1.35rem);
+		max-width: 38rem;
+		opacity: 0.9;
 	}
 
 	&__cta {
 		display: inline-block;
-		margin-top: 0.5rem;
-		padding: 0.9rem 1.75rem;
-		background: var(--wp--preset--color--accent, #e8552d);
-		color: #fff;
+		margin-top: 0.75rem;
+		padding: 1rem 2.25rem;
 		border-radius: 999px;
 		text-decoration: none;
 		font-weight: 600;
-		transition: transform 0.2s ease, opacity 0.2s ease;
+		transition: transform 0.25s var(--cular-ease);
 
-		&:hover {
-			transform: translateY(-2px);
-			opacity: 0.95;
+		&:hover { transform: translateY(-2px); }
+	}
+
+	// --- Plain (no background image): light, brand-forward ---
+	&--plain {
+		background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #eef1ea 55%, var(--cular-sage, #A0B89D) 100%);
+		color: var(--cular-green, #457F55);
+
+		.cular-hero__eyebrow { color: var(--cular-green, #457F55); opacity: 0.75; }
+		.cular-hero__subtext { color: #2b3a30; }
+		.cular-hero__cta { background: var(--cular-green, #457F55); color: #fff; }
+	}
+
+	// --- With background image: overlay + white text ---
+	&--image {
+		background-size: cover;
+		background-position: center;
+		color: #fff;
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.55));
 		}
+		.cular-hero__cta { background: var(--cular-gold, #F8CE4A); color: #1f1f1f; }
 	}
 }

@@ -16,16 +16,14 @@ $cta_label = get_field( 'cta_label' );
 $cta_url   = get_field( 'cta_url' );
 $bg        = get_field( 'background' );
 
+$has_bg  = ! empty( $bg['url'] );
 $anchor  = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
-$classes = 'cular-hero';
+$classes = 'cular-hero ' . ( $has_bg ? 'cular-hero--image' : 'cular-hero--plain' );
 if ( ! empty( $block['className'] ) ) {
 	$classes .= ' ' . $block['className'];
 }
 
-$style = '';
-if ( ! empty( $bg['url'] ) ) {
-	$style = ' style="background-image:url(' . esc_url( $bg['url'] ) . ')"';
-}
+$style = $has_bg ? ' style="background-image:url(' . esc_url( $bg['url'] ) . ')"' : '';
 ?>
 <section<?php echo $anchor; // phpcs:ignore ?> class="<?php echo esc_attr( $classes ); ?>"<?php echo $style; // phpcs:ignore ?>>
 	<div class="cular-hero__inner">

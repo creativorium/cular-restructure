@@ -1,32 +1,53 @@
 .cular-cta {
-	min-height: clamp(24rem, 60vh, 40rem);
+	// Soft cream -> sage vertical gradient behind the card.
+	background: linear-gradient(180deg, #ffffff 0%, #eef1ea 45%, var(--cular-sage, #A0B89D) 100%);
+	padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3rem);
 	display: grid;
-	place-content: center;
-	justify-items: center;
-	gap: 2rem;
-	text-align: center;
-	padding: clamp(3rem, 8vw, 7rem) 1.5rem;
-	background: var(--wp--preset--color--accent, #e8552d);
-	color: #fff;
+	place-items: center;
+
+	&__card {
+		width: min(100%, 1120px);
+		background: var(--cular-green, #457F55);
+		border-radius: clamp(1.25rem, 2vw, 2rem);
+		padding: clamp(3rem, 9vw, 8rem) clamp(1.5rem, 5vw, 5rem);
+		display: grid;
+		gap: clamp(2rem, 5vw, 4rem);
+		place-items: center;
+		text-align: center;
+		color: #fff;
+	}
 
 	&__heading {
 		margin: 0;
-		font-size: clamp(2.5rem, 9vw, 6.5rem);
-		line-height: 1;
-		font-weight: 700;
-		max-width: 16ch;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(2.75rem, 9vw, 7rem);
+		line-height: 1.02;
+		letter-spacing: 0.01em;
 	}
 
-	&__btn {
-		display: inline-block;
-		padding: 1rem 2.5rem;
-		background: #fff;
-		color: var(--wp--preset--color--contrast, #0e0e0e);
-		border-radius: 999px;
+	// Gold gradient on the highlighted word.
+	&__hl {
+		background: linear-gradient(90deg, #fff 0%, var(--cular-gold, #F8CE4A) 60%, #d9a93a 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	&__link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		color: #fff;
 		text-decoration: none;
-		font-weight: 600;
-		transition: transform 0.25s var(--cular-ease);
+		font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+		padding-bottom: 0.35rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+		transition: gap 0.3s var(--cular-ease);
 
-		&:hover { transform: translateY(-3px); }
+		&:hover { gap: 1rem; }
 	}
+
+	&__arrow { transition: transform 0.3s var(--cular-ease); }
+	&__link:hover &__arrow { transform: translateX(4px); }
 }

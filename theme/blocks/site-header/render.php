@@ -34,12 +34,9 @@ if ( empty( $social ) ) {
 }
 ?>
 <div class="cular-header" data-cular-header>
+	<?php $logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/logo-full.png'; ?>
 	<a class="cular-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-		<?php if ( ! empty( $logo['url'] ) ) : ?>
-			<img src="<?php echo esc_url( $logo['url'] ); ?>" alt="<?php echo esc_attr( $logo['alt'] ?: 'Cular Creative' ); ?>" />
-		<?php else : ?>
-			<span>Cular Creative</span>
-		<?php endif; ?>
+		<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( ! empty( $logo['alt'] ) ? $logo['alt'] : 'Cular Creative' ); ?>" />
 	</a>
 
 	<button class="cular-header__toggle" type="button" data-cular-menu-open aria-label="Open menu">
