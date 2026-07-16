@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/field-notes",
+  "title": "Cular — Field Notes",
+  "description": "Latest blog posts (Field Notes) as cards.",
+  "category": "cular",
+  "icon": "welcome-write-blog",
+  "keywords": ["blog", "field notes", "posts", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
