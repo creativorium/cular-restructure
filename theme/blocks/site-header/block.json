@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/site-header",
+  "title": "Cular — Site Header",
+  "description": "Sticky top bar (logo + menu toggle) with an animated full-screen side menu.",
+  "category": "cular",
+  "icon": "menu",
+  "keywords": ["header", "nav", "menu", "cular"],
+  "supports": { "html": false, "multiple": false, "reusable": false },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

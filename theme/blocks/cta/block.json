@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/cta",
+  "title": "Cular — CTA",
+  "description": "Big call-to-action band (e.g. \"Want to work with us?\").",
+  "category": "cular",
+  "icon": "megaphone",
+  "keywords": ["cta", "call to action", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

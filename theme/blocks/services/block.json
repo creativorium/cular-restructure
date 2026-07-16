@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/services",
+  "title": "Cular — Services",
+  "description": "Section heading with a set of service cards (Strategy, Consultancy, Build & Execute...).",
+  "category": "cular",
+  "icon": "grid-view",
+  "keywords": ["services", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

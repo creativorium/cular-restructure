@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/site-footer",
+  "title": "Cular — Site Footer",
+  "description": "Footer with big headline, link columns, newsletter, social and copyright.",
+  "category": "cular",
+  "icon": "align-full-width",
+  "keywords": ["footer", "cular"],
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
