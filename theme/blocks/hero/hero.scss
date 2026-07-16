@@ -1,0 +1,66 @@
+.cular-hero {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-height: clamp(30rem, 80vh, 52rem);
+	padding: var(--wp--preset--spacing--50, 3rem);
+	background-size: cover;
+	background-position: center;
+	color: #fff;
+	text-align: center;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.55));
+		pointer-events: none;
+	}
+
+	&__inner {
+		position: relative;
+		z-index: 1;
+		max-width: 48rem;
+		display: grid;
+		gap: 1.25rem;
+		justify-items: center;
+	}
+
+	&__eyebrow {
+		margin: 0;
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+		font-size: 0.8rem;
+		opacity: 0.85;
+	}
+
+	&__heading {
+		margin: 0;
+		font-size: clamp(2.25rem, 6vw, 4.5rem);
+		line-height: 1.05;
+		font-weight: 700;
+	}
+
+	&__subtext {
+		margin: 0;
+		font-size: clamp(1rem, 2vw, 1.25rem);
+		max-width: 34rem;
+	}
+
+	&__cta {
+		display: inline-block;
+		margin-top: 0.5rem;
+		padding: 0.9rem 1.75rem;
+		background: var(--wp--preset--color--accent, #e8552d);
+		color: #fff;
+		border-radius: 999px;
+		text-decoration: none;
+		font-weight: 600;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+
+		&:hover {
+			transform: translateY(-2px);
+			opacity: 0.95;
+		}
+	}
+}

@@ -1,0 +1,25 @@
+// Global base styles. Design tokens live in theme.json (exposed as
+// --wp--preset--* CSS vars); reference those in block SCSS.
+
+:root {
+	--cular-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+img,
+video {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+body {
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/hero",
+  "title": "Cular — Hero",
+  "description": "Full-width hero with heading, subtext, CTA and background image/slideshow.",
+  "category": "cular",
+  "icon": "cover-image",
+  "keywords": ["hero", "banner", "cular"],
+  "supports": {
+    "anchor": true,
+    "align": ["full"],
+    "jsx": false
+  },
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "example": {
+    "attributes": { "mode": "preview", "data": { "heading": "We build brands that move." } }
+  }
+}

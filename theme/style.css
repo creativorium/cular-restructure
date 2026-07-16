@@ -1,0 +1,15 @@
+/*
+Theme Name: Cular
+Theme URI: https://cularcreative.com
+Author: Cular Creative
+Description: Lean custom block theme for Cular Creative. Components are custom ACF Blocks under /blocks; assets are bundled with Vite. Replaces the previous Elementor build.
+Version: 0.1.0
+Requires at least: 6.5
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+Text Domain: cular
+*/
+
+/* Runtime styles are compiled by Vite into /dist and enqueued from there.
+   This file exists only to provide the theme header. */
