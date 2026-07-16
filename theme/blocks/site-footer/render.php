@@ -11,6 +11,9 @@ $headline = get_field( 'headline' ) ?: "Your Brand's Marketing Team";
 $columns  = get_field( 'columns' );
 $news     = get_field( 'newsletter_text' );
 $social   = get_field( 'social' );
+$logo     = get_field( 'logo' );
+
+$logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/logo-full.png';
 
 if ( empty( $columns ) ) {
 	$columns = array(
@@ -26,28 +29,35 @@ if ( empty( $social ) ) {
 	$social = array(
 		array( 'network' => 'Instagram', 'url' => 'https://www.instagram.com/cularcreative/' ),
 		array( 'network' => 'Facebook', 'url' => 'https://www.facebook.com/cularcreative/' ),
-		array( 'network' => 'LinkedIn', 'url' => 'https://www.linkedin.com/company/cular-creative/' ),
+		array( 'network' => 'Linkedin', 'url' => 'https://www.linkedin.com/company/cular-creative/' ),
 	);
 }
 $year = gmdate( 'Y' );
 ?>
 <footer class="cular-footer">
-	<div class="cular-footer__top">
-		<h2 class="cular-footer__headline"><?php echo esc_html( $headline ); ?></h2>
-	</div>
+	<div class="cular-footer__grid">
+		<div class="cular-footer__brand">
+			<img class="cular-footer__logo" src="<?php echo esc_url( $logo_url ); ?>" alt="Cular Creative" />
+			<p class="cular-footer__tagline luxia"><?php echo esc_html( $headline ); ?></p>
+		</div>
 
-	<div class="cular-footer__cols">
 		<?php foreach ( $columns as $col ) : ?>
 			<a class="cular-footer__col" href="<?php echo esc_url( $col['url'] ); ?>">
-				<h3><?php echo esc_html( $col['title'] ); ?></h3>
+				<h3 class="luxia"><?php echo esc_html( $col['title'] ); ?></h3>
 				<p><?php echo esc_html( $col['description'] ); ?></p>
 			</a>
 		<?php endforeach; ?>
-	</div>
 
-	<div class="cular-footer__news">
-		<p><?php echo esc_html( $news ); ?></p>
-		<?php echo do_shortcode( '[cular_newsletter]' ); // safe no-op if shortcode absent ?>
+		<div class="cular-footer__news">
+			<p><?php echo esc_html( $news ); ?></p>
+			<?php // TODO: wire action to the real newsletter provider (Mailchimp/WPForms). ?>
+			<form class="cular-footer__form" method="post" action="<?php echo esc_url( home_url( '/contact/' ) ); ?>">
+				<input type="email" name="email" placeholder="Email" aria-label="Email" required />
+				<button type="submit" aria-label="Subscribe">
+					<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+				</button>
+			</form>
+		</div>
 	</div>
 
 	<div class="cular-footer__bottom">
@@ -64,7 +74,7 @@ $year = gmdate( 'Y' );
 				<?php endforeach; ?>
 			</ul>
 		</div>
-
-		<p class="cular-footer__copy">Copyright &copy; <?php echo esc_html( $year ); ?> Cular Creative</p>
 	</div>
+
+	<p class="cular-footer__copy">Copyright &copy; <?php echo esc_html( $year ); ?> Cular Creative</p>
 </footer>

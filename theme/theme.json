@@ -4,8 +4,8 @@
   "settings": {
     "appearanceTools": true,
     "layout": {
-      "contentSize": "760px",
-      "wideSize": "1280px"
+      "contentSize": "820px",
+      "wideSize": "1320px"
     },
     "useRootPaddingAwareAlignments": true,
     "color": {
@@ -14,10 +14,12 @@
       "defaultPalette": false,
       "palette": [
         { "slug": "base", "name": "Base", "color": "#ffffff" },
-        { "slug": "contrast", "name": "Contrast", "color": "#0e0e0e" },
-        { "slug": "primary", "name": "Primary", "color": "#111111" },
-        { "slug": "accent", "name": "Accent", "color": "#e8552d" },
-        { "slug": "muted", "name": "Muted", "color": "#6b6b6b" }
+        { "slug": "cream", "name": "Cream", "color": "#eef1ea" },
+        { "slug": "contrast", "name": "Contrast", "color": "#111111" },
+        { "slug": "primary", "name": "Primary Green", "color": "#457F55" },
+        { "slug": "secondary", "name": "Sage", "color": "#A0B89D" },
+        { "slug": "accent", "name": "Gold", "color": "#F8CE4A" },
+        { "slug": "orange", "name": "Orange", "color": "#E9765B" }
       ]
     },
     "typography": {
@@ -25,9 +27,14 @@
       "customFontSize": true,
       "fontFamilies": [
         {
-          "slug": "sans",
-          "name": "Sans",
-          "fontFamily": "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+          "slug": "body",
+          "name": "Montserrat",
+          "fontFamily": "\"Montserrat\", system-ui, sans-serif"
+        },
+        {
+          "slug": "display",
+          "name": "Luxia Display",
+          "fontFamily": "\"Luxia Display\", Georgia, serif"
         }
       ],
       "fontSizes": [
@@ -44,9 +51,10 @@
   },
   "styles": {
     "color": { "background": "var(--wp--preset--color--base)", "text": "var(--wp--preset--color--contrast)" },
-    "typography": { "fontFamily": "var(--wp--preset--font-family--sans)", "lineHeight": "1.5" },
+    "typography": { "fontFamily": "var(--wp--preset--font-family--body)", "lineHeight": "1.5" },
     "elements": {
-      "link": { "color": { "text": "var(--wp--preset--color--accent)" } }
+      "heading": { "typography": { "fontFamily": "var(--wp--preset--font-family--display)", "fontWeight": "400" } },
+      "link": { "color": { "text": "var(--wp--preset--color--primary)" } }
     }
   },
   "templateParts": [

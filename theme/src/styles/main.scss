@@ -1,8 +1,25 @@
+// Self-hosted brand fonts (ported from the old Elementor custom fonts).
+@font-face {
+	font-family: "Luxia Display";
+	src: url("../../assets/fonts/LuxiaDisplay.ttf") format("truetype");
+	font-weight: 400 700;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("../../assets/fonts/Montserrat.ttf") format("truetype");
+	font-weight: 100 900;
+	font-display: swap;
+}
+
 // Global base styles. Design tokens live in theme.json (exposed as
 // --wp--preset--* CSS vars); reference those in block SCSS.
 
 :root {
 	--cular-ease: cubic-bezier(0.22, 1, 0.36, 1);
+	--cular-green: var(--wp--preset--color--primary, #457F55);
+	--cular-gold: var(--wp--preset--color--accent, #F8CE4A);
+	--cular-sage: var(--wp--preset--color--secondary, #A0B89D);
 }
 
 *,
@@ -20,6 +37,13 @@ video {
 
 body {
 	margin: 0;
+	font-family: "Montserrat", system-ui, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
+}
+
+// Display serif for headings site-wide.
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Luxia Display", Georgia, serif;
+	font-weight: 400;
 }
