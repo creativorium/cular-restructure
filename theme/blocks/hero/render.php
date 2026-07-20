@@ -74,9 +74,11 @@ if ( ! empty( $block['className'] ) ) {
 	<?php endif; ?>
 
 	<?php if ( $show_scr ) : ?>
-		<div class="cular-hero__scroll" aria-hidden="true">
-			<span class="cular-hero__scroll-line"></span>
-			<span class="cular-hero__scroll-label">Scroll Down</span>
+		<div class="cular-scroll" data-cular-scroll aria-hidden="true">
+			<div class="cular-scroll__bar">
+				<div class="cular-scroll__bar-inner"></div>
+			</div>
+			<span class="cular-scroll__text">Scroll Down</span>
 		</div>
 	<?php endif; ?>
 </section>

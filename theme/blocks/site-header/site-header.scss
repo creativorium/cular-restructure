@@ -7,11 +7,12 @@
 	justify-content: space-between;
 	padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3.5vw, 3rem);
 
-	// Button rect, measured by view.js so the panel can grow out of it.
+	// Button rect in panel-local coords, measured by view.js so the panel
+	// can grow out of the button.
 	--btn-top: 25px;
 	--btn-right: 25px;
-	--btn-w: 130px;
-	--btn-h: 45px;
+	--btn-bottom: calc(100% - 70px);
+	--btn-left: calc(100% - 155px);
 
 	&__brand {
 		position: relative;
@@ -19,20 +20,10 @@
 		display: block;
 		text-decoration: none;
 		line-height: 0;
-		transition: filter 0.4s var(--cular-ease) 0.15s;
 
 		img { width: clamp(120px, 13vw, 175px); height: auto; }
 	}
 
-	// Logo flips to white once the green panel is open.
-	&.is-open &__brand { filter: brightness(0) invert(1); }
-
-	// Hide-on-scroll (ported from the old --hide-on-scroll behaviour).
-	&.is-hidden:not(.is-open) &__toggle,
-	&.is-hidden:not(.is-open) &__brand {
-		opacity: 0;
-		pointer-events: none;
-	}
 
 	&__toggle {
 		position: relative;
@@ -92,26 +83,36 @@
 	}
 }
 
+// --- Side panel (right third of the screen, warm gradient) ---
 .cular-menu {
 	position: fixed;
-	inset: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: min(560px, 38vw);
 	z-index: 1;
-	background: var(--cular-green, #457F55);
 	color: #fff;
 	display: grid;
 	align-content: center;
-	gap: clamp(1.5rem, 4vw, 3rem);
-	padding: clamp(4rem, 12vh, 9rem) clamp(1.5rem, 6vw, 6rem) clamp(2rem, 6vh, 4rem);
+	gap: clamp(1.5rem, 4vh, 3rem);
+	padding: clamp(4rem, 10vh, 7rem) clamp(1.5rem, 3vw, 3.25rem) clamp(2rem, 5vh, 3.5rem);
 	pointer-events: none;
 
-	// Closed: clipped down to the pill button. Open: full screen.
-	clip-path: inset(
-		var(--btn-top) var(--btn-right)
-		calc(100% - var(--btn-top) - var(--btn-h))
-		calc(100% - var(--btn-right) - var(--btn-w))
-		round 999px
-	);
+	// Green base with a warm glow bottom-right (matches the live panel).
+	background-color: #3f7350;
+	background-image:
+		radial-gradient(120% 95% at 100% 100%, rgba(226, 120, 72, 0.95) 0%, rgba(226, 120, 72, 0) 58%),
+		radial-gradient(95% 70% at 95% 55%, rgba(176, 196, 142, 0.65) 0%, rgba(176, 196, 142, 0) 62%),
+		radial-gradient(100% 85% at 0% 0%, #37624455 0%, rgba(55, 98, 68, 0) 70%),
+		linear-gradient(160deg, #3f7350 0%, #4a7d55 45%, #6f8a55 100%);
+
+	// Closed: clipped to the pill button. Open: fills the panel.
+	clip-path: inset(var(--btn-top) var(--btn-right) var(--btn-bottom) var(--btn-left) round 999px);
 	transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+
+	@media (max-width: 900px) {
+		width: 100%;
+	}
 
 	.cular-header.is-open & {
 		clip-path: inset(0 0 0 0 round 0);
@@ -123,7 +124,7 @@
 		margin: 0;
 		padding: 0;
 		display: grid;
-		gap: 0.15rem;
+		gap: 0.1rem;
 	}
 
 	&__nav li { overflow: hidden; }
@@ -131,32 +132,32 @@
 	&__nav a {
 		display: flex;
 		align-items: center;
-		gap: 0;
 		color: inherit;
 		text-decoration: none;
 		font-family: "Luxia Display", Georgia, serif;
-		font-size: clamp(1.85rem, 5.5vw, 4rem);
-		line-height: 1.15;
+		text-transform: uppercase;
+		font-size: clamp(1.35rem, 2.1vw, 2.1rem);
+		line-height: 1.35;
+		white-space: nowrap;
 	}
 
 	// Each item rolls up into place, staggered by --index.
 	&__label {
 		display: inline-block;
-		transform: rotateX(90deg) translate3d(0, 60px, 0);
+		transform: rotateX(90deg) translate3d(0, 40px, 0);
 		transform-origin: center bottom;
 		opacity: 0;
 		transition: transform 0s linear 0.45s, opacity 0.3s linear;
 	}
 
-	// Stagger handled by the .is-open rules at the end of this file.
-
 	// Arrow that slides in on hover.
 	&__arrow {
 		width: 0;
-		height: 0.09em;
+		height: 0.07em;
 		background: currentColor;
 		position: relative;
 		opacity: 0;
+		flex: none;
 		transition: width 0.45s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.3s linear, margin-right 0.45s cubic-bezier(0.215, 0.61, 0.355, 1);
 
 		&::before,
@@ -173,23 +174,26 @@
 		&::after { transform: rotate(-45deg) translateX(0.05em); }
 	}
 
-	&__nav a:hover &__arrow,
 	&__nav a:hover .cular-menu__arrow {
-		width: 0.8em;
+		width: 0.7em;
 		opacity: 1;
-		margin-right: 0.25em;
+		margin-right: 0.3em;
 	}
 
+	// Social: two columns, matching the live panel.
 	&__social {
-		display: flex;
-		gap: 1rem 1.5rem;
-		align-items: center;
-		flex-wrap: wrap;
-		font-size: 0.85rem;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
+		font-size: 0.95rem;
 
-		ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+		> span { display: none; }
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0.75rem 1rem;
+		}
 
 		a {
 			position: relative;
@@ -215,7 +219,6 @@
 			&:hover::after { transform: scaleX(1); }
 		}
 	}
-
 }
 
 // --- Open state: staggered reveal of nav labels and social links ---
