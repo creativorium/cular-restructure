@@ -1,12 +1,12 @@
 .cular-team {
 	display: grid;
-	grid-template-columns: 1.35fr 1fr;
+	grid-template-columns: 1.75fr 1fr;
 	align-items: center;
-	gap: clamp(2rem, 5vw, 4.5rem);
-	max-width: 1320px;
+	gap: clamp(1.5rem, 3.5vw, 3.5rem);
+	max-width: 1680px;
 	margin-inline: auto;
 	width: 100%;
-	padding: clamp(3rem, 8vh, 6rem) clamp(1.25rem, 4vw, 3rem);
+	padding: clamp(2.5rem, 6vh, 5rem) clamp(1rem, 2vw, 2rem);
 	color: #fff;
 
 	@media (max-width: 900px) {
@@ -21,12 +21,24 @@
 		aspect-ratio: 16 / 10;
 		background: rgba(255, 255, 255, 0.12);
 
-		img,
-		video {
+		img {
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
 			display: block;
+		}
+
+		// The video is appended alongside the poster, so pin it over the top
+		// instead of letting it flow below (which hid the picture).
+		video {
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			background: #000;
 		}
 	}
 

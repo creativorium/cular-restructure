@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/why-us",
+  "title": "Cular — Why Work With Us",
+  "description": "Client logo marquee, \"Why work with us?\" copy and certification badges.",
+  "category": "cular",
+  "icon": "awards",
+  "keywords": ["clients", "logos", "why", "badges", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

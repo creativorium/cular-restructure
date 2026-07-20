@@ -1,58 +1,122 @@
 .cular-portfolio {
-	padding: clamp(3rem, 10vw, 9rem) clamp(1.25rem, 4vw, 3rem);
+	color: #fff;
+	background: transparent; // sits on the shared .cular-gradient-mesh wrapper
+	padding: clamp(2.5rem, 6vh, 5rem) clamp(1rem, 2vw, 2rem) clamp(3rem, 8vh, 6rem);
+	max-width: 1680px;
+	margin-inline: auto;
+	width: 100%;
 	display: grid;
-	gap: clamp(2rem, 5vw, 3.5rem);
+	gap: clamp(1.5rem, 3vh, 2.5rem);
 
-	&__eyebrow {
-		margin: 0 0 0.5rem;
-		text-transform: uppercase;
-		letter-spacing: 0.18em;
-		font-size: 0.8rem;
-		color: var(--wp--preset--color--accent, #e8552d);
+	&__head {
+		display: grid;
+		gap: 0.75rem;
+		max-width: 46rem;
 	}
 
-	&__heading { margin: 0; font-size: clamp(1.75rem, 4vw, 3rem); line-height: 1.1; }
+	&__heading {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(2rem, 4.5vw, 3.25rem);
+		line-height: 1.05;
+	}
+
+	&__intro {
+		margin: 0;
+		line-height: 1.6;
+		font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+		opacity: 0.95;
+	}
+
+	// Inner rounded panel with its own soft gradient.
+	&__panel {
+		border-radius: 1.5rem;
+		padding: clamp(1.25rem, 2.5vw, 2.5rem);
+		display: grid;
+		gap: clamp(1.5rem, 3vh, 2.5rem);
+		background:
+			radial-gradient(120% 100% at 0% 0%, #3f7350 0%, rgba(63, 115, 80, 0) 60%),
+			radial-gradient(110% 100% at 100% 100%, rgba(255, 140, 98, 0.9) 0%, rgba(255, 140, 98, 0) 62%),
+			linear-gradient(120deg, #3f7350 0%, #7d9a55 45%, #d9c46a 75%, #ff8c62 100%);
+	}
 
 	&__grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
-		gap: 1rem;
+		grid-template-columns: repeat(5, 1fr);
+		gap: clamp(0.75rem, 1.2vw, 1.25rem);
+
+		@media (max-width: 1100px) { grid-template-columns: repeat(3, 1fr); }
+		@media (max-width: 700px) { grid-template-columns: repeat(2, 1fr); }
+		@media (max-width: 460px) { grid-template-columns: 1fr; }
 	}
 
-	&__item {
-		position: relative;
-		display: block;
+	&__card {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		gap: 1rem;
+		padding: clamp(0.9rem, 1.4vw, 1.35rem);
+		border-radius: 1rem;
 		text-decoration: none;
 		color: #fff;
-		border-radius: 1.25rem;
-		overflow: hidden;
-		aspect-ratio: 4 / 5;
+		transition: transform 0.35s var(--cular-ease);
+
+		&:hover { transform: translateY(-6px); }
+
+		// Brand palette, cycled per card.
+		&--gold { background: var(--cular-gold, #F8CE4A); }
+		&--sage { background: var(--cular-sage, #A0B89D); }
+		&--coral { background: #E9765B; }
+		&--green { background: var(--cular-green, #457F55); }
+	}
+
+	&__title {
+		margin: 0;
+		text-align: center;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.05rem, 1.4vw, 1.4rem);
+		line-height: 1.2;
 	}
 
 	&__media {
-		position: absolute;
-		inset: 0;
-		background: #ddd center/cover no-repeat;
-		transition: transform 0.6s var(--cular-ease);
+		border-radius: 0.6rem;
+		overflow: hidden;
+		aspect-ratio: 3 / 4;
+		background: rgba(255, 255, 255, 0.25);
+
+		img,
+		video {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
 	}
 
-	&__item:hover &__media { transform: scale(1.05); }
-
-	&__meta {
-		position: absolute;
-		inset: auto 0 0 0;
-		padding: 1.25rem;
-		background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.7));
-
-		h3 { margin: 0; font-size: 1.25rem; }
+	&__tags {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.3rem;
+		text-align: center;
+		font-size: 0.82rem;
+		font-weight: 600;
 	}
 
 	&__all {
 		justify-self: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		color: #fff;
 		text-decoration: none;
-		color: inherit;
-		font-weight: 600;
-		border-bottom: 2px solid currentColor;
-		padding-bottom: 2px;
+		font-size: 1.05rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+		padding-bottom: 0.3rem;
+		transition: gap 0.3s var(--cular-ease);
+
+		&:hover { gap: 1rem; }
 	}
 }

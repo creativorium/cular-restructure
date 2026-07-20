@@ -12,6 +12,7 @@ define( 'CULAR_URI', get_template_directory_uri() );
 define( 'CULAR_VERSION', '0.1.0' );
 
 require_once CULAR_DIR . '/inc/nav.php';
+require_once CULAR_DIR . '/inc/media.php';
 require_once CULAR_DIR . '/inc/enqueue.php';
 require_once CULAR_DIR . '/inc/block-category.php';
 require_once CULAR_DIR . '/inc/blocks.php';

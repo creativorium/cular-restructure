@@ -48,6 +48,16 @@ body {
 	margin-block-start: 0;
 }
 
+// Our sections are full-bleed bands that manage their own spacing, so kill
+// WP's flow-layout block gap between top-level blocks (and inside our
+// gradient wrapper), otherwise 24px seams appear between sections.
+.wp-block-post-content > *,
+.entry-content > *,
+.cular-gradient-mesh > * {
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+
 // Display serif for headings site-wide.
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Luxia Display", Georgia, serif;
@@ -60,6 +70,9 @@ h1, h2, h3, h4, h5, h6 {
 	position: relative;
 	overflow: hidden;
 	color: #fff;
+	// Rounded bottom corners where the band ends.
+	border-bottom-left-radius: clamp(1.5rem, 3vw, 3rem);
+	border-bottom-right-radius: clamp(1.5rem, 3vw, 3rem);
 	background-color: #ff8c62;
 	background-size: 300% 300%;
 	background-image:
@@ -71,7 +84,7 @@ h1, h2, h3, h4, h5, h6 {
 		radial-gradient(at 89% 15%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
 		radial-gradient(at 34% 44%, hsla(127, 22%, 28%, 1) 0, transparent 44%),
 		radial-gradient(at 49% 78%, hsla(49, 92%, 65%, 1) 0, transparent 50%);
-	animation: cular-gradient-drift 30s linear infinite;
+	animation: cular-gradient-drift 18s linear infinite;
 }
 
 @keyframes cular-gradient-drift {
