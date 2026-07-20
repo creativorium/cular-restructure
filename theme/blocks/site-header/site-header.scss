@@ -1,25 +1,42 @@
 .cular-header {
 	position: fixed;
 	inset: 0 0 auto 0;
-	z-index: 100;
+	z-index: 300;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3.5vw, 3rem);
 
+	// Button rect, measured by view.js so the panel can grow out of it.
+	--btn-top: 25px;
+	--btn-right: 25px;
+	--btn-w: 130px;
+	--btn-h: 45px;
+
 	&__brand {
+		position: relative;
+		z-index: 2;
 		display: block;
 		text-decoration: none;
 		line-height: 0;
+		transition: filter 0.4s var(--cular-ease) 0.15s;
 
-		img {
-			width: clamp(120px, 13vw, 175px);
-			height: auto;
-		}
+		img { width: clamp(120px, 13vw, 175px); height: auto; }
 	}
 
-	// Green pill MENU button (matches the live site).
+	// Logo flips to white once the green panel is open.
+	&.is-open &__brand { filter: brightness(0) invert(1); }
+
+	// Hide-on-scroll (ported from the old --hide-on-scroll behaviour).
+	&.is-hidden:not(.is-open) &__toggle,
+	&.is-hidden:not(.is-open) &__brand {
+		opacity: 0;
+		pointer-events: none;
+	}
+
 	&__toggle {
+		position: relative;
+		z-index: 2;
 		appearance: none;
 		border: 0;
 		cursor: pointer;
@@ -30,49 +47,75 @@
 		text-transform: uppercase;
 		color: #fff;
 		background: var(--cular-green, #457F55);
-		padding: 0.85rem 1.9rem;
+		padding: 0 1.9rem;
+		height: 45px;
 		border-radius: 999px;
-		transition: transform 0.25s var(--cular-ease), background 0.25s var(--cular-ease);
+		overflow: hidden;
+		transition: opacity 0.3s ease-in-out, background 0.3s var(--cular-ease);
 
-		&:hover { transform: translateY(-1px); background: #3b6d49; }
+		&:hover { background: #3b6d49; }
+	}
+
+	// 3D roll between "Menu" and "Close".
+	&__toggle-inner {
+		position: relative;
+		display: grid;
+		place-items: center;
+		height: 100%;
+		perspective: 6em;
+	}
+
+	&__toggle-label {
+		grid-area: 1 / 1;
+		display: block;
+		backface-visibility: hidden;
+		transition: transform 0.55s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.35s linear 0.2s;
+
+		&[data-open] { transform-origin: top; }
+
+		&[data-close] {
+			transform-origin: bottom;
+			opacity: 0;
+			transform: rotateX(-90deg) scaleX(0.9) translate3d(0, 10px, 0);
+		}
+	}
+
+	&.is-open &__toggle-label[data-open] {
+		opacity: 0;
+		transform: rotateX(90deg) scaleX(0.9) translate3d(0, -10px, 0);
+	}
+
+	&.is-open &__toggle-label[data-close] {
+		opacity: 1;
+		transform: rotateX(0deg) scaleX(1) translateZ(0);
+		transition: transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.35s linear 0.3s;
 	}
 }
 
 .cular-menu {
 	position: fixed;
 	inset: 0;
-	z-index: 200;
+	z-index: 1;
 	background: var(--cular-green, #457F55);
 	color: #fff;
 	display: grid;
 	align-content: center;
-	gap: 2rem;
-	padding: clamp(2rem, 8vw, 6rem);
-	clip-path: inset(0 0 100% 0);
+	gap: clamp(1.5rem, 4vw, 3rem);
+	padding: clamp(4rem, 12vh, 9rem) clamp(1.5rem, 6vw, 6rem) clamp(2rem, 6vh, 4rem);
 	pointer-events: none;
-	visibility: hidden;
 
-	&.is-open {
+	// Closed: clipped down to the pill button. Open: full screen.
+	clip-path: inset(
+		var(--btn-top) var(--btn-right)
+		calc(100% - var(--btn-top) - var(--btn-h))
+		calc(100% - var(--btn-right) - var(--btn-w))
+		round 999px
+	);
+	transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+
+	.cular-header.is-open & {
+		clip-path: inset(0 0 0 0 round 0);
 		pointer-events: auto;
-		visibility: visible;
-	}
-
-	&__close {
-		position: absolute;
-		top: clamp(1rem, 2.5vw, 1.75rem);
-		right: clamp(1.25rem, 3.5vw, 3rem);
-		appearance: none;
-		border: 0;
-		cursor: pointer;
-		font: inherit;
-		font-size: 0.8rem;
-		font-weight: 600;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: var(--cular-green, #457F55);
-		background: #fff;
-		padding: 0.85rem 1.9rem;
-		border-radius: 999px;
 	}
 
 	&__nav ul {
@@ -80,32 +123,116 @@
 		margin: 0;
 		padding: 0;
 		display: grid;
-		gap: 0.35rem;
+		gap: 0.15rem;
 	}
 
+	&__nav li { overflow: hidden; }
+
 	&__nav a {
+		display: flex;
+		align-items: center;
+		gap: 0;
 		color: inherit;
 		text-decoration: none;
 		font-family: "Luxia Display", Georgia, serif;
-		font-size: clamp(2rem, 6.5vw, 4.5rem);
-		line-height: 1.08;
-		display: inline-block;
-		transition: opacity 0.25s var(--cular-ease);
+		font-size: clamp(1.85rem, 5.5vw, 4rem);
+		line-height: 1.15;
+	}
 
-		&:hover { opacity: 0.6; }
+	// Each item rolls up into place, staggered by --index.
+	&__label {
+		display: inline-block;
+		transform: rotateX(90deg) translate3d(0, 60px, 0);
+		transform-origin: center bottom;
+		opacity: 0;
+		transition: transform 0s linear 0.45s, opacity 0.3s linear;
+	}
+
+	// Stagger handled by the .is-open rules at the end of this file.
+
+	// Arrow that slides in on hover.
+	&__arrow {
+		width: 0;
+		height: 0.09em;
+		background: currentColor;
+		position: relative;
+		opacity: 0;
+		transition: width 0.45s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.3s linear, margin-right 0.45s cubic-bezier(0.215, 0.61, 0.355, 1);
+
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			right: 0;
+			width: 40%;
+			height: 100%;
+			background: currentColor;
+			transform: rotate(45deg) translateX(0.05em);
+			transform-origin: right center;
+		}
+		&::after { transform: rotate(-45deg) translateX(0.05em); }
+	}
+
+	&__nav a:hover &__arrow,
+	&__nav a:hover .cular-menu__arrow {
+		width: 0.8em;
+		opacity: 1;
+		margin-right: 0.25em;
 	}
 
 	&__social {
 		display: flex;
-		gap: 1rem;
+		gap: 1rem 1.5rem;
 		align-items: center;
 		flex-wrap: wrap;
 		font-size: 0.85rem;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
 
-		ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1rem; }
-		a { color: inherit; text-decoration: none; opacity: 0.8; }
-		a:hover { opacity: 1; }
+		ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+
+		a {
+			position: relative;
+			color: inherit;
+			text-decoration: none;
+			opacity: 0;
+			transform: translate3d(0, 100%, 0);
+			display: inline-block;
+			transition: transform 0s linear 0.45s, opacity 0.3s linear;
+
+			&::after {
+				content: "";
+				position: absolute;
+				left: 0;
+				bottom: -2px;
+				width: 100%;
+				height: 1px;
+				background: currentColor;
+				transform: scaleX(0);
+				transform-origin: left;
+				transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+			}
+			&:hover::after { transform: scaleX(1); }
+		}
+	}
+
+}
+
+// --- Open state: staggered reveal of nav labels and social links ---
+.cular-header.is-open {
+	.cular-menu__label {
+		transform: rotateX(0deg) translate3d(0, 0, 0);
+		opacity: 1;
+		transition:
+			transform 0.65s cubic-bezier(0.215, 0.61, 0.355, 1) calc(var(--index, 0) * 0.06s + 0.45s),
+			opacity 0.35s linear calc(var(--index, 0) * 0.06s + 0.45s);
+	}
+
+	.cular-menu__social a {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+		transition:
+			transform 0.65s cubic-bezier(0.215, 0.61, 0.355, 1) calc(var(--index, 0) * 0.06s + 0.6s),
+			opacity 0.45s linear calc(var(--index, 0) * 0.06s + 0.6s);
 	}
 }

@@ -2,6 +2,9 @@
 /**
  * Render: cular/site-header
  *
+ * Single pill button that flips MENU <-> CLOSE and expands into a
+ * full-screen menu panel. Simplified port of the old MDW side-menu effect.
+ *
  * @package Cular
  */
 
@@ -32,27 +35,30 @@ if ( empty( $social ) ) {
 		array( 'network' => 'LinkedIn', 'url' => 'https://www.linkedin.com/company/cular-creative/' ),
 	);
 }
+
+$logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/logo-green.png';
 ?>
 <div class="cular-header" data-cular-header>
-	<?php $logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/logo-green.png'; ?>
 	<a class="cular-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 		<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( ! empty( $logo['alt'] ) ? $logo['alt'] : 'Cular Creative' ); ?>" />
 	</a>
 
-	<button class="cular-header__toggle" type="button" data-cular-menu-open aria-label="Open menu">
-		<span>Menu</span>
+	<button class="cular-header__toggle" type="button" data-cular-menu-toggle aria-expanded="false" aria-controls="cular-menu">
+		<span class="cular-header__toggle-inner">
+			<span class="cular-header__toggle-label" data-open>Menu</span>
+			<span class="cular-header__toggle-label" data-close>Close</span>
+		</span>
 	</button>
 
-	<div class="cular-menu" data-cular-menu aria-hidden="true">
-		<button class="cular-menu__close" type="button" data-cular-menu-close aria-label="Close menu">
-			<span>Close</span>
-		</button>
-
+	<div class="cular-menu" id="cular-menu" data-cular-menu aria-hidden="true">
 		<nav class="cular-menu__nav" aria-label="Primary">
 			<ul>
-				<?php foreach ( $nav as $item ) : ?>
-					<li>
-						<a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+				<?php foreach ( $nav as $i => $item ) : ?>
+					<li style="--index:<?php echo (int) $i; ?>">
+						<a href="<?php echo esc_url( $item['url'] ); ?>">
+							<span class="cular-menu__arrow" aria-hidden="true"></span>
+							<span class="cular-menu__label"><?php echo esc_html( $item['label'] ); ?></span>
+						</a>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -62,8 +68,10 @@ if ( empty( $social ) ) {
 			<div class="cular-menu__social">
 				<span>Follow us:</span>
 				<ul>
-					<?php foreach ( $social as $s ) : ?>
-						<li><a href="<?php echo esc_url( $s['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $s['network'] ); ?></a></li>
+					<?php foreach ( $social as $i => $s ) : ?>
+						<li style="--index:<?php echo (int) $i; ?>">
+							<a href="<?php echo esc_url( $s['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $s['network'] ); ?></a>
+						</li>
 					<?php endforeach; ?>
 				</ul>
 			</div>

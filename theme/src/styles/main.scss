@@ -42,6 +42,12 @@ body {
 	text-rendering: optimizeLegibility;
 }
 
+// The fixed header template part is the first child of .wp-site-blocks, so
+// <main> picks up WP's default block-gap margin and pushes the hero down.
+.wp-site-blocks > main {
+	margin-block-start: 0;
+}
+
 // Display serif for headings site-wide.
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Luxia Display", Georgia, serif;

@@ -1,44 +1,61 @@
-// Animated side menu — open/close with GSAP, staggered links.
-import { gsap } from 'gsap';
+// Simplified port of the old MDW side-menu:
+// the pill button flips Menu <-> Close and the panel expands out of the button.
+// Plain JS (no jQuery) + CSS transitions.
 
-function initHeader(root) {
-	const menu = root.querySelector('[data-cular-menu]');
-	const openBtn = root.querySelector('[data-cular-menu-open]');
-	const closeBtn = root.querySelector('[data-cular-menu-close]');
-	if (!menu || !openBtn) return;
+function initHeader(header) {
+	const toggle = header.querySelector('[data-cular-menu-toggle]');
+	const menu = header.querySelector('[data-cular-menu]');
+	if (!toggle || !menu) return;
 
-	const links = menu.querySelectorAll('.cular-menu__nav a');
+	// Measure the button so the panel's closed clip-path matches it exactly.
+	const measure = () => {
+		const r = toggle.getBoundingClientRect();
+		header.style.setProperty('--btn-top', `${Math.round(r.top)}px`);
+		header.style.setProperty('--btn-right', `${Math.round(window.innerWidth - r.right)}px`);
+		header.style.setProperty('--btn-w', `${Math.round(r.width)}px`);
+		header.style.setProperty('--btn-h', `${Math.round(r.height)}px`);
+	};
+	measure();
+	window.addEventListener('resize', measure);
+
+	const isOpen = () => header.classList.contains('is-open');
 
 	const open = () => {
-		menu.classList.add('is-open');
+		measure();
+		header.classList.add('is-open');
+		toggle.setAttribute('aria-expanded', 'true');
 		menu.setAttribute('aria-hidden', 'false');
 		document.documentElement.style.overflow = 'hidden';
 		window.lenis?.stop();
-		gsap.timeline()
-			.to(menu, { clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'power4.inOut' })
-			.from(links, { yPercent: 120, opacity: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out' }, '-=0.25');
 	};
 
 	const close = () => {
-		gsap.to(menu, {
-			clipPath: 'inset(0 0 100% 0)',
-			duration: 0.6,
-			ease: 'power4.inOut',
-			onComplete: () => {
-				menu.classList.remove('is-open');
-				menu.setAttribute('aria-hidden', 'true');
-				document.documentElement.style.overflow = '';
-				window.lenis?.start();
-			},
-		});
+		header.classList.remove('is-open');
+		toggle.setAttribute('aria-expanded', 'false');
+		menu.setAttribute('aria-hidden', 'true');
+		document.documentElement.style.overflow = '';
+		window.lenis?.start();
 	};
 
-	openBtn.addEventListener('click', open);
-	closeBtn?.addEventListener('click', close);
-	menu.querySelectorAll('.cular-menu__nav a').forEach((a) => a.addEventListener('click', close));
+	toggle.addEventListener('click', () => (isOpen() ? close() : open()));
+
+	// Close when a link is followed, on Escape, or on outside click.
+	menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
 	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+		if (e.key === 'Escape' && isOpen()) close();
 	});
+	document.addEventListener('click', (e) => {
+		if (isOpen() && !menu.contains(e.target) && !toggle.contains(e.target)) close();
+	});
+
+	// Hide the header chrome after scrolling past the fold.
+	const HIDE_AFTER = 100;
+	const onScroll = () => {
+		if (isOpen()) return;
+		header.classList.toggle('is-hidden', window.scrollY > HIDE_AFTER);
+	};
+	window.addEventListener('scroll', onScroll, { passive: true });
+	onScroll();
 }
 
 document.querySelectorAll('[data-cular-header]').forEach(initHeader);
