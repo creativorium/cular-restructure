@@ -24,6 +24,7 @@ function initHeader(header) {
 		header.style.setProperty('--btn-right', `${Math.round(right)}px`);
 		header.style.setProperty('--btn-bottom', `${Math.round(bottom)}px`);
 		header.style.setProperty('--btn-left', `${Math.round(left)}px`);
+		header.style.setProperty('--btn-h', `${Math.round(b.height)}px`);
 	};
 	measure();
 	window.addEventListener('resize', measure);

@@ -13,6 +13,7 @@
 	--btn-right: 25px;
 	--btn-bottom: calc(100% - 70px);
 	--btn-left: calc(100% - 155px);
+	--btn-h: 45px;
 
 	&__brand {
 		position: relative;
@@ -107,7 +108,12 @@
 		linear-gradient(160deg, #3f7350 0%, #4a7d55 45%, #6f8a55 100%);
 
 	// Closed: clipped to the pill button. Open: fills the panel.
-	clip-path: inset(var(--btn-top) var(--btn-right) var(--btn-bottom) var(--btn-left) round 999px);
+	// Radius is half the button height (a true pill) rather than a huge value,
+	// so it interpolates cleanly instead of bulging into an oval mid-transition.
+	clip-path: inset(
+		var(--btn-top) var(--btn-right) var(--btn-bottom) var(--btn-left)
+		round calc(var(--btn-h, 45px) / 2)
+	);
 	transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
 
 	@media (max-width: 900px) {
