@@ -114,7 +114,13 @@
 		var(--btn-top) var(--btn-right) var(--btn-bottom) var(--btn-left)
 		round calc(var(--btn-h, 45px) / 2)
 	);
-	transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+	// No transition until view.js has measured the button, otherwise the
+	// correction from the placeholder values animates visibly on page load.
+	transition: none;
+
+	.cular-header.is-ready & {
+		transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+	}
 
 	@media (max-width: 900px) {
 		width: 100%;

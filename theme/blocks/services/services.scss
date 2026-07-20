@@ -1,18 +1,28 @@
 .cular-services {
 	position: relative;
-	padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vw, 9rem);
+	min-height: 100vh;
+	margin: 0;
+	padding: clamp(4.5rem, 10vh, 7rem) clamp(1.25rem, 4vw, 3rem);
 	display: grid;
-	gap: clamp(2.5rem, 6vw, 4.5rem);
+	align-content: center;
+	gap: clamp(2rem, 5vh, 4rem);
 	color: #fff;
 	overflow: hidden;
 
-	// Warm mesh gradient (ported from the old "gradientTwo" effect).
-	background-color: #d0663c;
+	// Animated mesh/blob gradient — ported verbatim from the old
+	// "gradientTwo" Elementor snippet (30s drift across a 300% canvas).
+	background-color: #ff0000;
+	background-size: 300% 300%;
 	background-image:
-		radial-gradient(90% 80% at 0% 30%, #d24f34 0%, rgba(210, 79, 52, 0) 60%),
-		radial-gradient(80% 70% at 100% 20%, #b9b46b 0%, rgba(185, 180, 107, 0) 65%),
-		radial-gradient(70% 90% at 70% 100%, #c9a24e 0%, rgba(201, 162, 78, 0) 60%),
-		linear-gradient(100deg, #d4553a 0%, #d9843f 40%, #c2a552 70%, #a9ae6b 100%);
+		radial-gradient(at 97% 97%, hsla(60, 96%, 75%, 1) 0, transparent 47%),
+		radial-gradient(at 1% 86%, hsla(127, 22%, 28%, 1) 0, transparent 42%),
+		radial-gradient(at 63% 9%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
+		radial-gradient(at 34% 44%, hsla(9, 74%, 54%, 1) 0, transparent 44%),
+		radial-gradient(at 92% 54%, hsla(49, 92%, 65%, 1) 0, transparent 50%),
+		radial-gradient(at 89% 15%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
+		radial-gradient(at 34% 44%, hsla(127, 22%, 28%, 1) 0, transparent 44%),
+		radial-gradient(at 49% 78%, hsla(49, 92%, 65%, 1) 0, transparent 50%);
+	animation: cular-gradient-drift 30s linear infinite;
 
 	&__heading {
 		margin: 0;
@@ -20,6 +30,10 @@
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
 		font-size: clamp(2rem, 5vw, 3.5rem);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
 	}
 
 	&__grid {
@@ -80,4 +94,11 @@
 
 		&:hover { gap: 1rem; }
 	}
+}
+
+// Slow drift of the mesh gradient across its oversized canvas.
+@keyframes cular-gradient-drift {
+	0% { background-position: 0% 0%; }
+	50% { background-position: 100% 100%; }
+	100% { background-position: 0% 0%; }
 }

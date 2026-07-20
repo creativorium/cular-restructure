@@ -27,25 +27,26 @@ function initHeader(header) {
 		header.style.setProperty('--btn-h', `${Math.round(b.height)}px`);
 	};
 	measure();
+	// Enable the clip-path transition only after the first measurement, so the
+	// correction from the CSS placeholder values isn't animated on load.
+	requestAnimationFrame(() => requestAnimationFrame(() => header.classList.add('is-ready')));
 	window.addEventListener('resize', measure);
 
 	const isOpen = () => header.classList.contains('is-open');
 
+	// The panel only covers part of the screen, so the page stays scrollable
+	// behind it — no scroll lock.
 	const open = () => {
 		measure();
 		header.classList.add('is-open');
 		toggle.setAttribute('aria-expanded', 'true');
 		menu.setAttribute('aria-hidden', 'false');
-		document.documentElement.style.overflow = 'hidden';
-		window.lenis?.stop();
 	};
 
 	const close = () => {
 		header.classList.remove('is-open');
 		toggle.setAttribute('aria-expanded', 'false');
 		menu.setAttribute('aria-hidden', 'true');
-		document.documentElement.style.overflow = '';
-		window.lenis?.start();
 	};
 
 	toggle.addEventListener('click', () => (isOpen() ? close() : open()));

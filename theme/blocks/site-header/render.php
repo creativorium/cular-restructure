@@ -11,10 +11,23 @@
 defined( 'ABSPATH' ) || exit;
 
 $logo   = get_field( 'logo' );
-$nav    = get_field( 'nav_items' );
-$social = get_field( 'social' );
+$nav    = array();
+$social = array();
 
-// Sensible defaults so the header works before anyone fills ACF.
+// 1) Appearance > Menus (preferred — edit it in wp-admin, not in code).
+// Helper lives in inc/nav.php.
+$nav    = cular_menu_items( 'primary' );
+$social = cular_menu_items( 'social' );
+
+// 2) Fall back to the block's ACF fields.
+if ( empty( $nav ) ) {
+	$nav = get_field( 'nav_items' );
+}
+if ( empty( $social ) ) {
+	$social = get_field( 'social' );
+}
+
+// 3) Finally, sensible defaults so the header always renders.
 if ( empty( $nav ) ) {
 	$nav = array(
 		array( 'label' => 'Home', 'url' => home_url( '/' ) ),
