@@ -54,6 +54,36 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: 400;
 }
 
+// Animated mesh/blob gradient — ported from the old "gradientTwo" snippet.
+// Applied to a wrapper so several sections can share one continuous field.
+.cular-gradient-mesh {
+	position: relative;
+	overflow: hidden;
+	color: #fff;
+	background-color: #ff8c62;
+	background-size: 300% 300%;
+	background-image:
+		radial-gradient(at 97% 97%, hsla(60, 96%, 75%, 1) 0, transparent 47%),
+		radial-gradient(at 1% 86%, hsla(127, 22%, 28%, 1) 0, transparent 42%),
+		radial-gradient(at 63% 9%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
+		radial-gradient(at 34% 44%, #ff8c62 0, transparent 44%),
+		radial-gradient(at 92% 54%, hsla(49, 92%, 65%, 1) 0, transparent 50%),
+		radial-gradient(at 89% 15%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
+		radial-gradient(at 34% 44%, hsla(127, 22%, 28%, 1) 0, transparent 44%),
+		radial-gradient(at 49% 78%, hsla(49, 92%, 65%, 1) 0, transparent 50%);
+	animation: cular-gradient-drift 30s linear infinite;
+}
+
+@keyframes cular-gradient-drift {
+	0% { background-position: 0% 0%; }
+	50% { background-position: 100% 100%; }
+	100% { background-position: 0% 0%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-gradient-mesh { animation: none; }
+}
+
 // Floating WhatsApp button (global chrome).
 // Flat WhatsApp green with a pulsing "radar" ring — no drop shadow.
 .cular-wa {

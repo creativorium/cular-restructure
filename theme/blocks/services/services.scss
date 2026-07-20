@@ -7,22 +7,9 @@
 	align-content: center;
 	gap: clamp(2rem, 5vh, 4rem);
 	color: #fff;
-	overflow: hidden;
-
-	// Animated mesh/blob gradient — ported verbatim from the old
-	// "gradientTwo" Elementor snippet (30s drift across a 300% canvas).
-	background-color: #ff0000;
-	background-size: 300% 300%;
-	background-image:
-		radial-gradient(at 97% 97%, hsla(60, 96%, 75%, 1) 0, transparent 47%),
-		radial-gradient(at 1% 86%, hsla(127, 22%, 28%, 1) 0, transparent 42%),
-		radial-gradient(at 63% 9%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
-		radial-gradient(at 34% 44%, hsla(9, 74%, 54%, 1) 0, transparent 44%),
-		radial-gradient(at 92% 54%, hsla(49, 92%, 65%, 1) 0, transparent 50%),
-		radial-gradient(at 89% 15%, hsla(113, 15%, 66%, 1) 0, transparent 50%),
-		radial-gradient(at 34% 44%, hsla(127, 22%, 28%, 1) 0, transparent 44%),
-		radial-gradient(at 49% 78%, hsla(49, 92%, 65%, 1) 0, transparent 50%);
-	animation: cular-gradient-drift 30s linear infinite;
+	// Background comes from the shared .cular-gradient-mesh wrapper so this
+	// section and the team intro sit on one continuous gradient field.
+	background: transparent;
 
 	&__heading {
 		margin: 0;
@@ -32,9 +19,6 @@
 		font-size: clamp(2rem, 5vw, 3.5rem);
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		animation: none;
-	}
 
 	&__grid {
 		display: grid;
@@ -47,9 +31,11 @@
 
 	&__card {
 		border-radius: 1.5rem;
-		padding: clamp(2rem, 4vw, 3.25rem);
+		padding: clamp(2.5rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.25rem);
+		min-height: clamp(26rem, 52vh, 36rem);
 		display: grid;
 		gap: 1rem;
+		grid-template-rows: auto auto 1fr auto;
 		align-content: start;
 		text-align: center;
 		box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
@@ -96,9 +82,3 @@
 	}
 }
 
-// Slow drift of the mesh gradient across its oversized canvas.
-@keyframes cular-gradient-drift {
-	0% { background-position: 0% 0%; }
-	50% { background-position: 100% 100%; }
-	100% { background-position: 0% 0%; }
-}

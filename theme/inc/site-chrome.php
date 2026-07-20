@@ -10,6 +10,12 @@ defined( 'ABSPATH' ) || exit;
 add_action(
 	'wp_footer',
 	function () {
+		// Elementor-built pages already ship their own floating WhatsApp
+		// widget — don't add a second one while both systems coexist.
+		if ( function_exists( 'cular_is_elementor_page' ) && cular_is_elementor_page() ) {
+			return;
+		}
+
 		$number  = apply_filters( 'cular_whatsapp_number', '6281338571823' );
 		$message = apply_filters(
 			'cular_whatsapp_message',

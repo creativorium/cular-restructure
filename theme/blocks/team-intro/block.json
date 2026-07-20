@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/team-intro",
+  "title": "Cular — Team Intro",
+  "description": "Video/image card beside intro copy (\"We work like your team, not a vendor\").",
+  "category": "cular",
+  "icon": "groups",
+  "keywords": ["team", "about", "video", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
