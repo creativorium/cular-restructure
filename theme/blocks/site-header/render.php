@@ -34,7 +34,7 @@ if ( empty( $social ) ) {
 }
 ?>
 <div class="cular-header" data-cular-header>
-	<?php $logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/logo-full.png'; ?>
+	<?php $logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/logo-green.png'; ?>
 	<a class="cular-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 		<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( ! empty( $logo['alt'] ) ? $logo['alt'] : 'Cular Creative' ); ?>" />
 	</a>

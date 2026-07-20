@@ -1,19 +1,42 @@
 .cular-hero {
 	position: relative;
+	width: 100%;
+	height: 100vh;
+	min-height: 34rem;
+	overflow: hidden;
 	display: grid;
 	place-items: center;
-	min-height: clamp(34rem, 92vh, 56rem);
-	padding: clamp(2rem, 6vw, 5rem);
-	text-align: center;
-	overflow: hidden;
+
+	&__video {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		z-index: 0;
+	}
+
+	// Text overlay is optional — the live homepage hero has none.
+	&--has-text {
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.5));
+		}
+	}
 
 	&__inner {
 		position: relative;
-		z-index: 1;
+		z-index: 2;
 		max-width: 52rem;
 		display: grid;
 		gap: 1.5rem;
 		justify-items: center;
+		text-align: center;
+		color: #fff;
+		padding: clamp(2rem, 6vw, 5rem);
 	}
 
 	&__eyebrow {
@@ -31,47 +54,43 @@
 		line-height: 1.03;
 	}
 
-	&__subtext {
-		margin: 0;
-		font-size: clamp(1.05rem, 2vw, 1.35rem);
-		max-width: 38rem;
-		opacity: 0.9;
-	}
+	&__subtext { margin: 0; font-size: clamp(1.05rem, 2vw, 1.35rem); max-width: 38rem; }
 
 	&__cta {
 		display: inline-block;
-		margin-top: 0.75rem;
+		margin-top: 0.5rem;
 		padding: 1rem 2.25rem;
 		border-radius: 999px;
+		background: var(--cular-gold, #F8CE4A);
+		color: #1f1f1f;
 		text-decoration: none;
 		font-weight: 600;
-		transition: transform 0.25s var(--cular-ease);
-
-		&:hover { transform: translateY(-2px); }
 	}
 
-	// --- Plain (no background image): light, brand-forward ---
-	&--plain {
-		background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #eef1ea 55%, var(--cular-sage, #A0B89D) 100%);
-		color: var(--cular-green, #457F55);
-
-		.cular-hero__eyebrow { color: var(--cular-green, #457F55); opacity: 0.75; }
-		.cular-hero__subtext { color: #2b3a30; }
-		.cular-hero__cta { background: var(--cular-green, #457F55); color: #fff; }
-	}
-
-	// --- With background image: overlay + white text ---
-	&--image {
-		background-size: cover;
-		background-position: center;
+	// "Scroll Down" indicator, right edge (vertical).
+	&__scroll {
+		position: absolute;
+		right: clamp(1rem, 2.5vw, 2.25rem);
+		top: 50%;
+		transform: translateY(-50%);
+		z-index: 2;
+		display: grid;
+		justify-items: center;
+		gap: 1rem;
 		color: #fff;
+		mix-blend-mode: difference;
+	}
 
-		&::after {
-			content: "";
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.55));
-		}
-		.cular-hero__cta { background: var(--cular-gold, #F8CE4A); color: #1f1f1f; }
+	&__scroll-line {
+		width: 1px;
+		height: clamp(4rem, 14vh, 9rem);
+		background: currentColor;
+		opacity: 0.85;
+	}
+
+	&__scroll-label {
+		writing-mode: vertical-rl;
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
 	}
 }
