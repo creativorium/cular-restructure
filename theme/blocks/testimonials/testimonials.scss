@@ -1,41 +1,180 @@
 .cular-tst {
-	padding: clamp(3rem, 10vw, 9rem) clamp(1.25rem, 4vw, 3rem);
+	padding: clamp(3rem, 9vh, 7rem) clamp(1.25rem, 4vw, 3.5rem);
+	max-width: 1680px;
+	margin-inline: auto;
 	display: grid;
-	gap: clamp(2rem, 5vw, 3.5rem);
+	gap: clamp(2rem, 5vh, 3.5rem);
+	color: var(--cular-green, #457F55);
+
+	&__head {
+		display: grid;
+		gap: 0.75rem;
+		max-width: 52rem;
+	}
 
 	&__heading {
 		margin: 0;
-		font-size: clamp(1.75rem, 4vw, 3rem);
-		text-align: center;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(2rem, 4.5vw, 3.25rem);
+		line-height: 1.05;
 	}
 
-	&__grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-		gap: 1.25rem;
-	}
-
-	&__card {
+	&__intro {
 		margin: 0;
-		padding: clamp(1.75rem, 3vw, 2.5rem);
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		border-radius: 1.25rem;
-		display: grid;
-		gap: 1.25rem;
-		align-content: space-between;
-
-		blockquote {
-			margin: 0;
-			font-size: 1.15rem;
-			line-height: 1.5;
-
-			&::before { content: "\201C"; }
-			&::after { content: "\201D"; }
-		}
-
-		figcaption { display: grid; gap: 0.15rem; }
+		line-height: 1.6;
+		font-size: clamp(0.95rem, 1.1vw, 1.05rem);
 	}
 
-	&__author { font-weight: 600; }
-	&__role { opacity: 0.6; font-size: 0.9rem; }
+	&__cols {
+		display: grid;
+		grid-template-columns: 1.15fr 1fr;
+		gap: clamp(2rem, 4vw, 4rem);
+		align-items: start;
+
+		@media (max-width: 1000px) { grid-template-columns: 1fr; }
+	}
+
+	// --- Shared slider mechanics (scroll-snap + arrows/dots) ---
+	&__viewport {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: calc((100% - 2 * 0.75rem) / 3);
+		gap: 0.75rem;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		&::-webkit-scrollbar { display: none; }
+
+		> * { scroll-snap-align: start; }
+
+		@media (max-width: 700px) { grid-auto-columns: calc((100% - 0.75rem) / 2); }
+		@media (max-width: 480px) { grid-auto-columns: 100%; }
+
+		// Quotes show one at a time.
+		&--single { grid-auto-columns: 100%; }
+	}
+
+	&__nav {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 1.25rem;
+	}
+
+	&__arrow {
+		appearance: none;
+		border: 1px solid currentColor;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		font-size: 1rem;
+		transition: background 0.25s var(--cular-ease), color 0.25s var(--cular-ease), opacity 0.25s;
+
+		&:hover:not(:disabled) { background: var(--cular-green, #457F55); color: #fff; }
+		&:disabled { opacity: 0.3; cursor: default; }
+	}
+
+	&__dots {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex: 1;
+	}
+
+	&__dot {
+		appearance: none;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: currentColor;
+		opacity: 0.25;
+		transition: opacity 0.25s, width 0.25s var(--cular-ease);
+
+		&.is-active { opacity: 1; width: 1.5rem; border-radius: 999px; }
+	}
+
+	// --- Video cards ---
+	&__vcard {
+		margin: 0;
+		display: grid;
+		gap: 0;
+		align-content: start;
+	}
+
+	&__vlogo {
+		height: clamp(2.25rem, 3.5vw, 3.25rem);
+		width: auto;
+		max-width: 70%;
+		object-fit: contain;
+		justify-self: center;
+		margin: 1.25rem auto 1rem;
+	}
+
+	// Green gradient panel behind logo + video (matches the live design).
+	&__vcard {
+		background: linear-gradient(180deg, #3f7350 0%, #7d9a55 55%, #d9c46a 100%);
+		border-radius: 0.5rem;
+		overflow: hidden;
+		padding-bottom: 0.75rem;
+	}
+
+	&__video {
+		width: 88%;
+		justify-self: center;
+		aspect-ratio: 9 / 16;
+		object-fit: cover;
+		border-radius: 0.35rem;
+		background: #000;
+		display: block;
+	}
+
+	&__vmeta {
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.9rem 1rem 0.25rem;
+		color: #fff;
+	}
+
+	&__vname {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: 1.3rem;
+		line-height: 1.1;
+	}
+
+	&__vcompany { font-size: 0.85rem; opacity: 0.85; }
+
+	// --- Written quotes ---
+	&__quotes { border-top: 2px solid currentColor; padding-top: 1.5rem; }
+
+	&__quote {
+		margin: 0;
+		display: grid;
+		gap: 1.25rem;
+		align-content: start;
+	}
+
+	&__quote-text {
+		margin: 0;
+		line-height: 1.6;
+		font-size: clamp(1rem, 1.25vw, 1.15rem);
+	}
+
+	&__quote-meta { display: grid; gap: 0.1rem; }
+
+	&__author {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: 1.35rem;
+	}
+
+	&__role { font-size: 0.9rem; opacity: 0.7; }
 }
