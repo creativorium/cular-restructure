@@ -52,8 +52,32 @@
 		@media (max-width: 700px) { grid-auto-columns: calc((100% - 0.75rem) / 2); }
 		@media (max-width: 480px) { grid-auto-columns: 100%; }
 
-		// Quotes show one at a time.
-		&--single { grid-auto-columns: 100%; }
+		// Quotes show two at a time.
+		&--pair {
+			grid-auto-columns: calc((100% - 2rem) / 2);
+			gap: 2rem;
+
+			@media (max-width: 1200px) { grid-auto-columns: 100%; }
+		}
+	}
+
+	// The rule above the quotes doubles as the slide indicator.
+	&__indicator {
+		display: flex;
+		gap: 0;
+		width: 100%;
+		margin-bottom: 1.5rem;
+
+		.cular-tst__dot {
+			flex: 1;
+			width: auto;
+			height: 2px;
+			border-radius: 0;
+			opacity: 0.25;
+			transition: opacity 0.3s var(--cular-ease);
+
+			&.is-active { opacity: 1; width: auto; border-radius: 0; }
+		}
 	}
 
 	&__nav {
@@ -111,13 +135,29 @@
 		align-content: start;
 	}
 
+	// Logo lockup. Source logos come in mixed colours, so force them white.
 	&__vlogo {
-		height: clamp(2.25rem, 3.5vw, 3.25rem);
-		width: auto;
-		max-width: 70%;
-		object-fit: contain;
-		justify-self: center;
-		margin: 1.25rem auto 1rem;
+		display: grid;
+		place-items: center;
+		min-height: clamp(2.75rem, 4vw, 3.75rem);
+		padding: 1.1rem 1rem 0.9rem;
+
+		img {
+			height: clamp(2.25rem, 3.5vw, 3.25rem);
+			max-width: 78%;
+			width: auto;
+			object-fit: contain;
+			filter: brightness(0) invert(1);
+		}
+	}
+
+	// Fallback when a brand has no logo file.
+	&__vwordmark {
+		color: #fff;
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+		text-align: center;
+		line-height: 1.15;
 	}
 
 	// Green gradient panel behind logo + video (matches the live design).
@@ -128,14 +168,52 @@
 		padding-bottom: 0.75rem;
 	}
 
-	&__video {
+	// Poster + play button; native controls only appear once playing.
+	&__vplayer {
+		position: relative;
 		width: 88%;
 		justify-self: center;
+		border-radius: 0.35rem;
+		overflow: hidden;
+	}
+
+	&__video {
+		width: 100%;
 		aspect-ratio: 9 / 16;
 		object-fit: cover;
-		border-radius: 0.35rem;
 		background: #000;
 		display: block;
+	}
+
+	&__play {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		width: 100%;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		background: rgba(0, 0, 0, 0.15);
+		color: #fff;
+		transition: opacity 0.3s var(--cular-ease), background 0.3s var(--cular-ease);
+
+		&::before {
+			content: "";
+			position: absolute;
+			width: 3.75rem;
+			height: 3.75rem;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.22);
+			border: 1px solid rgba(255, 255, 255, 0.65);
+			backdrop-filter: blur(2px);
+			transition: transform 0.3s var(--cular-ease);
+		}
+
+		svg { position: relative; z-index: 1; transform: translateX(2px); }
+
+		&:hover::before { transform: scale(1.08); }
+		&.is-hidden { opacity: 0; pointer-events: none; }
 	}
 
 	&__vmeta {

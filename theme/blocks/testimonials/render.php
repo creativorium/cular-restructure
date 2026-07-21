@@ -21,12 +21,15 @@ if ( ! $intro ) {
 
 if ( empty( $videos ) ) {
 	$videos = array(
+		// No posters by default: the supplied cover images have the brand logo
+		// baked in, which would duplicate the logo above the video. We show the
+		// video's first frame instead (see the #t=0.1 fragment below).
 		array( 'video_url' => content_url( '/uploads/2024/12/Testimoni-Vifa_2_2.webm' ), 'name' => 'Bobby', 'company' => 'Vifa Holiday Indonesia', 'logo' => '' ),
 		array( 'video_url' => content_url( '/uploads/2024/12/Testimoni-Inspiral_2.webm' ), 'name' => 'Bryan', 'company' => 'Inspiral Studios', 'logo' => '2024/06/Inspiral-Logo.png' ),
 		array( 'video_url' => content_url( '/uploads/2025/11/Testimoni-kayu-2-1-1.mp4' ), 'name' => 'Ira', 'company' => 'Kayu &amp; Co.', 'logo' => '2025/07/Logo-Kayu-Co.png' ),
 		array( 'video_url' => content_url( '/uploads/2026/02/Bali-Buda-testi-2-1.webm' ), 'name' => 'Ananda', 'company' => 'Bali Buda', 'logo' => '2025/12/Logo_BaliBuda.png' ),
 		array( 'video_url' => content_url( '/uploads/2026/02/Testi-Luna-1-1.webm' ), 'name' => 'Yovi', 'company' => 'Luna &amp; Sol', 'logo' => '' ),
-		array( 'video_url' => content_url( '/uploads/2026/01/Shenoa-Supatra-1-1-1.webm' ), 'name' => 'Shenoa', 'company' => 'SPB &amp; Kaiana Spa', 'logo' => '' ),
+		array( 'video_url' => content_url( '/uploads/2026/01/Shenoa-Supatra-1-1-1.webm' ), 'name' => 'Shenoa', 'company' => 'SPB &amp; Kaiana Spa', 'logo' => '2024/11/logo-spb-blue.png' ),
 	);
 }
 
@@ -71,12 +74,41 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 								: content_url( '/uploads/' . $v['logo'] );
 						}
 						?>
+						<?php
+						$poster_url = '';
+						if ( ! empty( $v['poster'] ) ) {
+							$poster_url = is_array( $v['poster'] )
+								? ( $v['poster']['url'] ?? '' )
+								: content_url( '/uploads/' . $v['poster'] );
+						}
+						?>
 						<figure class="cular-tst__vcard">
-							<?php if ( $logo_url ) : ?>
-								<img class="cular-tst__vlogo" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( wp_strip_all_tags( $v['company'] ) ); ?>" loading="lazy" />
-							<?php endif; ?>
+							<div class="cular-tst__vlogo">
+								<?php if ( $logo_url ) : ?>
+									<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( wp_strip_all_tags( $v['company'] ) ); ?>" loading="lazy" />
+								<?php else : ?>
+									<span class="cular-tst__vwordmark"><?php echo wp_kses_post( $v['company'] ); ?></span>
+								<?php endif; ?>
+							</div>
 
-							<video class="cular-tst__video" src="<?php echo esc_url( $v['video_url'] ); ?>" controls preload="metadata" playsinline></video>
+							<?php
+							// Without a poster, seek 0.1s in so the first frame renders
+							// as the preview rather than a black box.
+							$src = $v['video_url'];
+							if ( ! $poster_url ) {
+								$src .= '#t=0.1';
+							}
+							?>
+							<div class="cular-tst__vplayer" data-cular-video>
+								<video class="cular-tst__video" src="<?php echo esc_url( $src ); ?>"
+									<?php echo $poster_url ? 'poster="' . esc_url( $poster_url ) . '"' : ''; ?>
+									preload="metadata" playsinline></video>
+
+								<button class="cular-tst__play" type="button" data-cular-video-play
+									aria-label="<?php echo esc_attr( 'Play testimonial from ' . $v['name'] ); ?>">
+									<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+								</button>
+							</div>
 
 							<figcaption class="cular-tst__vmeta">
 								<span class="cular-tst__vname"><?php echo esc_html( $v['name'] ); ?></span>
@@ -96,7 +128,10 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 
 		<?php if ( $items ) : ?>
 			<div class="cular-tst__quotes" data-cular-slider="quotes">
-				<div class="cular-tst__viewport cular-tst__viewport--single" data-slider-track>
+				<?php // The rule above the quotes IS the slide indicator. ?>
+				<div class="cular-tst__indicator" data-slider-dots></div>
+
+				<div class="cular-tst__viewport cular-tst__viewport--pair" data-slider-track>
 					<?php foreach ( $items as $t ) : ?>
 						<blockquote class="cular-tst__quote">
 							<p class="cular-tst__quote-text">&ldquo;<?php echo esc_html( $t['quote'] ); ?>&rdquo;</p>
@@ -112,7 +147,6 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 
 				<div class="cular-tst__nav">
 					<button type="button" class="cular-tst__arrow" data-slider-prev aria-label="Previous testimonial">&#8592;</button>
-					<div class="cular-tst__dots" data-slider-dots></div>
 					<button type="button" class="cular-tst__arrow" data-slider-next aria-label="Next testimonial">&#8594;</button>
 				</div>
 			</div>
