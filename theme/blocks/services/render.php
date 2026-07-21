@@ -37,10 +37,10 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 <section<?php echo $anchor; // phpcs:ignore ?> class="cular-services">
 	<h2 class="cular-services__heading"><?php echo esc_html( $heading ); ?></h2>
 
-	<div class="cular-services__grid">
+	<div class="cular-services__grid" data-cular-reveal-items>
 		<?php foreach ( $items as $item ) : ?>
 			<?php $theme = ! empty( $item['card_theme'] ) ? $item['card_theme'] : 'warm'; ?>
-			<article class="cular-services__card cular-services__card--<?php echo esc_attr( $theme ); ?>" data-cular-reveal>
+			<article class="cular-services__card cular-services__card--<?php echo esc_attr( $theme ); ?>">
 				<h3 class="cular-services__title"><?php echo esc_html( $item['title'] ); ?></h3>
 
 				<?php if ( ! empty( $item['subtitle'] ) ) : ?>

@@ -74,7 +74,7 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 	</div>
 
 	<?php if ( $badge_list ) : ?>
-		<div class="cular-why__badges">
+		<div class="cular-why__badges" data-cular-reveal-items>
 			<?php foreach ( $badge_list as $badge ) : ?>
 				<img src="<?php echo esc_url( $badge['url'] ); ?>" alt="<?php echo esc_attr( $badge['alt'] ); ?>" loading="lazy" />
 			<?php endforeach; ?>

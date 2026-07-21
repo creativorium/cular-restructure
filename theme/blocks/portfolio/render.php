@@ -75,7 +75,7 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 
 	<?php if ( $q->have_posts() ) : ?>
 		<div class="cular-portfolio__panel">
-			<div class="cular-portfolio__grid">
+			<div class="cular-portfolio__grid" data-cular-reveal-items>
 				<?php
 				$i = 0;
 				while ( $q->have_posts() ) :

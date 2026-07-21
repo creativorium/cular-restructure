@@ -1,50 +1,172 @@
 .cular-notes {
-	padding: clamp(3rem, 10vw, 9rem) clamp(1.25rem, 4vw, 3rem);
+	padding: clamp(3rem, 9vh, 7rem) clamp(1.25rem, 4vw, 3.5rem);
+	max-width: 1680px;
+	margin-inline: auto;
 	display: grid;
-	gap: clamp(1.5rem, 4vw, 3rem);
-	background: var(--wp--preset--color--contrast, #0e0e0e);
-	color: #fff;
+	grid-template-columns: minmax(15rem, 22rem) 1fr;
+	gap: clamp(2rem, 4vw, 4rem);
+	align-items: center;
+	color: var(--cular-green, #457F55);
+	background: transparent;
 
-	&__head {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-		flex-wrap: wrap;
+	@media (max-width: 900px) {
+		grid-template-columns: 1fr;
+		align-items: start;
 	}
 
-	&__eyebrow {
-		margin: 0;
-		font-size: clamp(1.5rem, 4vw, 2.5rem);
-		font-weight: 700;
-	}
-
-	&__all { color: inherit; text-decoration: none; opacity: 0.7; }
-	&__all:hover { opacity: 1; }
-
-	&__grid {
+	// --- Left intro column ---
+	&__intro {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
-		gap: 1.5rem;
+		gap: 1.25rem;
+		align-content: center;
+		justify-items: start;
 	}
 
-	&__card {
+	&__heading {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(2rem, 4vw, 3.25rem);
+		line-height: 1.05;
+	}
+
+	&__text {
+		margin: 0;
+		line-height: 1.6;
+		font-size: clamp(0.95rem, 1.1vw, 1.02rem);
+	}
+
+	&__all {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
 		color: inherit;
 		text-decoration: none;
-		display: grid;
-		gap: 0.75rem;
-		align-content: start;
+		font-size: clamp(1rem, 1.3vw, 1.2rem);
+		border-bottom: 1px solid currentColor;
+		padding-bottom: 0.35rem;
 
-		h3 { margin: 0; font-size: 1.2rem; line-height: 1.3; }
+		span { display: inline-block; transition: transform 0.3s var(--cular-ease); }
+		&:hover span { transform: translateX(0.4rem); }
+	}
+
+	// --- Slider ---
+	&__slider {
+		position: relative;
+		display: grid;
+		gap: 1.25rem;
+		min-width: 0;
+	}
+
+	&__viewport {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: calc((100% - 2 * 1.25rem) / 3);
+		gap: 1.25rem;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		&::-webkit-scrollbar { display: none; }
+
+		> * { scroll-snap-align: start; }
+
+		@media (max-width: 1200px) { grid-auto-columns: calc((100% - 1.25rem) / 2); }
+		@media (max-width: 700px) { grid-auto-columns: 88%; }
+	}
+
+	// --- Cards ---
+	&__card {
+		display: grid;
+		grid-template-rows: auto auto auto 1fr;
+		gap: 0.85rem;
+		padding: clamp(1rem, 1.5vw, 1.4rem);
+		border-radius: 0.9rem;
+		text-decoration: none;
+		color: #fff;
+		transition: transform 0.35s var(--cular-ease);
+
+		&:hover { transform: translateY(-6px); }
+
+		&--gold { background: var(--cular-gold, #F8CE4A); color: #2f2f2f; }
+		&--coral { background: #F2825F; }
+		&--sage { background: var(--cular-sage, #A0B89D); }
 	}
 
 	&__media {
+		border-radius: 0.6rem;
+		overflow: hidden;
 		aspect-ratio: 16 / 10;
-		border-radius: 1rem;
-		background: #333 center/cover no-repeat;
-		transition: transform 0.5s var(--cular-ease);
-	}
-	&__card:hover &__media { transform: translateY(-4px); }
+		background: rgba(255, 255, 255, 0.3);
 
-	&__excerpt { margin: 0; opacity: 0.6; font-size: 0.9rem; }
+		img { width: 100%; height: 100%; object-fit: cover; display: block; }
+	}
+
+	&__date {
+		font-size: 0.85rem;
+		opacity: 0.85;
+	}
+
+	&__title {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+		line-height: 1.25;
+	}
+
+	&__more {
+		align-self: end;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+
+	// --- Arrows + dots ---
+	&__arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		z-index: 2;
+		appearance: none;
+		border: 0;
+		background: transparent;
+		color: var(--cular-green, #457F55);
+		cursor: pointer;
+		font-size: 2.25rem;
+		line-height: 1;
+		padding: 0.25rem 0.5rem;
+		transition: opacity 0.25s, transform 0.25s var(--cular-ease);
+
+		&:disabled { opacity: 0.25; cursor: default; }
+		&--prev { left: -1.75rem; }
+		&--next { right: -1.75rem; }
+
+		@media (max-width: 700px) {
+			&--prev { left: -0.75rem; }
+			&--next { right: -0.75rem; }
+		}
+	}
+
+	&__dots {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.45rem;
+	}
+
+	// Reuse the shared dot styling from the testimonials slider.
+	.cular-tst__dot {
+		appearance: none;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--cular-green, #457F55);
+		opacity: 0.25;
+		transition: opacity 0.25s, width 0.25s var(--cular-ease);
+
+		&.is-active { opacity: 1; width: 1.35rem; border-radius: 999px; }
+	}
 }
