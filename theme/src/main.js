@@ -14,9 +14,12 @@ window.ScrollTrigger = ScrollTrigger;
 
 // Smooth scroll — replaces the old CDN Lenis snippet.
 const lenis = new Lenis({
-	duration: 1.2,
+	// Lower duration = snappier settle; higher multiplier = more travel per wheel tick.
+	duration: 0.75,
 	easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
 	smoothWheel: true,
+	wheelMultiplier: 1.25,
+	touchMultiplier: 1.8,
 });
 window.lenis = lenis;
 

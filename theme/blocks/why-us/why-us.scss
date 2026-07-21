@@ -24,8 +24,9 @@
 	&__marquee:hover &__track { animation-play-state: paused; }
 
 	&__logo {
-		height: clamp(2.75rem, 4vw, 4.25rem);
+		height: clamp(4rem, 6.5vw, 7rem);
 		width: auto;
+		max-width: clamp(9rem, 16vw, 15rem);
 		object-fit: contain;
 		flex: none;
 	}
