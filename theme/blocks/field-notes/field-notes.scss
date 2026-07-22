@@ -64,6 +64,10 @@
 		grid-auto-columns: calc((100% - 2 * 1.25rem) / 3);
 		gap: 1.25rem;
 		overflow-x: auto;
+		// overflow-x:auto also clips vertically, which cut off the card's hover
+		// lift. Pad the scroll area and pull it back so the lift has room.
+		padding: 0.85rem 0.35rem;
+		margin: -0.85rem -0.35rem;
 		scroll-snap-type: x mandatory;
 		scrollbar-width: none;
 		-ms-overflow-style: none;

@@ -1,7 +1,10 @@
 .cular-cta {
 	// Cream at the top, easing down into the footer's green so the CTA band and
 	// the footer read as one continuous surface (no seam, no white strip).
-	background: linear-gradient(180deg, #ffffff 0%, #eef1ea 38%, var(--cular-sage, #A0B89D) 78%, var(--cular-green, #457F55) 100%);
+	// Ease from cream to the exact footer green, and REACH that green before the
+	// bottom edge so the lower band is solid green — a seamless join to the
+	// footer with no lighter strip in between.
+	background: linear-gradient(180deg, #ffffff 0%, #eef1ea 30%, var(--cular-sage, #A0B89D) 58%, var(--cular-green, #457F55) 82%, var(--cular-green, #457F55) 100%);
 	padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 12vw, 9rem);
 	display: grid;
 	place-items: center;

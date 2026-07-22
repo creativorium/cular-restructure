@@ -19,15 +19,18 @@ if ( ! $intro ) {
 	$intro = 'Join the conversation! Stay up to date with our latest insights on online marketing trends by reading our Field Notes and sharing your thoughts in the comments.';
 }
 
+// Over-fetch so we can skip posts that reuse the same featured image (several
+// recent posts are duplicates that share one placeholder image).
 $q = new WP_Query(
 	array(
 		'post_type'           => 'post',
-		'posts_per_page'      => $count,
+		'posts_per_page'      => $count + 10,
 		'post_status'         => 'publish',
 		'ignore_sticky_posts' => true,
 		'no_found_rows'       => true,
 	)
 );
+$used_thumbs = array();
 
 $themes = array( 'gold', 'coral', 'sage' );
 $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
@@ -50,6 +53,19 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 				$i = 0;
 				while ( $q->have_posts() ) :
 					$q->the_post();
+					if ( $i >= $count ) {
+						break;
+					}
+
+					// Skip posts that reuse a featured image already shown.
+					$thumb_id = (int) get_post_thumbnail_id( get_the_ID() );
+					if ( $thumb_id && in_array( $thumb_id, $used_thumbs, true ) ) {
+						continue;
+					}
+					if ( $thumb_id ) {
+						$used_thumbs[] = $thumb_id;
+					}
+
 					$theme = $themes[ $i % count( $themes ) ];
 					++$i;
 					$img = get_the_post_thumbnail_url( get_the_ID(), 'medium_large' );
