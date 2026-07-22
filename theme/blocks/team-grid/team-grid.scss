@@ -1,0 +1,66 @@
+.cular-team-grid {
+	color: #fff;
+	background: transparent; // on the shared .cular-gradient-mesh wrapper
+	max-width: 1320px;
+	margin-inline: auto;
+	width: 100%;
+	padding: clamp(2.5rem, 6vh, 5rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
+	display: grid;
+	gap: clamp(2.5rem, 6vh, 4.5rem);
+
+	&__heading {
+		margin: 0;
+		text-align: center;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		text-transform: uppercase;
+		font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+		line-height: 1.1;
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+		gap: clamp(1rem, 2vw, 1.75rem);
+	}
+
+	&__card {
+		margin: 0;
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	&__photo {
+		border-radius: 1.25rem;
+		overflow: hidden;
+		aspect-ratio: 1 / 1;
+		background: rgba(255, 255, 255, 0.15);
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			transition: transform 0.5s var(--cular-ease);
+		}
+	}
+
+	&__card:hover &__photo img { transform: scale(1.05); }
+
+	figcaption {
+		display: grid;
+		gap: 0.1rem;
+		text-align: center;
+	}
+
+	&__name {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: 1.4rem;
+		line-height: 1.1;
+	}
+
+	&__role {
+		font-size: 0.85rem;
+		opacity: 0.85;
+	}
+}

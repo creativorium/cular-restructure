@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/about-intro",
+  "title": "Cular — About Intro",
+  "description": "\"About Us\" heading with intro paragraphs on the brand gradient.",
+  "category": "cular",
+  "icon": "info",
+  "keywords": ["about", "intro", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

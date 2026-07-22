@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/team-grid",
+  "title": "Cular — Team Grid",
+  "description": "\"Meet the team\" heading with a grid of member cards (photo, name, role).",
+  "category": "cular",
+  "icon": "groups",
+  "keywords": ["team", "people", "members", "cular"],
+  "supports": { "anchor": true, "align": ["full"] },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
