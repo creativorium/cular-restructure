@@ -1,7 +1,8 @@
 .cular-cta {
-	// Soft cream -> sage vertical gradient behind the card.
-	background: linear-gradient(180deg, #ffffff 0%, #eef1ea 45%, var(--cular-sage, #A0B89D) 100%);
-	padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3rem);
+	// Cream at the top, easing down into the footer's green so the CTA band and
+	// the footer read as one continuous surface (no seam, no white strip).
+	background: linear-gradient(180deg, #ffffff 0%, #eef1ea 38%, var(--cular-sage, #A0B89D) 78%, var(--cular-green, #457F55) 100%);
+	padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 12vw, 9rem);
 	display: grid;
 	place-items: center;
 
@@ -18,20 +19,30 @@
 	}
 
 	&__heading {
+		position: relative;
 		margin: 0;
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
-		font-size: clamp(2.75rem, 9vw, 7rem);
+		font-size: clamp(2.5rem, 9vw, 7rem);
 		line-height: 1.02;
 		letter-spacing: 0.01em;
-	}
+		color: #fff;
 
-	// Gold gradient on the highlighted word.
-	&__hl {
-		background: linear-gradient(90deg, #fff 0%, var(--cular-gold, #F8CE4A) 60%, #d9a93a 100%);
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+		// A colour "spotlight" sweeps across the white text — the same effect
+		// as the old site (image revealed through the type by a moving ellipse).
+		&::after {
+			content: attr(data-spotlight);
+			position: absolute;
+			inset: 0;
+			background-image: url("../../assets/img/spotlight.png");
+			background-size: cover;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			clip-path: ellipse(22% 60% at 0% 50%);
+			animation: cular-spotlight 5s ease-in-out infinite;
+			pointer-events: none;
+		}
 	}
 
 	&__link {
@@ -50,4 +61,15 @@
 
 	&__arrow { transition: transform 0.3s var(--cular-ease); }
 	&__link:hover &__arrow { transform: translateX(4px); }
+}
+
+// Spotlight sweep for the CTA heading.
+@keyframes cular-spotlight {
+	0% { clip-path: ellipse(22% 60% at 0% 50%); }
+	50% { clip-path: ellipse(22% 60% at 100% 50%); }
+	100% { clip-path: ellipse(22% 60% at 0% 50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-cta__heading::after { animation: none; clip-path: ellipse(120% 120% at 50% 50%); opacity: 0.5; }
 }

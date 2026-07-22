@@ -58,6 +58,14 @@ body {
 	margin-block-end: 0;
 }
 
+// The footer template part is a direct child of .wp-site-blocks (a sibling of
+// <main>), so it also picks up WP's block-gap margin — that was the white
+// strip above the footer. Remove it and the seams around the header too.
+.wp-site-blocks > * {
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+
 // Display serif for headings site-wide.
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Luxia Display", Georgia, serif;
