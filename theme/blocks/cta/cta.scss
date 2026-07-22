@@ -1,10 +1,10 @@
 .cular-cta {
 	// Cream at the top, easing down into the footer's green so the CTA band and
 	// the footer read as one continuous surface (no seam, no white strip).
-	// Ease from cream to the exact footer green, and REACH that green before the
-	// bottom edge so the lower band is solid green — a seamless join to the
-	// footer with no lighter strip in between.
-	background: linear-gradient(180deg, #ffffff 0%, #eef1ea 30%, var(--cular-sage, #A0B89D) 58%, var(--cular-green, #457F55) 82%, var(--cular-green, #457F55) 100%);
+	// Cream at the top easing to SAGE at the bottom. The footer then continues
+	// sage -> green, so both meet at sage for a seamless blend (mirrors the live
+	// site's two-gradient join).
+	background: linear-gradient(180deg, #ffffff 0%, #eae6de 22%, var(--cular-sage, #A0B89D) 100%);
 	padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 12vw, 9rem);
 	display: grid;
 	place-items: center;
@@ -26,10 +26,12 @@
 		margin: 0;
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
-		font-size: clamp(2.5rem, 9vw, 7rem);
-		line-height: 1.02;
+		// Scales with the card width so it stays on one line down to mobile.
+		font-size: clamp(1.9rem, 7.5vw, 7rem);
+		line-height: 1.05;
 		letter-spacing: 0.01em;
 		color: #fff;
+		white-space: nowrap;
 
 		// A colour "spotlight" sweeps across the white text — the same effect
 		// as the old site (image revealed through the type by a moving ellipse).

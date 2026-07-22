@@ -1,5 +1,7 @@
 .cular-footer {
-	background: var(--cular-green, #457F55);
+	// Continues the CTA gradient: sage at the top (meeting the CTA's sage
+	// bottom) down to green — one continuous surface, no seam.
+	background: linear-gradient(180deg, var(--cular-sage, #A0B89D) 0%, var(--cular-green, #457F55) 42%, var(--cular-green, #457F55) 100%);
 	color: #fff;
 	padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 5vw, 4.5rem) 2.5rem;
 	font-size: 0.95rem;
@@ -54,32 +56,40 @@
 
 	&__form {
 		display: flex;
-		align-items: stretch;
+		align-items: flex-end;
+		gap: 0.5rem;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 		max-width: 22rem;
 
 		input {
 			flex: 1;
+			min-width: 0;
 			background: transparent;
 			border: 0;
 			color: #fff;
 			font: inherit;
-			padding: 0.6rem 0.25rem;
+			padding: 0.75rem 0.25rem;
 			&::placeholder { color: rgba(255, 255, 255, 0.7); }
 			&:focus { outline: none; }
 		}
 
+		// Gold rounded-square send button attached at the right of the field.
 		button {
+			flex: none;
 			display: grid;
 			place-items: center;
 			width: 2.75rem;
+			height: 2.75rem;
+			margin-bottom: 0.35rem;
 			border: 0;
 			cursor: pointer;
 			color: #2b2b2b;
 			background: var(--cular-gold, #F8CE4A);
-			border-radius: 0.4rem;
-			transition: transform 0.2s var(--cular-ease);
-			&:hover { transform: translateX(2px); }
+			border-radius: 0.5rem;
+			transition: filter 0.2s var(--cular-ease);
+			&:hover { filter: brightness(1.06); }
+
+			svg { width: 20px; height: 20px; }
 		}
 	}
 
