@@ -11,6 +11,7 @@
 
 	&__card {
 		width: min(100%, 1120px);
+		container-type: inline-size; // size the heading against the card width
 		background: var(--cular-green, #457F55);
 		border-radius: clamp(1.25rem, 2vw, 2rem);
 		padding: clamp(3rem, 9vw, 8rem) clamp(1.5rem, 5vw, 5rem);
@@ -26,12 +27,13 @@
 		margin: 0;
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
-		// Scales with the card width so it stays on one line down to mobile.
-		font-size: clamp(1.9rem, 7.5vw, 7rem);
+		// Sized against the card width (cqw) so one line always fits inside it.
+		font-size: clamp(1.6rem, 8cqw, 5.5rem);
 		line-height: 1.05;
 		letter-spacing: 0.01em;
 		color: #fff;
 		white-space: nowrap;
+		max-width: 100%;
 
 		// A colour "spotlight" sweeps across the white text — the same effect
 		// as the old site (image revealed through the type by a moving ellipse).

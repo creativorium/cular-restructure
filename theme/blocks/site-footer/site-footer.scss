@@ -1,7 +1,7 @@
 .cular-footer {
-	// Continues the CTA gradient: sage at the top (meeting the CTA's sage
-	// bottom) down to green — one continuous surface, no seam.
-	background: linear-gradient(180deg, var(--cular-sage, #A0B89D) 0%, var(--cular-green, #457F55) 42%, var(--cular-green, #457F55) 100%);
+	// Continues the CTA gradient: sage at the very top (meeting the CTA's sage
+	// bottom) easing down to green over a longer run — one continuous surface.
+	background: linear-gradient(180deg, var(--cular-sage, #A0B89D) 0%, var(--cular-green, #457F55) 60%, var(--cular-green, #457F55) 100%);
 	color: #fff;
 	padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 5vw, 4.5rem) 2.5rem;
 	font-size: 0.95rem;
