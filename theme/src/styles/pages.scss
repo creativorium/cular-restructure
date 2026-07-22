@@ -1,0 +1,82 @@
+// Styling for the simple content pages (FAQ, Privacy & Terms) which are built
+// from native Gutenberg blocks wrapped in a .cular-page container.
+
+.cular-page {
+	max-width: 900px;
+	margin-inline: auto;
+	padding: clamp(6rem, 14vh, 10rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
+	color: var(--wp--preset--color--contrast, #111);
+
+	&__title {
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		text-transform: uppercase;
+		font-size: clamp(2.5rem, 6vw, 4.5rem);
+		line-height: 1;
+		letter-spacing: 0.03em;
+		color: var(--cular-green, #457F55);
+		margin: 0 0 2.5rem;
+	}
+
+	// Category / section headings
+	h2 {
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.5rem, 3vw, 2.25rem);
+		color: var(--cular-green, #457F55);
+		margin: 2.75rem 0 1rem;
+	}
+
+	h3 {
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.2rem, 2vw, 1.6rem);
+		margin: 2rem 0 0.75rem;
+	}
+
+	p { line-height: 1.7; margin: 0 0 1rem; }
+	a { color: var(--cular-green, #457F55); }
+}
+
+// FAQ accordion (native core/details).
+.cular-page {
+	details {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+		padding: 0.35rem 0;
+
+		summary {
+			cursor: pointer;
+			list-style: none;
+			padding: 1rem 2.5rem 1rem 0;
+			position: relative;
+			font-weight: 600;
+			font-size: clamp(1rem, 1.4vw, 1.15rem);
+			transition: color 0.2s var(--cular-ease);
+
+			&::-webkit-details-marker { display: none; }
+
+			// Plus / minus indicator
+			&::after {
+				content: "+";
+				position: absolute;
+				right: 0.25rem;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 1.5rem;
+				line-height: 1;
+				color: var(--cular-green, #457F55);
+				transition: transform 0.25s var(--cular-ease);
+			}
+
+			&:hover { color: var(--cular-green, #457F55); }
+		}
+
+		&[open] summary::after { content: "\2212"; } // minus
+
+		> :not(summary) {
+			padding: 0 0 1.1rem;
+			line-height: 1.7;
+			opacity: 0.9;
+		}
+	}
+}
