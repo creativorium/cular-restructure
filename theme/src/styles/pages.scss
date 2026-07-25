@@ -1,3 +1,39 @@
+// Green full-page treatment for a simple content page, scoped by its page id.
+// Flips the page to brand green with white text, and adapts the header (white
+// logo + white menu button) so it reads on green. Reused per page.
+@mixin cular-page-green($id) {
+	body.page-id-#{$id} {
+		background: var(--cular-green, #457F55);
+
+		.cular-page {
+			color: #fff;
+
+			&__title,
+			h2,
+			h3 {
+				color: #fff;
+			}
+
+			a { color: var(--cular-gold, #F8CE4A); }
+
+			details {
+				border-bottom-color: rgba(255, 255, 255, 0.25);
+				summary::after { color: #fff; }
+				summary:hover { color: rgba(255, 255, 255, 0.7); }
+				> :not(summary) { opacity: 0.9; }
+			}
+		}
+
+		// Header on a green page: white logo + white pill button.
+		.cular-header__brand img { filter: brightness(0) invert(1); }
+		.cular-header__toggle {
+			background: #fff;
+			color: var(--cular-green, #457F55);
+			&:hover { background: rgba(255, 255, 255, 0.88); }
+		}
+	}
+}
+
 // Styling for the simple content pages (FAQ, Privacy & Terms) which are built
 // from native Gutenberg blocks wrapped in a .cular-page container.
 
@@ -80,3 +116,6 @@
 		}
 	}
 }
+
+// FAQ page (/faqs/, id 7589) — green background, white text.
+@include cular-page-green(7589);
