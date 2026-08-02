@@ -101,6 +101,18 @@ h1, h2, h3, h4, h5, h6 {
 	100% { background-position: 0% 0%; }
 }
 
+// Green-forward variant of the mesh (used on the Field Notes archive).
+.cular-gradient-mesh--green {
+	background-color: #7d9a6a;
+	background-image:
+		radial-gradient(at 92% 8%, hsla(49, 92%, 70%, 0.9) 0, transparent 45%),
+		radial-gradient(at 8% 12%, hsla(113, 20%, 60%, 1) 0, transparent 50%),
+		radial-gradient(at 15% 92%, hsla(127, 22%, 34%, 1) 0, transparent 48%),
+		radial-gradient(at 88% 90%, #ff8c62 0, transparent 42%),
+		radial-gradient(at 55% 45%, hsla(96, 26%, 58%, 1) 0, transparent 55%),
+		radial-gradient(at 70% 75%, hsla(49, 80%, 66%, 0.7) 0, transparent 48%);
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.cular-gradient-mesh { animation: none; }
 }
