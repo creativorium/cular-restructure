@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/field-notes-archive",
+  "title": "Cular — Field Notes Archive",
+  "description": "Blog archive: title, intro and a paginated grid of post cards.",
+  "category": "cular",
+  "icon": "grid-view",
+  "keywords": ["blog", "archive", "field notes", "cular"],
+  "supports": { "anchor": true, "align": ["full"], "multiple": false },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

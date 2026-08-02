@@ -1,0 +1,136 @@
+.cular-fn {
+	color: #fff;
+	background: transparent; // on the .cular-gradient-mesh--green wrapper
+	max-width: 1320px;
+	margin-inline: auto;
+	width: 100%;
+	padding: clamp(6rem, 14vh, 10rem) clamp(1.25rem, 4vw, 3.5rem) clamp(4rem, 10vh, 8rem);
+	display: grid;
+	gap: clamp(2.5rem, 6vh, 4.5rem);
+
+	&__head { display: grid; gap: 1.25rem; }
+
+	&__heading {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		text-transform: uppercase;
+		font-size: clamp(2.5rem, 7vw, 5rem);
+		line-height: 1;
+		letter-spacing: 0.03em;
+	}
+
+	&__intro p { margin: 0; line-height: 1.5; font-size: clamp(1rem, 1.3vw, 1.15rem); opacity: 0.95; }
+
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: clamp(1rem, 2vw, 1.75rem);
+
+		@media (max-width: 1000px) { grid-template-columns: repeat(2, 1fr); }
+		@media (max-width: 640px) { grid-template-columns: 1fr; }
+	}
+
+	// --- Card ---
+	&__card {
+		display: flex;
+		flex-direction: column;
+		border-radius: 1rem;
+		overflow: hidden;
+		transition: transform 0.35s var(--cular-ease);
+
+		&:hover { transform: translateY(-6px); }
+
+		// Brand colour code (matches the live archive).
+		&--sage { background: var(--cular-sage, #A0B89D); color: #1f2a22; }
+		&--green { background: var(--cular-green, #457F55); color: #fff; }
+		&--gold { background: var(--cular-gold, #F8CE4A); color: #2f2a12; }
+		&--coral { background: #E9765B; color: #fff; }
+		&--cream { background: #eef1ea; color: #2b3a30; }
+		&--grey { background: #9aa39b; color: #1f2a22; }
+	}
+
+	&__cardlink {
+		color: inherit;
+		text-decoration: none;
+		display: grid;
+		gap: 0.85rem;
+		padding: 0.6rem 0.6rem 0;
+	}
+
+	&__media {
+		border-radius: 0.7rem;
+		overflow: hidden;
+		aspect-ratio: 16 / 11;
+		background: rgba(255, 255, 255, 0.25);
+
+		img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--cular-ease); }
+	}
+	&__card:hover &__media img { transform: scale(1.04); }
+
+	&__date { padding-inline: 0.5rem; font-size: 0.85rem; opacity: 0.8; }
+
+	&__title {
+		margin: 0;
+		padding: 0 0.5rem;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+		line-height: 1.25;
+	}
+
+	&__actions {
+		margin-top: auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 1.1rem 1.1rem 1.25rem;
+	}
+
+	&__more { font-size: 0.85rem; font-weight: 700; }
+
+	&__share {
+		display: grid;
+		place-items: center;
+		width: 2.1rem;
+		height: 2.1rem;
+		border-radius: 50%;
+		border: 0;
+		cursor: pointer;
+		color: inherit;
+		background: rgba(0, 0, 0, 0.12);
+		transition: background 0.25s var(--cular-ease), transform 0.25s var(--cular-ease);
+
+		&:hover { background: rgba(0, 0, 0, 0.22); transform: scale(1.08); }
+		&.is-copied { background: rgba(0, 0, 0, 0.28); }
+	}
+
+	// --- Pagination ---
+	&__pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+
+		.page-numbers {
+			display: grid;
+			place-items: center;
+			min-width: 2.5rem;
+			height: 2.5rem;
+			padding: 0 0.5rem;
+			border-radius: 0.5rem;
+			text-decoration: none;
+			color: #fff;
+			background: rgba(255, 255, 255, 0.15);
+			transition: background 0.2s var(--cular-ease);
+
+			&:hover { background: rgba(255, 255, 255, 0.3); }
+			&.current { background: #fff; color: var(--cular-green, #457F55); font-weight: 700; }
+			&.dots { background: none; }
+		}
+	}
+
+	&__empty { font-size: 1.1rem; }
+}
