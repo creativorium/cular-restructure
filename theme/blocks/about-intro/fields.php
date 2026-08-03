@@ -14,6 +14,14 @@ acf_add_local_field_group(
 		'fields'   => array(
 			array( 'key' => 'field_cular_about_heading', 'label' => 'Heading', 'name' => 'heading', 'type' => 'text', 'default_value' => 'About Us' ),
 			array( 'key' => 'field_cular_about_body', 'label' => 'Body', 'name' => 'body', 'type' => 'textarea', 'rows' => 10, 'instructions' => 'Blank lines start a new paragraph.' ),
+			array(
+				'key'           => 'field_cular_about_scroll',
+				'label'         => 'Show "Scroll Down" indicator',
+				'name'          => 'show_scroll',
+				'type'          => 'true_false',
+				'default_value' => 1,
+				'ui'            => 1,
+			),
 		),
 		'location' => array(
 			array(

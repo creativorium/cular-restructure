@@ -10,8 +10,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$heading = get_field( 'heading' ) ?: 'About Us';
-$body    = get_field( 'body' );
+$heading  = get_field( 'heading' ) ?: 'About Us';
+$body     = get_field( 'body' );
+$show_scr = null === get_field( 'show_scroll' ) ? true : (bool) get_field( 'show_scroll' );
 
 if ( ! $body ) {
 	$body = 'Founded in Bali in 2017 by Raluca Vicovan, Cular Creative is a digital marketing agency that has empowered over 300 local and international brands to achieve accelerated business growth online. We partner with purpose-driven organizations committed to making a positive impact, leveraging digital marketing as a catalyst for meaningful change and delivering measurable results.'
@@ -29,4 +30,19 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 			<p><?php echo esc_html( trim( $para ) ); ?></p>
 		<?php endforeach; ?>
 	</div>
+
 </section>
+
+<?php if ( $show_scr ) : ?>
+	<?php
+	// Sits outside the section on purpose: the reveal animation leaves a
+	// transform on .cular-about, which would become the containing block for
+	// this position:fixed indicator and pull it in off the viewport edge.
+	?>
+	<div class="cular-scroll cular-scroll--left" data-cular-scroll aria-hidden="true">
+		<div class="cular-scroll__bar">
+			<div class="cular-scroll__bar-inner"></div>
+		</div>
+		<span class="cular-scroll__text">Scroll Down</span>
+	</div>
+<?php endif; ?>
