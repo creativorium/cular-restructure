@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/related-posts",
+  "title": "Cular — Related Posts",
+  "description": "More Field Notes — related posts for internal linking.",
+  "category": "cular",
+  "icon": "admin-links",
+  "keywords": ["related", "posts", "links", "cular"],
+  "supports": { "anchor": true, "align": ["full"], "multiple": false },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
