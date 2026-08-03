@@ -1,5 +1,5 @@
-// Hero behaviour: swap the background video for the portrait cut on mobile,
-// and fade the "waterfall" scroll indicator once the user scrolls.
+// Hero behaviour: swap the background video for the portrait cut on mobile.
+// (The "waterfall" scroll indicator is shared chrome — see src/main.js.)
 
 // --- Responsive background video -------------------------------------------
 const video = document.querySelector('.cular-hero__video');
@@ -25,16 +25,4 @@ if (video) {
 	// Only react when crossing the breakpoint, not on every resize tick.
 	if (mq.addEventListener) mq.addEventListener('change', applySource);
 	else mq.addListener(applySource);
-}
-
-// --- Scroll indicator -------------------------------------------------------
-const indicator = document.querySelector('[data-cular-scroll]');
-
-if (indicator) {
-	const HIDE_AFTER = 50;
-	const onScroll = () => {
-		indicator.classList.toggle('is-hidden', window.scrollY > HIDE_AFTER);
-	};
-	window.addEventListener('scroll', onScroll, { passive: true });
-	onScroll();
 }

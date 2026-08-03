@@ -93,9 +93,26 @@ function initHeroParallax() {
 	});
 }
 
+/**
+ * Fade the "waterfall" scroll indicator out once the user leaves the fold.
+ * Shared chrome — rendered by the homepage hero and the About hero.
+ */
+function initScrollIndicator() {
+	const indicator = document.querySelector('[data-cular-scroll]');
+	if (!indicator) return;
+
+	const HIDE_AFTER = 50;
+	const onScroll = () => {
+		indicator.classList.toggle('is-hidden', window.scrollY > HIDE_AFTER);
+	};
+	window.addEventListener('scroll', onScroll, { passive: true });
+	onScroll();
+}
+
 function boot() {
 	initReveals();
 	initHeroParallax();
+	initScrollIndicator();
 	initSliders();
 	ScrollTrigger.refresh();
 }
