@@ -41,7 +41,7 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 	</header>
 
 	<?php if ( $q->have_posts() ) : ?>
-		<div class="cular-fn__grid" data-cular-reveal-items>
+		<div class="cular-fn__grid" data-cular-reveal>
 			<?php
 			$i = 0;
 			while ( $q->have_posts() ) :
