@@ -1,46 +1,52 @@
-// Individual service page body: approach copy + related services.
+// Individual service page: approach copy beside an expandable list of what the
+// service covers, then colour-coded related services, then the intake form.
 
 .cular-sdet {
 	color: #fff;
 	width: 100%;
 	max-width: 1152px;
 	margin-inline: auto;
-	padding: clamp(3rem, 8vh, 6rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
+	padding: clamp(2rem, 6vh, 4rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
 	display: grid;
 	gap: clamp(3rem, 8vw, 6rem);
 
+	// --- Approach + detail list ---
 	&__approach {
 		display: grid;
-		gap: 1.25rem;
-		justify-items: start;
+		grid-template-columns: 1fr 1fr;
+		gap: clamp(1.5rem, 4vw, 3.5rem);
+		align-items: start;
+
+		@media (max-width: 900px) { grid-template-columns: 1fr; }
 	}
+
+	&__copy { display: grid; gap: 1.1rem; justify-items: start; }
 
 	&__heading {
 		margin: 0;
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
-		font-size: clamp(1.5rem, 3vw, 2.25rem);
+		font-size: clamp(1.3rem, 2.4vw, 1.85rem);
 		line-height: 1.15;
 	}
 
 	&__body {
 		display: grid;
 		gap: 1rem;
-		max-width: 60ch;
 
 		p {
 			margin: 0;
 			line-height: 1.7;
-			font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+			font-size: clamp(0.92rem, 1.1vw, 1rem);
 		}
 	}
 
 	&__btn {
 		margin-top: 0.5rem;
 		display: inline-block;
-		padding: 0.8rem 1.6rem;
+		padding: 0.75rem 1.6rem;
 		border-radius: 999px;
-		background: var(--cular-coral, #E9765B);
+		background: linear-gradient(115deg, var(--cular-coral, #E9765B), #f0916f);
 		color: #fff;
 		font-weight: 700;
 		font-size: 0.9rem;
@@ -50,59 +56,190 @@
 		&:hover { transform: translateY(-2px); }
 	}
 
-	// --- Related ---
-	&__related { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
+	// --- Expandable service list ---
+	&__list { display: grid; }
+
+	&__item { border-bottom: 1px solid rgba(255, 255, 255, 0.5); }
+
+	&__q {
+		list-style: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1rem 0.25rem;
+		font-size: clamp(0.78rem, 0.95vw, 0.9rem);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+
+		&::-webkit-details-marker { display: none; }
+		&:hover { opacity: 0.85; }
+	}
+
+	// Circled arrow marker, as on the live cards.
+	&__chev {
+		flex: none;
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: 50%;
+		background: #fff;
+		position: relative;
+		transition: transform 0.25s var(--cular-ease);
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			margin: auto;
+			width: 0;
+			height: 0;
+			border-left: 5px solid var(--cular-green, #457F55);
+			border-top: 3.5px solid transparent;
+			border-bottom: 3.5px solid transparent;
+			transform: translateX(1px);
+		}
+	}
+
+	&__item[open] &__chev { transform: rotate(90deg); }
+
+	&__a {
+		padding: 0 0.25rem 1rem;
+		font-size: 0.9rem;
+		line-height: 1.65;
+		opacity: 0.92;
+
+		p { margin: 0 0 0.6rem; }
+		p:last-child { margin-bottom: 0; }
+	}
+
+	// --- Related services ---
+	&__related { display: grid; gap: clamp(1.25rem, 3vw, 2rem); justify-items: center; }
 
 	&__related-heading {
 		margin: 0;
+		max-width: 22ch;
+		text-align: center;
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
-		font-size: clamp(1.3rem, 2.6vw, 2rem);
+		font-size: clamp(1.4rem, 2.8vw, 2.1rem);
 		line-height: 1.15;
 	}
 
 	&__cards {
+		width: 100%;
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: clamp(1rem, 2vw, 1.5rem);
 
-		@media (max-width: 800px) { grid-template-columns: 1fr; }
+		@media (max-width: 900px) { grid-template-columns: 1fr; }
 	}
 
 	&__card {
 		display: grid;
-		gap: 0.75rem;
-		padding: 0.6rem 0.6rem 1.2rem;
+		align-content: start;
+		gap: 1rem;
+		padding: 1rem 1rem 1.5rem;
 		border-radius: 1rem;
-		text-decoration: none;
-		color: #fff;
-		background: url("../../assets/img/service-card-bg.jpg") center / cover no-repeat;
-		transition: transform 0.35s var(--cular-ease);
 
-		&:hover { transform: translateY(-5px); }
+		&--gold { background: var(--cular-gold, #F8CE4A); color: #2f2a12; }
+		&--green { background: var(--cular-green, #457F55); color: #fff; }
+		&--coral { background: var(--cular-coral, #E9765B); color: #fff; }
 	}
 
 	&__card-media {
 		display: block;
 		aspect-ratio: 16 / 10;
-		border-radius: 0.65rem;
-		background: rgba(255, 255, 255, 0.2) center / cover no-repeat;
+		border-radius: 0.5rem;
+		background: rgba(255, 255, 255, 0.25) center / cover no-repeat;
 	}
 
 	&__card-title {
-		padding-inline: 0.4rem;
+		margin: 0;
 		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
 		text-transform: uppercase;
-		font-size: clamp(1rem, 1.4vw, 1.2rem);
-		line-height: 1.2;
+		font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+		line-height: 1.15;
+	}
+
+	&__card-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+
+		li {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.75rem;
+			padding: 0.7rem 0;
+			border-bottom: 1px solid currentColor;
+			font-size: 0.72rem;
+			letter-spacing: 0.05em;
+			text-transform: uppercase;
+			line-height: 1.35;
+		}
+	}
+
+	&__dot {
+		flex: none;
+		width: 1.1rem;
+		height: 1.1rem;
+		border-radius: 50%;
+		background: currentColor;
+		position: relative;
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			margin: auto;
+			width: 0;
+			height: 0;
+			border-left: 4px solid rgba(255, 255, 255, 0.95);
+			border-top: 3px solid transparent;
+			border-bottom: 3px solid transparent;
+			transform: translateX(1px);
+		}
 	}
 
 	&__card-cta {
-		padding-inline: 0.4rem;
-		font-size: 0.75rem;
+		justify-self: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.55rem 1.1rem;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.9);
+		color: #2b3a30;
+		font-size: 0.72rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		opacity: 0.9;
+		text-decoration: none;
+		transition: transform 0.2s var(--cular-ease);
+
+		&::before {
+			content: "";
+			width: 0.5rem;
+			height: 0.5rem;
+			border-radius: 50%;
+			background: var(--cular-green, #457F55);
+		}
+
+		&:hover { transform: translateY(-2px); }
+	}
+
+	// --- Intake form ---
+	&__form { display: grid; gap: clamp(1.25rem, 3vw, 2rem); scroll-margin-top: 6rem; }
+
+	&__form-heading {
+		margin: 0;
+		text-align: center;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.5rem, 3vw, 2.25rem);
 	}
 }

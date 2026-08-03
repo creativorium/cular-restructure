@@ -251,3 +251,31 @@
 			opacity 0.45s linear calc(var(--index, 0) * 0.06s + 0.6s);
 	}
 }
+
+// Soft "glass" plate once the page is scrolled, so the header reads against
+// whatever is passing underneath it.
+.cular-header {
+	transition: background 0.35s ease, backdrop-filter 0.35s ease;
+
+	&.is-scrolled {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(14px) saturate(1.3);
+		-webkit-backdrop-filter: blur(14px) saturate(1.3);
+		box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+	}
+
+	&.is-open { background: none; backdrop-filter: none; }
+}
+
+// On solid-green pages the green pill and green logo would disappear, so both
+// flip to white (see the cular-on-green body class in inc/site-chrome.php).
+.cular-on-green {
+	.cular-header__brand img { filter: brightness(0) invert(1); }
+
+	.cular-header__toggle {
+		background: #fff;
+		color: var(--cular-green, #457F55);
+
+		&:hover { background: #eef1ea; }
+	}
+}
