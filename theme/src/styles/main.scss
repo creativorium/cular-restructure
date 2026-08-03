@@ -174,14 +174,6 @@ h1, h2, h3, h4, h5, h6 {
 
 	&.is-hidden { opacity: 0; }
 
-	// About Us runs the rail down the left edge, and taller.
-	&--left {
-		right: auto;
-		left: 1rem;
-
-		.cular-scroll__bar { height: 82vh; }
-	}
-
 	&__bar {
 		position: relative;
 		width: 2px;
@@ -209,7 +201,6 @@ h1, h2, h3, h4, h5, h6 {
 
 	@media (max-width: 600px) {
 		right: 3px;
-		&--left { left: 3px; }
 		&__text { font-size: 0.9rem; }
 	}
 }

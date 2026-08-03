@@ -117,8 +117,11 @@
 	}
 }
 
-// FAQ page (/faqs/, id 7589) — green background, white text.
-@include cular-page-green(7589);
+// FAQ page (/faqs/) — flat sage band; the cular/faq block paints its own cards.
+.cular-faq-page {
+	background: linear-gradient(var(--cular-sage, #A0B89D) 0%, #8fae8c 100%);
+	color: #fff;
+}
 
 // Privacy & Terms page (/privacy-terms/, id 12901) — green background, white text.
 @include cular-page-green(12901);

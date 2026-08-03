@@ -39,7 +39,7 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 	// transform on .cular-about, which would become the containing block for
 	// this position:fixed indicator and pull it in off the viewport edge.
 	?>
-	<div class="cular-scroll cular-scroll--left" data-cular-scroll aria-hidden="true">
+	<div class="cular-scroll" data-cular-scroll aria-hidden="true">
 		<div class="cular-scroll__bar">
 			<div class="cular-scroll__bar-inner"></div>
 		</div>
