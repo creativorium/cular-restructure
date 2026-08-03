@@ -37,7 +37,8 @@
 	p a,
 	li:not([class]) a,
 	blockquote a {
-		color: var(--cular-gold, #F8CE4A);
+		color: var(--cular-green, #457F55);
+		font-weight: 600;
 		text-decoration: underline;
 		text-underline-offset: 2px;
 	}
@@ -63,8 +64,9 @@
 	&__ref a {
 		text-decoration: none;
 		font-size: 0.7em;
+		font-weight: 700;
 		vertical-align: super;
-		color: var(--cular-gold, #F8CE4A);
+		color: var(--cular-green, #457F55);
 	}
 
 	// Generated reference list — a quiet card at the foot of the article.

@@ -131,6 +131,21 @@ h1, h2, h3, h4, h5, h6 {
 		radial-gradient(at 70% 75%, hsla(49, 80%, 66%, 0.7) 0, transparent 48%);
 }
 
+// About Us hero — a cooler, green-based mesh (ported from the live About page)
+// so the page reads differently from the warm homepage band. The team band
+// paints its own background underneath, so no rounded bottom here.
+.cular-gradient-mesh--about {
+	border-radius: 0;
+	background-color: var(--cular-green, #457F55);
+	background-size: 200% 200%;
+	background-image:
+		radial-gradient(at 88% 79%, rgb(56, 87, 59) 0, transparent 50%),
+		radial-gradient(at 13% 9%, rgb(158, 181, 155) 0, transparent 50%),
+		radial-gradient(rgb(225, 77, 51) 0, transparent 50%),
+		radial-gradient(at 75% 25%, rgb(248, 218, 84) 0, transparent 50%);
+	animation-duration: 13s;
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.cular-gradient-mesh { animation: none; }
 }

@@ -4,8 +4,11 @@
 	max-width: 1000px;
 	margin-inline: auto;
 	width: 100%;
+	// Full-height hero like the live page — the copy sits above centre.
+	min-height: 100svh;
 	padding: clamp(4rem, 12vh, 9rem) clamp(1.25rem, 4vw, 3rem);
 	display: grid;
+	align-content: center;
 	gap: clamp(1.5rem, 4vh, 3rem);
 
 	&__heading {

@@ -1,66 +1,90 @@
+// Meet the team — a flush 5-across grid of gradient cards inside one rounded
+// container, sitting on a green-to-sage band. Geometry mirrors the live About
+// page: 1152px grid, 230x304 cards, 20px container radius, no gutters.
+
 .cular-team-grid {
 	color: #fff;
-	background: transparent; // on the shared .cular-gradient-mesh wrapper
-	max-width: 1320px;
-	margin-inline: auto;
 	width: 100%;
-	padding: clamp(2.5rem, 6vh, 5rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
-	display: grid;
-	gap: clamp(2.5rem, 6vh, 4.5rem);
+	background: linear-gradient(var(--cular-green, #457F55) 0%, var(--cular-sage, #A0B89D) 100%);
+	padding: clamp(4rem, 11vh, 10.9rem) clamp(1rem, 3vw, 3rem) clamp(4rem, 11vh, 8rem);
 
 	&__heading {
-		margin: 0;
+		margin: 0 auto clamp(1.75rem, 4vw, 3.25rem);
+		max-width: 1152px;
 		text-align: center;
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
 		text-transform: uppercase;
-		font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+		font-size: clamp(1.75rem, 3.5vw, 3.125rem);
 		line-height: 1.1;
 	}
 
 	&__grid {
+		max-width: 1152px;
+		margin-inline: auto;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
-		gap: clamp(1rem, 2vw, 1.75rem);
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0; // cards butt up against each other
+		border-radius: 20px;
+		overflow: hidden;
+
+		@media (max-width: 1000px) { grid-template-columns: repeat(3, 1fr); }
+		@media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); }
 	}
 
 	&__card {
-		margin: 0;
-		display: grid;
-		gap: 0.85rem;
-	}
-
-	&__photo {
-		border-radius: 1.25rem;
+		position: relative;
 		overflow: hidden;
-		aspect-ratio: 1 / 1;
-		background: rgba(255, 255, 255, 0.15);
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-			transition: transform 0.5s var(--cular-ease);
-		}
+		margin: 0;
+		aspect-ratio: 230 / 304;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: clamp(0.7rem, 1.7vw, 1.5rem) 0 0;
+		background: url("../../assets/img/team-card-bg.jpg") center / cover no-repeat;
 	}
 
-	&__card:hover &__photo img { transform: scale(1.05); }
-
-	figcaption {
+	&__caption {
+		position: relative;
+		z-index: 1;
 		display: grid;
-		gap: 0.1rem;
-		text-align: center;
+		justify-items: center;
+	}
+
+	// Long titles stay on one line (and may bleed to the card edges) rather
+	// than wrapping and pushing the name down — matches the live cards.
+	&__role {
+		font-size: clamp(0.7rem, 1.11vw, 1rem);
+		line-height: 1.5;
+		margin-bottom: clamp(0.4rem, 1vw, 0.9rem);
+		white-space: nowrap;
 	}
 
 	&__name {
 		font-family: "Luxia Display", Georgia, serif;
-		font-size: 1.4rem;
-		line-height: 1.1;
+		font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+		line-height: 1;
 	}
 
-	&__role {
-		font-size: 0.85rem;
-		opacity: 0.85;
+	// Cut-outs sit on the card floor and are clipped by it, as on the live site.
+	&__photo {
+		position: absolute;
+		inset: auto 0 0;
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	// Open positions: the Cular mark instead of a portrait.
+	&__card--soon::after {
+		content: "";
+		position: absolute;
+		left: 50%;
+		bottom: 13%;
+		transform: translateX(-50%);
+		width: 69%;
+		aspect-ratio: 360 / 315;
+		background: url("../../assets/img/team-soon-mark.png") center / contain no-repeat;
 	}
 }
