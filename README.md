@@ -2,6 +2,10 @@
 
 Rebuild of the [Cular Creative](https://cularcreative.com) agency site off Elementor onto a lean **WordPress block theme + custom ACF Blocks**, bundled with **Vite**.
 
+> 📘 **Full project guide:** [`docs/PROJECT.md`](docs/PROJECT.md) — architecture,
+> page status, git workflow, and the SEO + performance + roadmap plan. Read this
+> first (handoff-ready for any dev or AI agent).
+
 ## Architecture
 
 - **`theme/`** — the custom block theme (`cular`). This folder is symlinked into the Local site's `wp-content/themes/cular`, so editing here updates the running site live.
