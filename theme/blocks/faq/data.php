@@ -78,7 +78,7 @@ function cular_faq_default_groups() {
 			),
 		),
 		array(
-			'title'     => 'ACTIVATE',
+			'title'     => 'MARKETING SERVICES',
 			'subgroups' => array(
 				array(
 					'title' => 'Website',
@@ -223,7 +223,7 @@ function cular_faq_default_groups() {
 			),
 		),
 		array(
-			'title'     => 'ELEVATE',
+			'title'     => 'CONSULTANCY',
 			'subgroups' => array(
 				array(
 					'title' => 'MARKETING AUDIT',

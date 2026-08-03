@@ -30,7 +30,7 @@ if ( empty( $groups ) ) {
 $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
 ?>
 <section<?php echo $anchor; // phpcs:ignore ?> class="cular-faq">
-	<header class="cular-faq__head cular-gradient-mesh cular-gradient-mesh--about">
+	<header class="cular-faq__head">
 		<div class="cular-faq__head-inner">
 			<h1 class="cular-faq__heading"><?php echo esc_html( $heading ); ?></h1>
 			<p class="cular-faq__intro"><?php echo esc_html( $intro ); ?></p>
