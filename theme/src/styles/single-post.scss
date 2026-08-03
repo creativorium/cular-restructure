@@ -1,5 +1,12 @@
 // Single Field Note (blog post) — readable prose on the brand gradient.
 
+// The article runs edge-to-edge into the footer here (no rounded band like the
+// homepage), and needs breathing room under "More Field Notes".
+.cular-single-main {
+	border-radius: 0;
+	padding-bottom: clamp(4rem, 10vh, 8rem);
+}
+
 .cular-post {
 	color: #fff;
 	padding: clamp(6rem, 14vh, 10rem) clamp(1.25rem, 4vw, 2rem) clamp(3rem, 6vh, 5rem);
@@ -25,7 +32,11 @@
 	p, li { line-height: 1.75; font-size: clamp(1rem, 1.2vw, 1.12rem); }
 	p { margin: 0 0 1.25rem; }
 
-	a {
+	// Prose links only — the share bar lives inside the article too and styles
+	// its own buttons.
+	p a,
+	li:not([class]) a,
+	blockquote a {
 		color: var(--cular-gold, #F8CE4A);
 		text-decoration: underline;
 		text-underline-offset: 2px;
@@ -56,14 +67,76 @@
 		color: var(--cular-gold, #F8CE4A);
 	}
 
+	// Generated reference list — a quiet card at the foot of the article.
 	&__sources {
+		display: block;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		padding-top: 1.5rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.25);
+		padding: clamp(1.25rem, 3vw, 2rem);
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		border-radius: 1rem;
+		background: rgba(0, 0, 0, 0.18);
+	}
 
-		h2 { font-size: 1.4rem; margin-top: 0; }
-		ol { padding-left: 1.5rem; }
-		li { font-size: 0.95rem; margin-bottom: 0.5rem; word-break: break-word; }
-		a { color: #fff; opacity: 0.85; }
+	&__sources-title {
+		margin: 0 0 0.35rem;
+		font-size: 1.25rem;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		opacity: 0.9;
+	}
+
+	&__sources-list {
+		counter-reset: cular-source;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0;
+	}
+
+	&__source {
+		counter-increment: cular-source;
+		border-top: 1px solid rgba(255, 255, 255, 0.14);
+	}
+
+	&__source-link {
+		display: grid;
+		grid-template-columns: 1.75rem 1fr;
+		align-items: baseline;
+		gap: 0 0.75rem;
+		padding: 0.85rem 0.25rem;
+		color: #fff;
+		text-decoration: none;
+		transition: background 0.2s var(--cular-ease);
+
+		&::before {
+			content: counter(cular-source);
+			grid-row: span 2;
+			align-self: center;
+			display: grid;
+			place-items: center;
+			width: 1.75rem;
+			height: 1.75rem;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.16);
+			font-size: 0.8rem;
+			font-weight: 700;
+		}
+
+		&:hover { background: rgba(255, 255, 255, 0.08); }
+		&:hover .cular-post__source-label { text-decoration: underline; }
+	}
+
+	&__source-label {
+		font-size: 0.98rem;
+		line-height: 1.4;
+		overflow-wrap: anywhere;
+	}
+
+	&__source-host {
+		font-size: 0.78rem;
+		letter-spacing: 0.02em;
+		opacity: 0.7;
+		overflow-wrap: anywhere;
 	}
 }

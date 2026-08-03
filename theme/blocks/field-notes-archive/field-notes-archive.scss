@@ -41,13 +41,13 @@
 
 		&:hover { transform: translateY(-6px); }
 
-		// Brand colour code (matches the live archive).
-		&--sage { background: var(--cular-sage, #A0B89D); color: #1f2a22; }
+		// Brand colour code (matches the live archive) — five brand colours,
+		// no greys or off-whites.
+		&--sage { background: var(--cular-sage, #A0B89D); color: #fff; }
 		&--green { background: var(--cular-green, #457F55); color: #fff; }
 		&--gold { background: var(--cular-gold, #F8CE4A); color: #2f2a12; }
-		&--coral { background: #E9765B; color: #fff; }
-		&--cream { background: #eef1ea; color: #2b3a30; }
-		&--grey { background: #9aa39b; color: #1f2a22; }
+		&--peach { background: var(--cular-peach, #ff8c62); color: #fff; }
+		&--coral { background: var(--cular-coral, #E9765B); color: #fff; }
 	}
 
 	&__cardlink {
@@ -60,7 +60,7 @@
 		padding: 0.6rem 0.6rem 1.25rem;
 	}
 
-	// Show the full graphic — these are designed social images, so don't crop.
+	// Designed 16:9 social covers — fill the frame like the live archive does.
 	&__media {
 		border-radius: 0.7rem;
 		overflow: hidden;
@@ -70,7 +70,7 @@
 		img {
 			width: 100%;
 			height: 100%;
-			object-fit: contain;
+			object-fit: cover;
 			display: block;
 			transition: transform 0.5s var(--cular-ease);
 		}

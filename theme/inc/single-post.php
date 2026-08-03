@@ -33,6 +33,43 @@ function cular_single_post_content( $content ) {
 	libxml_clear_errors();
 	$xp = new DOMXPath( $dom );
 
+	// 0) Drop the legacy in-content "Share this Post" widget. Posts imported
+	// from Elementor carry a heading plus a paragraph of raw share SVGs; the
+	// theme renders its own cular/post-share block, so this is a duplicate
+	// (and the bare SVGs blow up to full width without Elementor's CSS).
+	foreach ( iterator_to_array( $xp->query( '//h1|//h2|//h3|//h4' ) ) as $h ) {
+		if ( 'share this post' !== strtolower( trim( preg_replace( '/\s+/u', ' ', $h->textContent ) ) ) ) {
+			continue;
+		}
+
+		// Remove the following siblings that make up the widget — bare network
+		// labels ("Facebook", "LinkedIn"), share links, or icon-only nodes —
+		// stopping at the next heading or the first bit of real prose.
+		$labels = '/^(facebook|linked ?in|twitter|x|instagram|whats ?app|telegram|pinterest|e-?mail|copy link|share)$/i';
+
+		$node = $h->nextSibling;
+		while ( $node ) {
+			$next = $node->nextSibling;
+			if ( XML_ELEMENT_NODE === $node->nodeType && preg_match( '/^h[1-6]$/i', $node->nodeName ) ) {
+				break;
+			}
+			$text     = trim( preg_replace( '/\s+/u', ' ', $node->textContent ) );
+			$is_share = '' === $text
+				|| preg_match( $labels, $text )
+				|| ( XML_ELEMENT_NODE === $node->nodeType
+					&& ( $xp->query( './/*[local-name()="svg"]', $node )->length > 0
+						|| $xp->query( './/a[contains(@href,"facebook.com/share") or contains(@href,"linkedin.com/share")]', $node )->length > 0 ) );
+
+			if ( ! $is_share ) {
+				break; // real content — leave it alone.
+			}
+			$node->parentNode->removeChild( $node );
+			$node = $next;
+		}
+
+		$h->parentNode->removeChild( $h );
+	}
+
 	// 1) First h2 -> h1.
 	$first_h2 = $xp->query( '//h2' )->item( 0 );
 	if ( $first_h2 ) {
@@ -76,12 +113,17 @@ function cular_single_post_content( $content ) {
 	}
 
 	if ( $sources ) {
-		$out .= '<section class="cular-post__sources"><h2>Sources</h2><ol>';
+		$out .= '<aside class="cular-post__sources" aria-labelledby="cular-sources-title">'
+			. '<h2 class="cular-post__sources-title" id="cular-sources-title">Sources</h2><ol class="cular-post__sources-list">';
 		foreach ( $sources as $s ) {
-			$out .= '<li id="cular-source-' . (int) $s['n'] . '"><a href="' . esc_url( $s['href'] ) . '" target="_blank" rel="noopener noreferrer">'
-				. esc_html( $s['text'] ? $s['text'] : $s['href'] ) . '</a></li>';
+			$host = preg_replace( '/^www\./', '', (string) wp_parse_url( $s['href'], PHP_URL_HOST ) );
+			$out .= '<li class="cular-post__source" id="cular-source-' . (int) $s['n'] . '">'
+				. '<a class="cular-post__source-link" href="' . esc_url( $s['href'] ) . '" target="_blank" rel="noopener noreferrer">'
+				. '<span class="cular-post__source-label">' . esc_html( $s['text'] ? $s['text'] : $host ) . '</span>'
+				. '<span class="cular-post__source-host">' . esc_html( $host ) . '</span>'
+				. '</a></li>';
 		}
-		$out .= '</ol></section>';
+		$out .= '</ol></aside>';
 	}
 
 	return $out;
