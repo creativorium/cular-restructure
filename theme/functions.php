@@ -18,6 +18,7 @@ require_once CULAR_DIR . '/inc/block-category.php';
 require_once CULAR_DIR . '/inc/blocks.php';
 require_once CULAR_DIR . '/inc/site-chrome.php';
 require_once CULAR_DIR . '/inc/elementor-offload.php';
+require_once CULAR_DIR . '/inc/single-post.php';
 
 /**
  * Theme supports.

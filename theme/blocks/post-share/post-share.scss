@@ -1,0 +1,33 @@
+.cular-share {
+	display: grid;
+	gap: 1.1rem;
+	margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+
+	&__title {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.5rem, 3vw, 2rem);
+	}
+
+	&__buttons { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+	&__btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.7rem 1.25rem;
+		border-radius: 0.5rem;
+		border: 0;
+		cursor: pointer;
+		font: inherit;
+		font-weight: 600;
+		text-decoration: none;
+		color: #fff;
+		background: var(--cular-green, #457F55);
+		transition: transform 0.2s var(--cular-ease), background 0.2s var(--cular-ease);
+
+		&:hover { transform: translateY(-2px); background: #3b6d49; }
+		&.is-copied { background: var(--cular-gold, #F8CE4A); color: #2b2b2b; }
+	}
+}

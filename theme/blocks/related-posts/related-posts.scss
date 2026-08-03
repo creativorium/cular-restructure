@@ -1,0 +1,56 @@
+.cular-related {
+	color: #fff;
+	max-width: 1100px;
+	margin: clamp(3rem, 7vw, 6rem) auto 0;
+	width: 100%;
+	display: grid;
+	gap: clamp(1.5rem, 4vw, 2.5rem);
+
+	&__title {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: clamp(1rem, 2vw, 1.5rem);
+
+		@media (max-width: 800px) { grid-template-columns: 1fr; }
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 0.6rem 0.6rem 1.1rem;
+		border-radius: 0.9rem;
+		text-decoration: none;
+		color: #fff;
+		transition: transform 0.35s var(--cular-ease);
+
+		&:hover { transform: translateY(-5px); }
+		&--gold { background: var(--cular-gold, #F8CE4A); color: #2f2a12; }
+		&--coral { background: #E9765B; }
+		&--green { background: var(--cular-green, #457F55); }
+	}
+
+	&__media {
+		aspect-ratio: 16 / 10;
+		border-radius: 0.6rem;
+		background: rgba(255, 255, 255, 0.25) center/cover no-repeat;
+	}
+
+	&__date { padding-inline: 0.4rem; font-size: 0.8rem; opacity: 0.85; }
+
+	&__name {
+		margin: 0;
+		padding: 0 0.4rem;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+		line-height: 1.25;
+	}
+}

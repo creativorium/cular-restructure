@@ -1,6 +1,7 @@
 // Global styles.
 import './styles/main.scss';
 import './styles/pages.scss';
+import './styles/single-post.scss';
 
 // Motion stack (ported from the old Elementor custom code: GSAP + Lenis).
 import { gsap } from 'gsap';

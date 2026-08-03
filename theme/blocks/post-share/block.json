@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "cular/post-share",
+  "title": "Cular — Post Share",
+  "description": "\"Share this Post\" bar (Facebook, LinkedIn, copy link).",
+  "category": "cular",
+  "icon": "share",
+  "keywords": ["share", "social", "cular"],
+  "supports": { "anchor": true, "multiple": false },
+  "acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
