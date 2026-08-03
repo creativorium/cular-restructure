@@ -247,6 +247,50 @@ portfolio all depend on videos the original scan flagged as "unused". Plan:
 3. Delete orphans + confirmed-unused (keep originals until verified; owner
    authorised deletion "at the end").
 
+### 12a. Media manifest — track what we actually use ⬅ **do this as we build**
+
+We now know exactly which images/videos each rebuilt component references, and
+that knowledge is worth capturing **while we build** rather than reconstructing
+it at the end. At launch we want two lists: *keep + compress* and *delete*.
+
+**Where media references come from** (all four must be scanned — a file used by
+only one of these is still in use):
+
+| Source | How to find it |
+| --- | --- |
+| Block defaults hardcoded in PHP | `grep -rn "uploads/" theme/blocks/` |
+| Theme's own assets | `theme/assets/img/`, `theme/assets/fonts/` |
+| ACF fields + post meta | attachment IDs in `wp_postmeta` (portfolio `video_url`, `overlay_logo_id`, team `photo`, block JSON in `post_content`) |
+| Post/page content | `<img>`, `<video>`, and background-image URLs inside `post_content` |
+| Featured images | `_thumbnail_id` on every post/page/CPT |
+
+**Known-referenced media so far** (keep + compress; update as pages land):
+
+- **Theme assets:** `logo-full.png`, `logo-green.png`, `spotlight.png`,
+  `team-card-bg.jpg`, `team-soon-mark.png`, the three font TTFs.
+- **Hero:** showreel video (landscape + portrait cuts).
+- **Team (About):** 11 member cut-outs — see the roster in
+  `blocks/team-grid/render.php`.
+- **Testimonials:** video testimonials + brand logos.
+- **Portfolio:** `portfolio_item` card art + videos.
+- **Field Notes:** the featured image of every published post.
+- **Why-us:** client logo marquee.
+
+**Method when the rebuild is done:**
+1. Write `reference/media-manifest.mjs` — crawl every rebuilt URL with
+   Playwright and collect `img[src]`, `img[srcset]`, `video/source[src]`, and
+   computed `background-image` for every element. That catches CSS-only
+   references the DB scan misses.
+2. Union that with the DB scan (the four sources above) → **used set**.
+3. `used set` vs `wp_posts` attachments → **orphan set**.
+4. Compress the used set (WebP/AVIF, correct dimensions, strip EXIF); delete
+   the orphan set only after the owner signs off, keeping a full uploads
+   backup until the production site is verified.
+
+> Do **not** rely on the original `reference/media-audit/` numbers for the
+> delete list — that scan predates the rebuild and marks in-use videos as
+> unused.
+
 ## 13. Migration & deploy notes
 
 - **Elementor removal (final step):** once all pages are rebuilt, deactivate

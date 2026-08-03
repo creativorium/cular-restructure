@@ -1,0 +1,108 @@
+// Individual service page body: approach copy + related services.
+
+.cular-sdet {
+	color: #fff;
+	width: 100%;
+	max-width: 1152px;
+	margin-inline: auto;
+	padding: clamp(3rem, 8vh, 6rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
+	display: grid;
+	gap: clamp(3rem, 8vw, 6rem);
+
+	&__approach {
+		display: grid;
+		gap: 1.25rem;
+		justify-items: start;
+	}
+
+	&__heading {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.5rem, 3vw, 2.25rem);
+		line-height: 1.15;
+	}
+
+	&__body {
+		display: grid;
+		gap: 1rem;
+		max-width: 60ch;
+
+		p {
+			margin: 0;
+			line-height: 1.7;
+			font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+		}
+	}
+
+	&__btn {
+		margin-top: 0.5rem;
+		display: inline-block;
+		padding: 0.8rem 1.6rem;
+		border-radius: 999px;
+		background: var(--cular-coral, #E9765B);
+		color: #fff;
+		font-weight: 700;
+		font-size: 0.9rem;
+		text-decoration: none;
+		transition: transform 0.2s var(--cular-ease);
+
+		&:hover { transform: translateY(-2px); }
+	}
+
+	// --- Related ---
+	&__related { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
+
+	&__related-heading {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		font-size: clamp(1.3rem, 2.6vw, 2rem);
+		line-height: 1.15;
+	}
+
+	&__cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: clamp(1rem, 2vw, 1.5rem);
+
+		@media (max-width: 800px) { grid-template-columns: 1fr; }
+	}
+
+	&__card {
+		display: grid;
+		gap: 0.75rem;
+		padding: 0.6rem 0.6rem 1.2rem;
+		border-radius: 1rem;
+		text-decoration: none;
+		color: #fff;
+		background: url("../../assets/img/service-card-bg.jpg") center / cover no-repeat;
+		transition: transform 0.35s var(--cular-ease);
+
+		&:hover { transform: translateY(-5px); }
+	}
+
+	&__card-media {
+		display: block;
+		aspect-ratio: 16 / 10;
+		border-radius: 0.65rem;
+		background: rgba(255, 255, 255, 0.2) center / cover no-repeat;
+	}
+
+	&__card-title {
+		padding-inline: 0.4rem;
+		font-family: "Luxia Display", Georgia, serif;
+		text-transform: uppercase;
+		font-size: clamp(1rem, 1.4vw, 1.2rem);
+		line-height: 1.2;
+	}
+
+	&__card-cta {
+		padding-inline: 0.4rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		opacity: 0.9;
+	}
+}

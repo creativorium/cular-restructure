@@ -50,12 +50,15 @@
 		z-index: 1;
 		display: grid;
 		justify-items: center;
+		width: 100%;
+		padding-inline: clamp(0.4rem, 0.9vw, 0.8rem);
 	}
 
-	// Long titles stay on one line (and may bleed to the card edges) rather
-	// than wrapping and pushing the name down — matches the live cards.
+	// Long titles stay on one line rather than wrapping and pushing the name
+	// down. Sized so the longest role ("Digital Advertising Specialist") still
+	// clears the card padding instead of running edge to edge.
 	&__role {
-		font-size: clamp(0.7rem, 1.11vw, 1rem);
+		font-size: clamp(0.62rem, 0.92vw, 0.85rem);
 		line-height: 1.5;
 		margin-bottom: clamp(0.4rem, 1vw, 0.9rem);
 		white-space: nowrap;

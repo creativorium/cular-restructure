@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/cta-panel",
+	"title": "CTA Panel",
+	"category": "cular",
+	"icon": "megaphone",
+	"description": "Centred heading, supporting line and a single button.",
+	"keywords": ["cta", "button"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/service-detail",
+	"title": "Service Detail",
+	"category": "cular",
+	"icon": "text-page",
+	"description": "Approach copy for a single service page, plus a Get in Touch button.",
+	"keywords": ["service", "detail", "approach"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

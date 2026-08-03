@@ -1,0 +1,15 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/faq",
+	"title": "FAQ",
+	"category": "cular",
+	"icon": "editor-help",
+	"description": "Frequently asked questions grouped into category cards with accordions.",
+	"keywords": ["faq", "questions", "accordion"],
+	"supports": { "anchor": true, "html": false },
+	"acf": {
+		"mode": "preview",
+		"renderTemplate": "render.php"
+	}
+}

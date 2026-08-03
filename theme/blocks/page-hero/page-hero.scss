@@ -1,0 +1,70 @@
+// Page hero — green-to-sage band with an optional cut-out image behind the
+// title. Mirrors the live Marketing Services / Consultancy heroes.
+
+.cular-phero {
+	position: relative;
+	overflow: hidden;
+	color: #fff;
+	width: 100%;
+	background: linear-gradient(var(--cular-green, #457F55) 65%, var(--cular-sage, #A0B89D) 100%);
+	padding: clamp(7rem, 18vh, 11rem) clamp(1.25rem, 4vw, 3rem) clamp(3rem, 8vh, 6rem);
+
+	&--small { padding-block: clamp(6rem, 14vh, 8rem) clamp(2.5rem, 6vh, 4rem); }
+
+	// The cut-out sits behind the copy and bleeds off the bottom of the band.
+	&__media {
+		position: absolute;
+		inset: 0 0 auto;
+		display: flex;
+		justify-content: center;
+		pointer-events: none;
+
+		img {
+			width: min(100%, 1100px);
+			height: auto;
+			display: block;
+			object-fit: contain;
+			object-position: bottom center;
+			mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+		}
+	}
+
+	&__inner {
+		position: relative;
+		z-index: 1;
+		max-width: 1152px;
+		margin-inline: auto;
+		width: 100%;
+		display: grid;
+		gap: 1.1rem;
+	}
+
+	&__title {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-weight: 400;
+		text-transform: uppercase;
+		font-size: clamp(2.75rem, 8vw, 6.5rem);
+		line-height: 0.95;
+		letter-spacing: 0.01em;
+		max-width: 14ch;
+	}
+
+	&__lead {
+		margin: 0;
+		font-weight: 700;
+		font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+	}
+
+	&__body {
+		display: grid;
+		gap: 0.9rem;
+		max-width: 46rem;
+
+		p {
+			margin: 0;
+			line-height: 1.6;
+			font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+		}
+	}
+}
