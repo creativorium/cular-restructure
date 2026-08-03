@@ -34,3 +34,25 @@ add_action(
 		<?php
 	}
 );
+
+/**
+ * Flag pages whose background is solid brand green, so the header can flip its
+ * logo and menu pill to white — a green pill on a green page is invisible.
+ */
+add_filter(
+	'body_class',
+	function ( $classes ) {
+		if ( ! is_singular() ) {
+			return $classes;
+		}
+		$content = get_post_field( 'post_content', get_queried_object_id() );
+		$green = array( 'cular-faq-page', 'cular-services-page' );
+		foreach ( $green as $marker ) {
+			if ( $content && str_contains( $content, $marker ) ) {
+				$classes[] = 'cular-on-green';
+				break;
+			}
+		}
+		return $classes;
+	}
+);

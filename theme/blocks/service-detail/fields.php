@@ -16,6 +16,18 @@ acf_add_local_field_group(
 			array( 'key' => 'field_cular_sdet_body', 'label' => 'Body', 'name' => 'body', 'type' => 'textarea', 'rows' => 8, 'instructions' => 'Blank lines start a new paragraph.' ),
 			array( 'key' => 'field_cular_sdet_btn', 'label' => 'Button label', 'name' => 'button_label', 'type' => 'text', 'default_value' => 'Get in Touch' ),
 			array( 'key' => 'field_cular_sdet_btn_url', 'label' => 'Button URL', 'name' => 'button_url', 'type' => 'url', 'instructions' => 'Defaults to the Contact page.' ),
+			array(
+				'key'          => 'field_cular_sdet_details',
+				'label'        => 'What it covers',
+				'name'         => 'details',
+				'type'         => 'repeater',
+				'layout'       => 'block',
+				'button_label' => 'Add item',
+				'sub_fields'   => array(
+					array( 'key' => 'field_cular_sdet_d_q', 'label' => 'Title', 'name' => 'q', 'type' => 'text' ),
+					array( 'key' => 'field_cular_sdet_d_a', 'label' => 'Detail', 'name' => 'a', 'type' => 'textarea', 'rows' => 4 ),
+				),
+			),
 			array( 'key' => 'field_cular_sdet_rel_head', 'label' => 'Related heading', 'name' => 'related_heading', 'type' => 'text' ),
 			array(
 				'key'          => 'field_cular_sdet_related',
@@ -28,7 +40,16 @@ acf_add_local_field_group(
 					array( 'key' => 'field_cular_sdet_rel_title', 'label' => 'Title', 'name' => 'title', 'type' => 'text' ),
 					array( 'key' => 'field_cular_sdet_rel_url', 'label' => 'Link', 'name' => 'url', 'type' => 'url' ),
 					array( 'key' => 'field_cular_sdet_rel_img', 'label' => 'Image', 'name' => 'image', 'type' => 'image', 'return_format' => 'array', 'preview_size' => 'medium' ),
+					array( 'key' => 'field_cular_sdet_rel_items', 'label' => 'Sub-topics', 'name' => 'items', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'One per line.' ),
 				),
+			),
+			array( 'key' => 'field_cular_sdet_form_head', 'label' => 'Form heading', 'name' => 'form_heading', 'type' => 'text', 'default_value' => 'Book a Call with Us' ),
+			array(
+				'key'          => 'field_cular_sdet_form',
+				'label'        => 'Intake form',
+				'name'         => 'form_type',
+				'type'         => 'text',
+				'instructions' => 'Cular Intake Forms type, e.g. "contact", "ads", "seo". Leave blank for no form.',
 			),
 		),
 		'location' => array(

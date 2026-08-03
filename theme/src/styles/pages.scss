@@ -125,9 +125,10 @@
 	padding-bottom: clamp(3rem, 8vh, 6rem);
 }
 
-// FAQ page (/faqs/) — flat sage band; the cular/faq block paints its own cards.
+// FAQ page (/faqs/) — solid green top to bottom; the cular/faq block paints
+// its own cards on top.
 .cular-faq-page {
-	background: linear-gradient(var(--cular-sage, #A0B89D) 0%, #8fae8c 100%);
+	background: var(--cular-green, #457F55);
 	color: #fff;
 }
 

@@ -50,7 +50,8 @@
 		border-radius: clamp(1rem, 2vw, 1.75rem);
 		overflow: hidden;
 		padding: clamp(2rem, 4.5vw, 4rem) clamp(1.25rem, 3.5vw, 3.5rem) clamp(2.5rem, 5vw, 4.5rem);
-		background: url("../../assets/img/team-card-bg.jpg") center / cover no-repeat;
+		// Flat brand gradient — no grain texture.
+		background: linear-gradient(115deg, #2f5d3f 0%, var(--cular-green, #457F55) 38%, #8aa757 72%, var(--cular-gold, #F8CE4A) 100%);
 		display: grid;
 		gap: clamp(1.5rem, 3vw, 2.5rem);
 	}

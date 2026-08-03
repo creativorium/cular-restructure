@@ -109,10 +109,21 @@ function initScrollIndicator() {
 	onScroll();
 }
 
+/** Give the fixed header a glass plate once the page leaves the top. */
+function initHeaderScroll() {
+	const header = document.querySelector('.cular-header');
+	if (!header) return;
+
+	const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
+	window.addEventListener('scroll', onScroll, { passive: true });
+	onScroll();
+}
+
 function boot() {
 	initReveals();
 	initHeroParallax();
 	initScrollIndicator();
+	initHeaderScroll();
 	initSliders();
 	ScrollTrigger.refresh();
 }

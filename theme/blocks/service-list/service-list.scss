@@ -15,14 +15,9 @@
 		background: url("../../assets/img/service-card-bg.jpg") center / cover no-repeat;
 	}
 
-	// Warm card (Growth & Technical Support) — same texture, pushed to orange.
+	// Warm card (Growth & Technical Support) — flat brand gradient, no texture.
 	&--warm &__card {
-		background-blend-mode: multiply, normal;
-		background-image:
-			linear-gradient(105deg, #ff8c62 0%, #f9a03f 45%, #f8ce4a 100%),
-			url("../../assets/img/service-card-bg.jpg");
-		background-size: cover, cover;
-		background-position: center, center;
+		background: linear-gradient(115deg, #FF8C62 0%, #F8CE4A 100%);
 	}
 
 	&__card-title {
