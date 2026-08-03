@@ -27,7 +27,9 @@ $q     = new WP_Query(
 	)
 );
 
-$themes = array( 'sage', 'green', 'gold', 'coral', 'grey' );
+// Brand palette of the live archive — no greys/creams, cards are always one of
+// these five.
+$themes = array( 'sage', 'green', 'gold', 'peach', 'green', 'coral' );
 $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
 ?>
 <section<?php echo $anchor; // phpcs:ignore ?> class="cular-fn">
@@ -48,21 +50,41 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 				$q->the_post();
 				$theme = $themes[ $i % count( $themes ) ];
 				++$i;
-				$img   = get_the_post_thumbnail_url( get_the_ID(), 'medium_large' );
-				$title = get_the_title();
-				$url   = get_permalink();
+				$thumb_id = get_post_thumbnail_id();
+				$title    = get_the_title();
+				$url      = get_permalink();
+
+				// Cards lead with the hand-written excerpt (as on the live site);
+				// fall back to the title when a post has none.
+				$blurb = has_excerpt() ? get_the_excerpt() : $title;
 				?>
 				<article class="cular-fn__card cular-fn__card--<?php echo esc_attr( $theme ); ?>"
 					itemscope itemtype="https://schema.org/BlogPosting">
 					<a class="cular-fn__cardlink" href="<?php echo esc_url( $url ); ?>" itemprop="url">
 						<div class="cular-fn__media">
-							<?php if ( $img ) : ?>
-								<img src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy" itemprop="image" />
-							<?php endif; ?>
+							<?php
+							if ( $thumb_id ) {
+								echo wp_get_attachment_image(
+									$thumb_id,
+									'large',
+									false,
+									array(
+										'alt'      => $title,
+										'loading'  => 'lazy',
+										'itemprop' => 'image',
+										'sizes'    => '(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 30vw',
+									)
+								);
+							}
+							?>
 						</div>
 
 						<time class="cular-fn__date" datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" itemprop="datePublished"><?php echo esc_html( get_the_date( 'M j, Y' ) ); ?></time>
-						<h2 class="cular-fn__title" itemprop="headline"><?php echo esc_html( $title ); ?></h2>
+
+						<?php // The title carries the heading/schema; the excerpt is what's shown. ?>
+						<h2 class="screen-reader-text" itemprop="headline"><?php echo esc_html( $title ); ?></h2>
+						<p class="cular-fn__title" itemprop="description"><?php echo esc_html( $blurb ); ?></p>
+
 						<meta itemprop="mainEntityOfPage" content="<?php echo esc_url( $url ); ?>" />
 						<span class="cular-fn__more">Read More &raquo;</span>
 					</a>

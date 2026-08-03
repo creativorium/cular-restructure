@@ -20,6 +20,8 @@
 	--cular-green: var(--wp--preset--color--primary, #457F55);
 	--cular-gold: var(--wp--preset--color--accent, #F8CE4A);
 	--cular-sage: var(--wp--preset--color--secondary, #A0B89D);
+	--cular-coral: var(--wp--preset--color--orange, #E9765B);
+	--cular-peach: #ff8c62; // warm accent used on blog cards + the mesh base
 }
 
 *,
@@ -64,6 +66,20 @@ body {
 .wp-site-blocks > * {
 	margin-block-start: 0;
 	margin-block-end: 0;
+}
+
+// Visually hidden but readable by assistive tech / crawlers (WP's own class).
+.screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
 }
 
 // Display serif for headings site-wide.
