@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/page-hero",
+	"title": "Page Hero",
+	"category": "cular",
+	"icon": "cover-image",
+	"description": "Green band hero with a big display title, intro copy and an optional cut-out image.",
+	"keywords": ["hero", "title", "banner"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

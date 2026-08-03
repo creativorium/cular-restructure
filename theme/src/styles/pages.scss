@@ -117,6 +117,14 @@
 	}
 }
 
+// Marketing Services / Consultancy — the hero band ends in sage, so the body
+// below it continues in the same tone straight into the footer.
+.cular-services-body {
+	background: var(--cular-sage, #A0B89D);
+	color: #fff;
+	padding-bottom: clamp(3rem, 8vh, 6rem);
+}
+
 // FAQ page (/faqs/) — flat sage band; the cular/faq block paints its own cards.
 .cular-faq-page {
 	background: linear-gradient(var(--cular-sage, #A0B89D) 0%, #8fae8c 100%);

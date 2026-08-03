@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/service-list",
+	"title": "Service List",
+	"category": "cular",
+	"icon": "list-view",
+	"description": "Gradient card listing services, each with a title, blurb and a Discover More button.",
+	"keywords": ["services", "list", "card"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
