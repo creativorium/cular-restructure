@@ -74,7 +74,7 @@ $anchor  = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) 
 					<?php foreach ( $socials as $s ) : ?>
 						<li>
 							<a href="<?php echo esc_url( $s['url'] ); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr( $s['label'] ); ?>">
-								<?php echo esc_html( substr( $s['label'], 0, 1 ) ); ?>
+								<?php cular_social_icon( $s['label'] ); ?>
 							</a>
 						</li>
 					<?php endforeach; ?>

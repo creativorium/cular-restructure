@@ -135,6 +135,12 @@
 // Privacy & Terms page (/privacy-terms/, id 12901) — green background, white text.
 @include cular-page-green(12901);
 
+// Contact page — solid green hero, then white fading into sage so the form
+// panel reads as a card.
+.cular-contact-hero {
+	background: var(--cular-green, #457F55);
+}
+
 // Contact page — white fading into sage, so the form panel reads as a card.
 .cular-contact-body {
 	background: linear-gradient(#fff 0%, #dbe4d5 38%, var(--cular-sage, #A0B89D) 100%);
