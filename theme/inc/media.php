@@ -48,3 +48,20 @@ function cular_gallery_urls( $field, array $fallback = array() ) {
 
 	return $out;
 }
+
+/**
+ * Card art for a portfolio_item: featured image first, then the
+ * portfolio_image_id meta some entries use instead.
+ *
+ * @param int    $id   Portfolio item ID.
+ * @param string $size Image size.
+ * @return string URL, or '' when the item has no usable art.
+ */
+function cular_portfolio_image( $id, $size = 'medium_large' ) {
+	$url = get_the_post_thumbnail_url( $id, $size );
+	if ( $url ) {
+		return $url;
+	}
+	$alt = (int) get_post_meta( $id, 'portfolio_image_id', true );
+	return $alt ? (string) wp_get_attachment_image_url( $alt, $size ) : '';
+}

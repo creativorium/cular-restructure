@@ -28,6 +28,9 @@ acf_add_local_field_group(
 					array( 'key' => 'field_cular_sdet_d_a', 'label' => 'Detail', 'name' => 'a', 'type' => 'textarea', 'rows' => 4 ),
 				),
 			),
+			array( 'key' => 'field_cular_sdet_port_head', 'label' => 'Portfolio heading', 'name' => 'portfolio_heading', 'type' => 'text', 'instructions' => 'e.g. "Some of our previous Graphic Design work".' ),
+			array( 'key' => 'field_cular_sdet_port_tags', 'label' => 'Portfolio tags', 'name' => 'portfolio_tags', 'type' => 'text', 'instructions' => 'Comma-separated portfolio_tag names. Leave blank to hide the section.' ),
+			array( 'key' => 'field_cular_sdet_port_count', 'label' => 'Portfolio count', 'name' => 'portfolio_count', 'type' => 'number', 'default_value' => 4 ),
 			array( 'key' => 'field_cular_sdet_rel_head', 'label' => 'Related heading', 'name' => 'related_heading', 'type' => 'text' ),
 			array(
 				'key'          => 'field_cular_sdet_related',
