@@ -254,17 +254,28 @@
 
 // Soft "glass" plate once the page is scrolled, so the header reads against
 // whatever is passing underneath it.
+//
+// The blur lives on a pseudo-element, NOT on .cular-header itself: a
+// backdrop-filter makes an element a containing block for its position:fixed
+// descendants, which would re-anchor .cular-menu to the header bar and leave
+// its clip-path drawing a tall gradient column down the page.
 .cular-header {
-	transition: background 0.35s ease, backdrop-filter 0.35s ease;
-
-	&.is-scrolled {
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		opacity: 0;
+		pointer-events: none;
 		background: rgba(255, 255, 255, 0.1);
 		backdrop-filter: blur(14px) saturate(1.3);
 		-webkit-backdrop-filter: blur(14px) saturate(1.3);
 		box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+		transition: opacity 0.35s ease;
 	}
 
-	&.is-open { background: none; backdrop-filter: none; }
+	&.is-scrolled::before { opacity: 1; }
+	&.is-open::before { opacity: 0; }
 }
 
 // On solid-green pages the green pill and green logo would disappear, so both
