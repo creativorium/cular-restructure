@@ -67,6 +67,81 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 		</div>
 	<?php endif; ?>
 
+	<?php
+	// Real client work for this service, pulled live from the portfolio_item
+	// CPT by tag. The live site repeats the services carousel here under a
+	// "previous work" heading, which shows services rather than work.
+	$port_tags = array_filter( array_map( 'trim', explode( ',', (string) get_field( 'portfolio_tags' ) ) ) );
+	$port_head = get_field( 'portfolio_heading' );
+	$port      = array();
+
+	if ( $port_tags ) {
+		$want      = (int) ( get_field( 'portfolio_count' ) ?: 4 );
+		$candidates = get_posts(
+			array(
+				'post_type'      => 'portfolio_item',
+				'post_status'    => 'publish',
+				'posts_per_page' => 30,
+				'orderby'        => 'date',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'portfolio_tag',
+						'field'    => 'name',
+						'terms'    => $port_tags,
+					),
+				),
+			)
+		);
+
+		// Cards without art look broken, so only keep work we can illustrate.
+		foreach ( $candidates as $candidate ) {
+			if ( cular_portfolio_image( $candidate->ID ) ) {
+				$port[] = $candidate;
+			}
+			if ( count( $port ) >= $want ) {
+				break;
+			}
+		}
+	}
+	?>
+
+	<?php if ( $port ) : ?>
+		<div class="cular-sdet__work" data-cular-reveal>
+			<?php if ( $port_head ) : ?>
+				<h2 class="cular-sdet__related-heading"><?php echo esc_html( $port_head ); ?></h2>
+			<?php endif; ?>
+
+			<div class="cular-sdet__work-grid">
+				<?php
+				$w = 0;
+				foreach ( $port as $item ) :
+					$theme = $themes[ $w % count( $themes ) ];
+					++$w;
+
+					$img  = cular_portfolio_image( $item->ID );
+					$link  = get_post_meta( $item->ID, 'external_link', true ) ?: get_permalink( $item->ID );
+					$name  = get_post_meta( $item->ID, 'card_title', true ) ?: get_the_title( $item->ID );
+					$terms = wp_get_post_terms( $item->ID, 'portfolio_tag', array( 'fields' => 'names' ) );
+					$terms = is_wp_error( $terms ) ? array() : array_map( 'html_entity_decode', $terms );
+					?>
+					<a class="cular-sdet__work-card cular-sdet__work-card--<?php echo esc_attr( $theme ); ?>" href="<?php echo esc_url( $link ); ?>">
+						<span class="cular-sdet__work-name"><?php echo esc_html( $name ); ?></span>
+
+						<span class="cular-sdet__work-media"<?php echo $img ? ' style="background-image:url(' . esc_url( $img ) . ')"' : ''; ?>></span>
+
+						<?php if ( $terms ) : ?>
+							<span class="cular-sdet__work-tags">
+								<?php foreach ( array_slice( $terms, 0, 5 ) as $t ) : ?>
+									<span><?php echo esc_html( $t ); ?></span>
+								<?php endforeach; ?>
+							</span>
+						<?php endif; ?>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	<?php endif; ?>
+
 	<?php if ( ! empty( $related ) && is_array( $related ) ) : ?>
 		<div class="cular-sdet__related" data-cular-reveal>
 			<h2 class="cular-sdet__related-heading"><?php echo esc_html( $rel_head ); ?></h2>

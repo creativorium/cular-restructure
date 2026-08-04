@@ -18,9 +18,15 @@ $image = get_field( 'image' );
 $size  = get_field( 'size' ) ?: 'large';
 $bare  = (bool) get_field( 'bare' ); // let a wrapper gradient show through
 
+// Prefer a sized variant — the source cut-outs are multi-megabyte PNGs and
+// ACF's array form hands back the original.
 $img_url = '';
-if ( $image ) {
-	$img_url = is_array( $image ) ? ( $image['url'] ?? '' ) : ( is_numeric( $image ) ? wp_get_attachment_image_url( $image, 'full' ) : $image );
+if ( is_array( $image ) ) {
+	$img_url = $image['sizes']['1536x1536'] ?? $image['sizes']['large'] ?? $image['url'] ?? '';
+} elseif ( is_numeric( $image ) ) {
+	$img_url = wp_get_attachment_image_url( $image, '1536x1536' );
+} elseif ( $image ) {
+	$img_url = $image;
 }
 
 $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';

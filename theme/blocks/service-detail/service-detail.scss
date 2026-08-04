@@ -4,7 +4,7 @@
 .cular-sdet {
 	color: #fff;
 	width: 100%;
-	max-width: 1152px;
+	max-width: 1440px;
 	margin-inline: auto;
 	padding: clamp(2rem, 6vh, 4rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 8rem);
 	display: grid;
@@ -241,5 +241,62 @@
 		font-family: "Luxia Display", Georgia, serif;
 		font-weight: 400;
 		font-size: clamp(1.5rem, 3vw, 2.25rem);
+	}
+}
+
+// --- Client work for this service (portfolio_item CPT, filtered by tag) ---
+.cular-sdet {
+	&__work {
+		display: grid;
+		gap: clamp(1.25rem, 3vw, 2rem);
+		justify-items: center;
+	}
+
+	&__work-grid {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: clamp(0.85rem, 1.6vw, 1.4rem);
+
+		@media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+		@media (max-width: 620px) { grid-template-columns: 1fr; }
+	}
+
+	&__work-card {
+		display: grid;
+		align-content: start;
+		gap: 0.9rem;
+		padding: 1rem 1rem 1.4rem;
+		border-radius: 0.65rem;
+		text-align: center;
+		text-decoration: none;
+		transition: transform 0.35s var(--cular-ease);
+
+		&:hover { transform: translateY(-5px); }
+
+		&--gold { background: var(--cular-gold, #F8CE4A); color: #2f2a12; }
+		&--green { background: var(--cular-green, #457F55); color: #fff; }
+		&--coral { background: var(--cular-coral, #E9765B); color: #fff; }
+	}
+
+	&__work-name {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: clamp(1rem, 1.5vw, 1.3rem);
+		line-height: 1.2;
+	}
+
+	&__work-media {
+		display: block;
+		aspect-ratio: 4 / 5;
+		border-radius: 0.35rem;
+		background: rgba(255, 255, 255, 0.35) center / cover no-repeat;
+	}
+
+	&__work-tags {
+		display: grid;
+		gap: 0.15rem;
+		font-size: 0.72rem;
+		line-height: 1.45;
+		opacity: 0.95;
 	}
 }
