@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/contact",
+	"title": "Contact",
+	"category": "cular",
+	"icon": "email",
+	"description": "Contact details beside the Book a Call intake form.",
+	"keywords": ["contact", "form", "address"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

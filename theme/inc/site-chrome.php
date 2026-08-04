@@ -56,3 +56,40 @@ add_filter(
 		return $classes;
 	}
 );
+
+/**
+ * Cular Intake Forms only loads its CSS/JS when the literal shortcode is in
+ * post_content. Our blocks render it through do_shortcode(), so tell the
+ * plugin which form a page uses and let it enqueue accordingly.
+ *
+ * @return string Form type slug found in this page's blocks, or ''.
+ */
+function cular_page_intake_form_type( $post = null ) {
+	$post = $post ?: get_post();
+	if ( ! $post instanceof WP_Post ) {
+		return '';
+	}
+	if ( preg_match( '/"form_type":"([a-z0-9\-]+)"/i', $post->post_content, $m ) ) {
+		return $m[1];
+	}
+	return '';
+}
+
+add_filter(
+	'cular_intake_should_enqueue',
+	function ( $should, $post ) {
+		return $should || '' !== cular_page_intake_form_type( $post );
+	},
+	10,
+	2
+);
+
+add_filter(
+	'cular_intake_form_type',
+	function ( $type, $post ) {
+		$found = cular_page_intake_form_type( $post );
+		return $found ?: $type;
+	},
+	10,
+	2
+);
