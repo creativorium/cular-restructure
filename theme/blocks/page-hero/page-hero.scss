@@ -11,6 +11,9 @@
 
 	&--small { padding-block: clamp(6rem, 14vh, 8rem) clamp(2.5rem, 6vh, 4rem); }
 
+	// Sits on a wrapper that paints its own gradient (e.g. the Contact hero).
+	&--bare { background: none; }
+
 	// The cut-out sits behind the copy and bleeds off the bottom of the band.
 	&__media {
 		position: absolute;
