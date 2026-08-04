@@ -163,24 +163,36 @@
 		line-height: 1.15;
 	}
 
-	&__card-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
+	&__card-list { display: grid; }
 
-		li {
+	&__card-item {
+		border-bottom: 1px solid currentColor;
+
+		summary {
+			list-style: none;
+			cursor: pointer;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			gap: 0.75rem;
 			padding: 0.7rem 0;
-			border-bottom: 1px solid currentColor;
 			font-size: 0.72rem;
 			letter-spacing: 0.05em;
 			text-transform: uppercase;
 			line-height: 1.35;
+
+			&::-webkit-details-marker { display: none; }
+			&:hover { opacity: 0.85; }
 		}
+	}
+
+	&__card-answer {
+		padding: 0 0 0.85rem;
+		font-size: 0.75rem;
+		line-height: 1.6;
+		text-transform: none;
+		letter-spacing: 0;
+		opacity: 0.92;
 	}
 
 	&__dot {
@@ -190,7 +202,9 @@
 		border-radius: 50%;
 		background: currentColor;
 		position: relative;
+		transition: transform 0.25s var(--cular-ease);
 
+		// Arrow glyph.
 		&::before {
 			content: "";
 			position: absolute;
@@ -203,6 +217,22 @@
 			border-bottom: 3px solid transparent;
 			transform: translateX(1px);
 		}
+
+		// Radar ring.
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			border-radius: 50%;
+			border: 1px solid currentColor;
+			animation: cular-radar 2.4s ease-out infinite;
+		}
+	}
+
+	&__card-item[open] &__dot {
+		transform: rotate(90deg);
+
+		&::after { animation: none; opacity: 0; }
 	}
 
 	&__card-cta {
@@ -287,9 +317,15 @@
 
 	&__work-media {
 		display: block;
-		aspect-ratio: 4 / 5;
 		border-radius: 0.35rem;
-		background: rgba(255, 255, 255, 0.35) center / cover no-repeat;
+		overflow: hidden;
+		background: rgba(255, 255, 255, 0.25);
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+		}
 	}
 
 	&__work-tags {
@@ -299,4 +335,21 @@
 		line-height: 1.45;
 		opacity: 0.95;
 	}
+}
+
+@keyframes cular-radar {
+	0% { transform: scale(1); opacity: 0.75; }
+	70% { transform: scale(2.1); opacity: 0; }
+	100% { transform: scale(2.1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-sdet__dot::after { animation: none; }
+}
+
+// The intake form reads as a form, not a full-width slab.
+.cular-sdet__form {
+	width: 100%;
+	max-width: 720px;
+	margin-inline: auto;
 }

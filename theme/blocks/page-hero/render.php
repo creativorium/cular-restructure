@@ -17,6 +17,7 @@ $body  = get_field( 'body' );
 $image = get_field( 'image' );
 $size  = get_field( 'size' ) ?: 'large';
 $bare  = (bool) get_field( 'bare' ); // let a wrapper gradient show through
+$wide  = (bool) get_field( 'wide' ); // match the wider service-detail container
 
 // Prefer a sized variant — the source cut-outs are multi-megabyte PNGs and
 // ACF's array form hands back the original.
@@ -31,7 +32,7 @@ if ( is_array( $image ) ) {
 
 $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
 ?>
-<section<?php echo $anchor; // phpcs:ignore ?> class="cular-phero cular-phero--<?php echo esc_attr( $size ); ?><?php echo $bare ? ' cular-phero--bare' : ''; ?>">
+<section<?php echo $anchor; // phpcs:ignore ?> class="cular-phero cular-phero--<?php echo esc_attr( $size ); ?><?php echo $bare ? ' cular-phero--bare' : ''; ?><?php echo $wide ? ' cular-phero--wide' : ''; ?><?php echo $img_url ? ' cular-phero--has-media' : ''; ?>">
 	<?php if ( $img_url ) : ?>
 		<div class="cular-phero__media" aria-hidden="true">
 			<img src="<?php echo esc_url( $img_url ); ?>" alt="" loading="eager" fetchpriority="high" />

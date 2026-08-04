@@ -14,28 +14,42 @@
 	// Sits on a wrapper that paints its own gradient (e.g. the Contact hero).
 	&--bare { background: none; }
 
-	// The cut-out sits behind the copy and bleeds off the bottom of the band.
+	// Matches the wider service-detail container.
+	&--wide { --cular-hero-width: 1440px; }
+
+	// The cut-out fills the band and dissolves into it. It is never cropped:
+	// the band grows to fit the image rather than clipping it.
+	&--has-media { padding-block: 0 0; }
+
 	&__media {
-		position: absolute;
-		inset: 0 0 auto;
+		position: relative;
+		z-index: 0;
 		display: flex;
 		justify-content: center;
 		pointer-events: none;
+		padding-top: clamp(3.5rem, 8vh, 6rem);
 
 		img {
-			width: min(100%, 1100px);
+			width: min(100%, 1500px);
 			height: auto;
 			display: block;
-			object-fit: contain;
-			object-position: bottom center;
-			mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+			// Long, gentle dissolve rather than a hard cut near the bottom.
+			mask-image: linear-gradient(to bottom, #000 40%, rgba(0, 0, 0, 0.55) 72%, transparent 99%);
+			-webkit-mask-image: linear-gradient(to bottom, #000 40%, rgba(0, 0, 0, 0.55) 72%, transparent 99%);
 		}
+	}
+
+	// With an image present the copy overlaps its lower half, as on the live
+	// hero, instead of the image being absolutely positioned behind everything.
+	&--has-media &__inner {
+		margin-top: clamp(-26rem, -30vw, -12rem);
+		padding-bottom: clamp(3rem, 8vh, 6rem);
 	}
 
 	&__inner {
 		position: relative;
 		z-index: 1;
-		max-width: 1152px;
+		max-width: var(--cular-hero-width, 1152px);
 		margin-inline: auto;
 		width: 100%;
 		// Matches the body container, so hero and content share a left edge.

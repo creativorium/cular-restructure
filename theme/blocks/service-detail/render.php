@@ -127,7 +127,9 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 					<a class="cular-sdet__work-card cular-sdet__work-card--<?php echo esc_attr( $theme ); ?>" href="<?php echo esc_url( $link ); ?>">
 						<span class="cular-sdet__work-name"><?php echo esc_html( $name ); ?></span>
 
-						<span class="cular-sdet__work-media"<?php echo $img ? ' style="background-image:url(' . esc_url( $img ) . ')"' : ''; ?>></span>
+						<span class="cular-sdet__work-media">
+							<img src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $name ); ?>" loading="lazy" />
+						</span>
 
 						<?php if ( $terms ) : ?>
 							<span class="cular-sdet__work-tags">
@@ -164,18 +166,33 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 						$img = wp_get_attachment_image_url( $img, 'medium_large' );
 					}
 
+					// Each line is "topic||explanation"; the explanation is optional.
 					$sub = array_filter( array_map( 'trim', preg_split( '/\r?\n/', (string) ( $r['items'] ?? '' ) ) ) );
 					?>
 					<article class="cular-sdet__card cular-sdet__card--<?php echo esc_attr( $theme ); ?>">
-						<span class="cular-sdet__card-media"<?php echo $img ? ' style="background-image:url(' . esc_url( $img ) . ')"' : ''; ?>></span>
+						<?php if ( $img ) : ?>
+							<span class="cular-sdet__card-media" style="background-image:url(<?php echo esc_url( $img ); ?>)"></span>
+						<?php endif; ?>
 						<h3 class="cular-sdet__card-title"><?php echo esc_html( $r['title'] ?? '' ); ?></h3>
 
 						<?php if ( $sub ) : ?>
-							<ul class="cular-sdet__card-list">
-								<?php foreach ( $sub as $s ) : ?>
-									<li><span><?php echo esc_html( $s ); ?></span><span class="cular-sdet__dot" aria-hidden="true"></span></li>
+							<div class="cular-sdet__card-list">
+								<?php
+								foreach ( $sub as $line ) :
+									$parts  = array_map( 'trim', explode( '||', $line, 2 ) );
+									$a_text = $parts[1] ?? '';
+									?>
+									<details class="cular-sdet__card-item">
+										<summary>
+											<span><?php echo esc_html( $parts[0] ); ?></span>
+											<span class="cular-sdet__dot" aria-hidden="true"></span>
+										</summary>
+										<?php if ( $a_text ) : ?>
+											<div class="cular-sdet__card-answer"><?php echo esc_html( $a_text ); ?></div>
+										<?php endif; ?>
+									</details>
 								<?php endforeach; ?>
-							</ul>
+							</div>
 						<?php endif; ?>
 
 						<a class="cular-sdet__card-cta" href="<?php echo esc_url( $url ); ?>">
