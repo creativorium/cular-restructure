@@ -26,6 +26,15 @@ acf_add_local_field_group(
 				'ui'            => 1,
 			),
 			array(
+				'key'           => 'field_cular_phero_wide',
+				'label'         => 'Wide container',
+				'name'          => 'wide',
+				'type'          => 'true_false',
+				'instructions'  => 'Align the title with a 1440px page container instead of 1152px.',
+				'default_value' => 0,
+				'ui'            => 1,
+			),
+			array(
 				'key'           => 'field_cular_phero_size',
 				'label'         => 'Band size',
 				'name'          => 'size',
