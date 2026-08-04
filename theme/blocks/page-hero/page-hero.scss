@@ -7,7 +7,7 @@
 	color: #fff;
 	width: 100%;
 	background: linear-gradient(var(--cular-green, #457F55) 65%, var(--cular-sage, #A0B89D) 100%);
-	padding: clamp(7rem, 18vh, 11rem) clamp(1.25rem, 4vw, 3rem) clamp(3rem, 8vh, 6rem);
+	padding-block: clamp(7rem, 18vh, 11rem) clamp(3rem, 8vh, 6rem);
 
 	&--small { padding-block: clamp(6rem, 14vh, 8rem) clamp(2.5rem, 6vh, 4rem); }
 
@@ -38,6 +38,8 @@
 		max-width: 1152px;
 		margin-inline: auto;
 		width: 100%;
+		// Matches the body container, so hero and content share a left edge.
+		padding-inline: clamp(1.25rem, 4vw, 3rem);
 		display: grid;
 		gap: 1.1rem;
 	}
