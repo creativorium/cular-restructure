@@ -25,6 +25,23 @@ function cular_vite_dev_server() {
 	return null;
 }
 
+/**
+ * The parsed Vite manifest, or an empty array in dev / before a first build.
+ *
+ * Read once per request — several hooks below need it.
+ *
+ * @return array<string,array>
+ */
+function cular_vite_manifest() {
+	static $manifest = null;
+	if ( null !== $manifest ) {
+		return $manifest;
+	}
+	$path     = CULAR_DIR . '/dist/.vite/manifest.json';
+	$manifest = file_exists( $path ) ? (array) json_decode( file_get_contents( $path ), true ) : array();
+	return $manifest;
+}
+
 add_action(
 	'wp_enqueue_scripts',
 	function () {
@@ -44,11 +61,7 @@ add_action(
 		}
 
 		// Production: read manifest.
-		$manifest_path = CULAR_DIR . '/dist/.vite/manifest.json';
-		if ( ! file_exists( $manifest_path ) ) {
-			return;
-		}
-		$manifest = json_decode( file_get_contents( $manifest_path ), true );
+		$manifest = cular_vite_manifest();
 		$entry    = $manifest['src/main.js'] ?? null;
 		if ( ! $entry ) {
 			return;
@@ -63,6 +76,65 @@ add_action(
 		}
 		wp_enqueue_script( 'cular-main', $dist . $entry['file'], array(), CULAR_VERSION, true );
 	}
+);
+
+/**
+ * Reveal-on-scroll bootstrap — inline, in <head>, deliberately.
+ *
+ * The reveal CSS hides `[data-cular-reveal]` elements only under `html.cular-js`
+ * so this must land before the first paint (an external file would let the
+ * content paint and then blink out). It is ~200 bytes; a request would cost far
+ * more than it saves.
+ *
+ * The timeout is the safety net: our JS adds `cular-ready` when the bundle
+ * boots, and if that never happens — bundle 404s, a JS error, an ancient
+ * browser — this un-hides everything rather than leaving the visitor a page of
+ * blank sections.
+ */
+add_action(
+	'wp_head',
+	function () {
+		?>
+<script>(function(d){d.classList.add('cular-js');setTimeout(function(){if(!d.classList.contains('cular-ready'))d.classList.add('cular-reveal-all')},3000)})(document.documentElement)</script>
+		<?php
+	},
+	1
+);
+
+/**
+ * Preload the two brand fonts.
+ *
+ * Both are used above the fold on every page (Luxia for the hero heading,
+ * Montserrat for everything else) but the browser only discovers them after it
+ * has fetched and parsed our CSS. Preloading overlaps those two round trips and
+ * removes the swap-in flash. Worth doing only because the subset files are tiny
+ * (42KB + 7KB) — preloading a 688KB TTF would have made things worse.
+ *
+ * The href has to come from the manifest: Vite content-hashes the fonts, and
+ * preloading the un-hashed source path would fetch a second, different URL
+ * instead of priming the one the CSS actually asks for.
+ */
+add_action(
+	'wp_head',
+	function () {
+		if ( cular_vite_dev_server() ) {
+			return;
+		}
+		$manifest = cular_vite_manifest();
+		$dist     = CULAR_URI . '/dist/';
+
+		foreach ( array( 'assets/fonts/Montserrat.woff2', 'assets/fonts/LuxiaDisplay.woff2' ) as $src ) {
+			$file = $manifest[ $src ]['file'] ?? null;
+			if ( ! $file ) {
+				continue;
+			}
+			printf(
+				'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+				esc_url( $dist . $file )
+			);
+		}
+	},
+	2
 );
 
 /**

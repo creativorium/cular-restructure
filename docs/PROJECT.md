@@ -35,8 +35,8 @@ without re-deriving context.
 | Theme | Custom **`cular`** block theme (`theme/`) |
 | Components | **ACF PRO Blocks** — one folder per block under `theme/blocks/` |
 | Build | **Vite 6** — bundles all block SCSS + JS into `theme/dist/` |
-| Motion | **GSAP** (+ ScrollTrigger) and **Lenis** smooth scroll, npm-bundled |
-| Fonts | Self-hosted **Luxia Display** (headings) + **Montserrat** (body) |
+| Motion | **Lenis** smooth scroll (npm) + IntersectionObserver/CSS reveals. GSAP was removed — see §9 |
+| Fonts | Self-hosted **Luxia Display** (headings) + **Montserrat** (body), subset WOFF2 |
 | Local dev | **Local by Flywheel** (MySQL 8.4, PHP 8.2, nginx) |
 | Hosting (target) | Hostinger or DigitalOcean |
 
@@ -45,7 +45,8 @@ without re-deriving context.
 ```
 Redesign/                     git root -> github.com/creativorium/cular-restructure
   vite.config.js              Vite config (root = theme/, outputs theme/dist)
-  package.json                gsap, lenis, sass, vite
+  package.json                lenis, sass, vite (+ the scripts in §4)
+  tools/                      build-fonts.mjs, build-images.mjs (asset pipelines)
   theme/                      the block theme (symlinked into the Local site)
     style.css theme.json      theme header + design tokens (colours, fonts)
     functions.php             bootstraps inc/*
@@ -61,11 +62,12 @@ Redesign/                     git root -> github.com/creativorium/cular-restruct
     templates/                FSE templates: index, page, home (blog), single, front-page
     parts/                    header + footer template parts (render our blocks)
     blocks/<name>/            one folder per component (see §5)
-    src/                      global JS/SCSS entry (main.js, styles/, slider.js)
-    assets/                   self-hosted fonts + logos + spotlight image
+    src/                      global JS/SCSS entry (main.js, styles/, slider.js, reveal.js)
+    assets/                   fonts + img, each with a src/ holding the originals
     dist/                     Vite build output (gitignored)
   reference/                  LOCAL-ONLY (gitignored): extracted proprietary code,
-                              rendered HTML, screenshots, Playwright check scripts
+                              rendered HTML, screenshots, Playwright check scripts,
+                              media-crawl.mjs + media-scan.php + media-manifest/
   docs/PROJECT.md             this file
 ```
 
@@ -80,6 +82,18 @@ goes to GitHub (owner's request).
 - The theme is **symlinked**: `wp-content/themes/cular` → this repo's `theme/`.
   So the checked-out git branch is what renders live.
 - **Build:** `npm install` then `npm run build` (or `npm run dev` for HMR).
+- **Other scripts** (all optional — their outputs are committed, so you only run
+  them when the inputs change):
+
+  | Command | Does |
+  | --- | --- |
+  | `npm run fonts` | Re-subset the brand fonts to WOFF2. Needs `pip install fonttools brotli`. |
+  | `npm run images` | Re-optimise `theme/assets/img/` from `img/src/`. Needs `pip install pillow`. |
+  | `npm run media:manifest` | Rebuild the used/unused uploads lists (§12a). Needs the Local site running. |
+
+- `reference/run-php.mjs` runs any WP-booting PHP script with Local's own PHP +
+  `php.ini` (the system PHP has no `mysqli`, so `wp-load.php` dies). Use it
+  instead of hand-rolling PHPRC paths.
 - **DB:** local/root/root on port 10029 (Local's MySQL). Boot WP from CLI with
   Local's PHP + `PHPRC` for scripts (see `reference/` scratch scripts).
 - **Visual QA:** Playwright (installed with `--no-save`) drives the real site and
@@ -112,11 +126,14 @@ blocks/<name>/
 `portfolio` (curated `portfolio_item`s), `why-us` (logo marquee + badges),
 `testimonials` (video + written sliders), `field-notes` (homepage teaser),
 `field-notes-archive` (blog index), `cta` (spotlight heading), `about-intro`,
-`team-grid`, `post-share`, `related-posts`.
+`team-grid`, `post-share`, `related-posts`, `page-hero` (shared inner-page
+hero), `service-list` (hub page card grid), `service-detail` (child service
+page), `cta-panel`, `faq`, `contact` (intake form).
 
 Shared: `src/slider.js` (scroll-snap slider used by testimonials + field notes),
+`src/reveal.js` (IntersectionObserver reveals + hero parallax),
 `src/styles/main.scss` (tokens, fonts, `.cular-gradient-mesh` [+`--green`],
-WhatsApp button, reveal helpers), `pages.scss` (FAQ/Privacy), `single-post.scss`.
+WhatsApp button, reveal CSS), `pages.scss` (FAQ/Privacy), `single-post.scss`.
 
 ## 6. Pages — status & URLs
 
@@ -124,22 +141,43 @@ Converted **in place** at their real URLs. Each converted page's previous
 Elementor state is backed up to post meta (`_cular_prev_edit_mode`,
 `_cular_prev_template`) — fully restorable, no `-old` duplicates.
 
-| Page | URL | Status |
-| --- | --- | --- |
-| Home | `/` | ✅ full rebuild (hero → services → team → portfolio → why-us → testimonials → field notes → CTA) |
-| About | `/about/` | ✅ about-intro + team grid |
-| FAQ | `/faqs/` | ✅ native accordion, green page |
-| Privacy & Terms | `/privacy-terms/` | ✅ native sections, green page |
-| Field Notes (blog) | `/blog/` | ✅ archive (set as WP posts page) |
-| Single post | `/<slug>/` | ✅ single.html + share + related + SEO |
-| Marketing Services | `/activate/` | ⬜ still Elementor |
-| Consultancy | `/elevate/` | ⬜ still Elementor |
-| Service detail pages | `/social-media/`, `/seo/`, `/web-development/`, `/content-creation/`, `/graphic-design/`, `/digital-advertising/`, `/copywriting/` | ⬜ still Elementor |
-| Case Study | `/case-study/` | ⬜ still Elementor |
-| Portfolio listing | `/portfolio-cular/` | ⬜ still Elementor |
-| Single portfolio | `/portfolio-cular/<slug>/` | ⬜ still Elementor |
-| Contact | `/contact/` | ⬜ still Elementor (has forms — see §12) |
-| Rate card / ads landing pages | various | ⬜ low priority |
+Status below is generated from the database (`_elementor_edit_mode` vs. our
+`_cular_prev_edit_mode` backup marker), not from memory — re-derive it rather
+than trusting this table if it looks stale.
+
+### Rebuilt on our blocks ✅
+
+| Page | URL |
+| --- | --- |
+| Home | `/` (page `home-cular`, set as the front page) |
+| About | `/about/` — about-intro + team grid |
+| FAQ | `/faqs/` — native accordion, grouped into category cards |
+| Privacy & Terms | `/privacy-terms/` — native sections, green page |
+| Field Notes (blog) | `/blog/` — archive, set as the WP posts page |
+| Single post | `/<slug>/` — single.html + share + related + SEO |
+| Contact | `/contact/` — green hero + working intake form |
+| Marketing Services (hub) | `/activate/` |
+| ↳ 8 service detail pages | `/activate/` + `social-media`, `seo`, `web-development`, `content-creation`, `graphic-design`, `advertising`, `copywriting`, `branding-identity` |
+| Consultancy (hub) | `/elevate/` |
+| ↳ 3 detail pages | `/elevate/` + `consultacy`, `marketing-audit`, `blueprint-strategy` |
+
+Note the service pages live **under their hub** (`/activate/seo/`), not at the
+top level — the old `/seo/` URLs in an earlier draft of this doc never existed.
+
+### Still on Elementor ⬜
+
+85 pages. Grouped by what they need, not by count:
+
+| Group | Count | URL(s) | Notes |
+| --- | --- | --- | --- |
+| **Portfolio single pages** | 47 | `/portfolio-cular/<slug>/` | The content already exists twice: these Elementor pages *and* the 44 `portfolio_item` CPT entries we built the homepage carousel from. Needs one `single-portfolio_item.html` template, then these are redundant → 301 to the CPT. |
+| **Portfolio listing** | 2 | `/portfolio-cular/`, `/cular-portfolio/` | Two competing listings; `/portfolio-cular/` is the one in the nav. |
+| **Paid landing pages** | 10 | `/ads-pages/*` | Live ad traffic — check with the owner before touching. Several are form pages. |
+| **Standalone form pages** | 10 | `/form/*` | All Elementor Pro forms. Blocker for removing Elementor (§13); the `cular/contact` intake form is the pattern to reuse. |
+| **Case study** | 5 | `/case-study/`, `/case-study-test/`, `/case-study-insurance-platform/`, `/case-study-pilates-combo/`, `/case-study-draft/` | Only `/case-study/` is in the nav; the other four look like drafts/experiments — confirm before rebuilding all five. |
+| **Rate card** | 4 | `/book-ratecard/`, `/book-ratecard-2/`, + 2 drafts | Low priority. |
+| **Old homepage** | 1 | `/cular-creative/` | ⚠️ **The "Home" item in the Primary Menu still points here**, not at `/`. Anyone using the menu lands on the old Elementor homepage. Fix in Appearance → Menus. |
+| **Odds and ends** | 6 | `/hiring/`, `/let-us-know-how-we-did/`, `/mau-omset-shopee-anda-naik-hingga-250/`, `/cular-business-enquiry-landing-page/`, `/field-note-preview/`, 1 untitled draft | Mostly disposable — audit for traffic, then delete or 301. |
 
 Not-yet-rebuilt pages keep working on Elementor at their real URL until we
 rebuild them; the nav/footer links then resolve to the new page automatically.
@@ -169,28 +207,58 @@ Targets: **LCP < 2.5s, CLS < 0.1, INP < 200ms**, Lighthouse 90+ on mobile.
 
 Done:
 - Elementor CSS/JS **dequeued** on block pages (homepage went 190KB → ~52KB).
-- One Vite bundle (CSS ~a few KB gzip; JS ~52KB gzip incl. GSAP + Lenis).
 - Images `loading="lazy"`; `svh` on hero to avoid mobile CLS; reveal/animation
   respect `prefers-reduced-motion`.
+- **Fonts → subset WOFF2.** `npm run fonts` (`tools/build-fonts.mjs`) subsets to
+  Latin + the punctuation we actually set. Montserrat **688KB TTF → 42KB WOFF2**
+  with its 100–900 variable axis intact; Luxia 19KB → 7KB. TTF originals moved to
+  `theme/assets/fonts/src/`. Unused `LuxiaRegular.ttf` deleted. Both fonts are
+  now `rel="preload"`ed, with the hashed href read from the Vite manifest so the
+  preload primes the same URL the CSS asks for instead of fetching a second copy.
+- **GSAP + ScrollTrigger removed.** They were ~117KB minified serving exactly two
+  effects — a fade-and-rise on scroll and one parallax transform. Now
+  IntersectionObserver + a CSS transition, and six lines of rAF, in
+  `src/reveal.js`. Easing matched to GSAP's `power3.out`, so the motion is
+  unchanged. Nothing in the theme or in any page's content used `window.gsap`
+  (checked against `post_content` before removing). Lenis stays (~15KB) — it is
+  the smooth-scroll feel.
+  **JS bundle 141KB → 26.6KB raw, 52.9KB → 7.8KB gzip.**
+- **Theme's own images optimised.** `npm run images` (`tools/build-images.mjs`):
+  logos resized to 2× their largest render size, CSS backgrounds converted to
+  WebP. **427KB → 46KB**; `spotlight.png` alone went 227KB → 6KB. Originals in
+  `theme/assets/img/src/`. Header and footer logos got explicit `width`/`height`
+  to stop them reflowing the fixed header.
+- Scroll chrome (scroll indicator + header glass plate) coalesced from two
+  per-event listeners into one rAF-throttled pass that only touches the DOM on a
+  threshold crossing. The header's `backdrop-filter` is now `visibility: hidden`
+  at the top of the page rather than merely transparent, so the compositor drops
+  the blur readback entirely until it is needed.
 
 To do (ordered by impact):
-1. **Images → WebP/AVIF + right sizes.** Uploads are 5.7 GB, mostly oversized
-   JP/PNG. Convert survivors, add `srcset`/`sizes`, strip metadata. Biggest LCP
-   win. (See §12 media cleanup.)
-2. **Fonts:** subset + convert TTF → **WOFF2** (Montserrat is a 688KB variable
-   TTF — subset to Latin + needed weights; `font-display: swap` already set).
-3. **Hero video:** serve a poster image, `preload="none"` on mobile, and a
-   smaller/compressed showreel; consider AV1/WebM at lower bitrate.
-4. **Defer/async JS**, keep the single bundle; split rarely-used block JS if it
-   grows. Consider `@wordpress/scripts`-style code-splitting only if needed.
-5. **Critical CSS** inline for above-the-fold; the rest async (optional; Vite can
-   emit a critical chunk).
-6. **Caching + CDN** in production (page cache + Cloudflare/host CDN). Do **not**
+1. **Uploads → WebP/AVIF + right sizes.** The 906-file keep set is 534 MB and
+   still mostly oversized JPG/PNG plus uncompressed video. Convert, add
+   `srcset`/`sizes`, strip metadata. Biggest remaining LCP win. (See §12a.)
+2. **Hero video:** the showreel is a **120 MB** `.webm`. Serve a poster image,
+   `preload="none"` on mobile, and a properly compressed cut (AV1/WebM at a sane
+   bitrate). This is now by far the heaviest single asset on the site.
+3. **Third-party tags.** GTM / Google Ads / Analytics currently load on every
+   page and are the largest remaining third-party cost. Port them to a
+   consent-aware loader (§15) so they load after interaction, not on paint.
+4. **Critical CSS** inline for above-the-fold; the rest async (optional; Vite can
+   emit a critical chunk). CSS is 72KB raw / 17KB gzip — worth doing only after
+   the image work.
+5. **Caching + CDN** in production (page cache + Cloudflare/host CDN). Do **not**
    reuse the old NitroPack/WP Rocket configs — start clean.
-7. **DB:** search-replace to the production domain on deploy; remove leftover
+6. **DB:** search-replace to the production domain on deploy; remove leftover
    Newfold/Elementor options; keep autoloaded options small.
-8. Lighthouse/PSI pass per page before launch; fix any CLS from late-loading
+7. Lighthouse/PSI pass per page before launch; fix any CLS from late-loading
    images (set width/height or aspect-ratio — mostly done).
+
+**Regression check:** `node reference/verify-light.mjs` drives 7 representative
+pages and asserts that every `[data-cular-reveal]` element ends up visible, that
+the WOFF2 fonts load and no `.ttf` is requested, that the menu opens and closes,
+that rapid double-toggling doesn't strand it, and that no first-party request
+fails. Run it after touching motion, fonts, or assets.
 
 ## 10. SEO plan
 
@@ -247,49 +315,65 @@ portfolio all depend on videos the original scan flagged as "unused". Plan:
 3. Delete orphans + confirmed-unused (keep originals until verified; owner
    authorised deletion "at the end").
 
-### 12a. Media manifest — track what we actually use ⬅ **do this as we build**
+### 12a. Media manifest — what we actually use ✅ **built, re-run it as you build**
 
-We now know exactly which images/videos each rebuilt component references, and
-that knowledge is worth capturing **while we build** rather than reconstructing
-it at the end. At launch we want two lists: *keep + compress* and *delete*.
+The manifest is now a script, not a memory exercise. **Re-run it after every
+page you convert** — a page that moves off Elementor changes which uploads count
+as in use, in both directions.
 
-**Where media references come from** (all four must be scanned — a file used by
-only one of these is still in use):
+```bash
+npm run media:manifest     # crawl + scan (crawl needs the Local site running)
+npm run media:crawl        # browser pass only
+npm run media:scan         # DB/code pass only (reuses the last crawl)
+```
 
-| Source | How to find it |
-| --- | --- |
-| Block defaults hardcoded in PHP | `grep -rn "uploads/" theme/blocks/` |
-| Theme's own assets | `theme/assets/img/`, `theme/assets/fonts/` |
-| ACF fields + post meta | attachment IDs in `wp_postmeta` (portfolio `video_url`, `overlay_logo_id`, team `photo`, block JSON in `post_content`) |
-| Post/page content | `<img>`, `<video>`, and background-image URLs inside `post_content` |
-| Featured images | `_thumbnail_id` on every post/page/CPT |
+Two passes, because neither is complete on its own:
 
-**Known-referenced media so far** (keep + compress; update as pages land):
+| Pass | File | Catches |
+| --- | --- | --- |
+| Browser crawl | `reference/media-crawl.mjs` | What a real browser actually downloads on every rebuilt URL, desktop **and** mobile, scrolled to the bottom: `img[src\|srcset]`, `video`/`source`/`poster`, media links, and computed `background-image` on every element. This is the only pass that sees CSS-only references. |
+| DB + code scan | `reference/media-scan.php` | Hardcoded `uploads/` URLs in theme code; attachment IDs and URLs in `wp_postmeta` (ACF fields, `video_url`, `overlay_logo_id`, `_thumbnail_id`); `post_content` of every post we are **keeping**; `wp_options`. Expands each attachment to all its generated sizes, so a thumbnail reference never strands the full-size original. |
 
-- **Theme assets:** `logo-full.png`, `logo-green.png`, `spotlight.png`,
-  `team-card-bg.jpg`, `team-soon-mark.png`, the three font TTFs.
-- **Hero:** showreel video (landscape + portrait cuts).
-- **Team (About):** 11 member cut-outs — see the roster in
-  `blocks/team-grid/render.php`.
-- **Testimonials:** video testimonials + brand logos.
-- **Portfolio:** `portfolio_item` card art + videos.
-- **Field Notes:** the featured image of every published post.
-- **Why-us:** client logo marquee.
+Output lands in `reference/media-manifest/` (gitignored):
+`used.txt` (keep + compress, with *why* each file is kept), `unused.txt`
+(attachments nothing references), `orphans.txt` (files on disk with no
+attachment row), `summary.txt`.
 
-**Method when the rebuild is done:**
-1. Write `reference/media-manifest.mjs` — crawl every rebuilt URL with
-   Playwright and collect `img[src]`, `img[srcset]`, `video/source[src]`, and
-   computed `background-image` for every element. That catches CSS-only
-   references the DB scan misses.
-2. Union that with the DB scan (the four sources above) → **used set**.
-3. `used set` vs `wp_posts` attachments → **orphan set**.
-4. Compress the used set (WebP/AVIF, correct dimensions, strip EXIF); delete
-   the orphan set only after the owner signs off, keeping a full uploads
-   backup until the production site is verified.
+**Current numbers** (all 19 rebuilt URLs crawled):
+
+```
+Uploads on disk:      10,011 files, 5.7 GB
+Referenced (keep):       906 files, 534 MB
+Unused attachments:    8,717 files, 5.0 GB
+Orphan files:            388 files, 120 MB   (mostly Elementor form-submission PDFs)
+Reclaimable:                       5.1 GB
+```
+
+Two things to know before trusting a delete list:
+
+- **`post_content` of Elementor pages we intend to delete is deliberately
+  excluded** from the used set — otherwise every image on every page we are
+  about to throw away keeps itself alive and the reclaimable figure collapses to
+  nothing. The flip side: convert a page, re-run the scan, or you may delete
+  something that page still needs. Featured images are still counted for *all*
+  posts, including Elementor ones, as a deliberate safety margin.
+- **Numeric post meta is only read as an attachment ID when the meta key does
+  not start with `_`.** Without that guard `_wp_attachment_metadata` — a
+  serialized blob full of pixel widths and heights — matches a width of 1024
+  against attachment #1024 and marks essentially the entire library as used.
+  That bug made the first run report 1,852 files as in use instead of 906.
+
+Sanity checks that the current run passes: the 120MB hero showreel is kept
+while its five duplicate exports are flagged unused; all 24 testimonial and
+portfolio videos are kept; only 4 referenced files are missing from disk.
+
+**When the rebuild is done:** compress the used set (WebP/AVIF, correct
+dimensions, strip EXIF), then delete the orphan + unused sets — only after the
+owner signs off, and keeping a full uploads backup until production is verified.
 
 > Do **not** rely on the original `reference/media-audit/` numbers for the
 > delete list — that scan predates the rebuild and marks in-use videos as
-> unused.
+> unused. Use `reference/media-manifest/` instead.
 
 ## 13. Migration & deploy notes
 
@@ -315,16 +399,24 @@ only one of these is still in use):
 
 ## 14. Roadmap (suggested order)
 
-1. **Contact page** + working form (unblocks Elementor removal).
-2. **Marketing Services `/activate/`** and **Consultancy `/elevate/`** (hub
-   pages), then the 7 service detail pages (likely one reusable `cular/service`
-   block/template).
-3. **Portfolio listing** + **single `portfolio_item`** (case-study layout).
-4. **Case Study `/case-study/`**.
-5. **Media cleanup** (§12) + **performance pass** (§9).
-6. **SEO pass** (§10): re-enable Yoast, sitemaps, OG, alt-text audit, FAQ schema.
-7. **Remove Elementor** + dependencies; final QA + Lighthouse per page.
-8. **Deploy** to Hostinger/DO.
+1. ~~Contact page + working form~~ ✅
+2. ~~Marketing Services `/activate/` + Consultancy `/elevate/` hubs and their 11
+   child service pages~~ ✅
+3. **Fix the "Home" menu item** — it still points at the old Elementor
+   `/cular-creative/` instead of `/`. One-minute fix, currently sending every
+   menu user to the wrong homepage.
+4. **Single `portfolio_item` template** + **portfolio listing** (`/portfolio-cular/`).
+   Rebuilding the listing on the CPT makes 47 Elementor pages redundant in one
+   move — by far the best ratio of work to Elementor removed.
+5. **Case Study `/case-study/`** (confirm which of the five are real first).
+6. **`/form/*` pages** — 10 Elementor Pro forms. Reuse the `cular/contact`
+   intake pattern. This is the last hard blocker for removing Elementor.
+7. **`/ads-pages/*`** — check with the owner for live ad spend before touching.
+8. **Media cleanup** (§12a) + the remaining **performance work** (§9): uploads to
+   WebP/AVIF, hero video compression, third-party tag deferral.
+9. **SEO pass** (§10): re-enable Yoast, sitemaps, OG, alt-text audit, FAQ schema.
+10. **Remove Elementor** + dependencies; final QA + Lighthouse per page.
+11. **Deploy** to Hostinger/DO.
 
 ## 15. Suggestions & improvements
 

@@ -7,6 +7,12 @@
 	justify-content: space-between;
 	padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3.5vw, 3rem);
 
+	// One easing + one duration for the whole open/close gesture, so the panel,
+	// the pill label and the nav items stay visually locked together.
+	--cular-menu-ease: cubic-bezier(0.65, 0, 0.25, 1);
+	--cular-menu-dur: 0.42s;
+	--cular-menu-stagger: 0.035s;
+
 	// Button rect in panel-local coords, measured by view.js so the panel
 	// can grow out of the button.
 	--btn-top: 25px;
@@ -61,7 +67,7 @@
 		grid-area: 1 / 1;
 		display: block;
 		backface-visibility: hidden;
-		transition: transform 0.55s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.35s linear 0.2s;
+		transition: transform 0.32s var(--cular-menu-ease), opacity 0.2s linear 0.06s;
 
 		&[data-open] { transform-origin: top; }
 
@@ -80,7 +86,7 @@
 	&.is-open &__toggle-label[data-close] {
 		opacity: 1;
 		transform: rotateX(0deg) scaleX(1) translateZ(0);
-		transition: transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.35s linear 0.3s;
+		transition: transform 0.36s var(--cular-menu-ease), opacity 0.2s linear 0.1s;
 	}
 }
 
@@ -107,6 +113,14 @@
 		radial-gradient(100% 85% at 0% 0%, #37624455 0%, rgba(55, 98, 68, 0) 70%),
 		linear-gradient(160deg, #3f7350 0%, #4a7d55 45%, #6f8a55 100%);
 
+	// Animating clip-path repaints the four gradient layers every frame. Giving
+	// the panel its own compositor layer keeps that repaint off the rest of the
+	// page (hero video, marquee) instead of dirtying it too. view.js adds
+	// will-change: clip-path only while the gesture is actually running.
+	transform: translateZ(0);
+	backface-visibility: hidden;
+	contain: paint;
+
 	// Closed: clipped to the pill button. Open: fills the panel.
 	// Radius is half the button height (a true pill) rather than a huge value,
 	// so it interpolates cleanly instead of bulging into an oval mid-transition.
@@ -119,7 +133,7 @@
 	transition: none;
 
 	.cular-header.is-ready & {
-		transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+		transition: clip-path var(--cular-menu-dur) var(--cular-menu-ease);
 	}
 
 	@media (max-width: 900px) {
@@ -154,12 +168,17 @@
 	}
 
 	// Each item rolls up into place, staggered by --index.
+	//
+	// The CLOSED rule doubles as the close animation, so it must be short and
+	// delay-free: the old `transform 0s linear 0.45s` held every label upright
+	// for 0.45s and then snapped it, which is what left items frozen half-open
+	// when the button was clicked twice in quick succession.
 	&__label {
 		display: inline-block;
 		transform: rotateX(90deg) translate3d(0, 40px, 0);
 		transform-origin: center bottom;
 		opacity: 0;
-		transition: transform 0s linear 0.45s, opacity 0.3s linear;
+		transition: transform 0.18s var(--cular-menu-ease), opacity 0.14s linear;
 	}
 
 	// Arrow that slides in on hover.
@@ -214,7 +233,7 @@
 			opacity: 0;
 			transform: translate3d(0, 100%, 0);
 			display: inline-block;
-			transition: transform 0s linear 0.45s, opacity 0.3s linear;
+			transition: transform 0.18s var(--cular-menu-ease), opacity 0.14s linear;
 
 			&::after {
 				content: "";
@@ -234,21 +253,51 @@
 }
 
 // --- Open state: staggered reveal of nav labels and social links ---
+//
+// Items start rolling in while the panel is still expanding (0.16s in, not
+// after the full 0.42s) — the whole gesture now finishes in ~0.65s instead of
+// ~1.5s, and the overlap is what makes it read as fast rather than merely short.
 .cular-header.is-open {
 	.cular-menu__label {
 		transform: rotateX(0deg) translate3d(0, 0, 0);
 		opacity: 1;
 		transition:
-			transform 0.65s cubic-bezier(0.215, 0.61, 0.355, 1) calc(var(--index, 0) * 0.06s + 0.45s),
-			opacity 0.35s linear calc(var(--index, 0) * 0.06s + 0.45s);
+			transform 0.42s cubic-bezier(0.215, 0.61, 0.355, 1) calc(var(--index, 0) * var(--cular-menu-stagger) + 0.16s),
+			opacity 0.24s linear calc(var(--index, 0) * var(--cular-menu-stagger) + 0.16s);
 	}
 
 	.cular-menu__social a {
 		opacity: 1;
 		transform: translate3d(0, 0, 0);
 		transition:
-			transform 0.65s cubic-bezier(0.215, 0.61, 0.355, 1) calc(var(--index, 0) * 0.06s + 0.6s),
-			opacity 0.45s linear calc(var(--index, 0) * 0.06s + 0.6s);
+			transform 0.42s cubic-bezier(0.215, 0.61, 0.355, 1) calc(var(--index, 0) * var(--cular-menu-stagger) + 0.28s),
+			opacity 0.3s linear calc(var(--index, 0) * var(--cular-menu-stagger) + 0.28s);
+	}
+}
+
+// Full-width panel (mobile): lock the page behind it. view.js also stops Lenis,
+// which otherwise keeps smooth-scrolling the page under an open menu.
+html.cular-menu-open,
+html.cular-menu-open body {
+	overflow: hidden;
+	touch-action: none;
+}
+
+// Respect reduced-motion: the panel still opens, it just doesn't perform.
+@media (prefers-reduced-motion: reduce) {
+	.cular-header {
+		--cular-menu-dur: 0.01s;
+		--cular-menu-stagger: 0s;
+	}
+
+	.cular-menu__label,
+	.cular-menu__social a,
+	.cular-header__toggle-label,
+	.cular-header.is-open .cular-menu__label,
+	.cular-header.is-open .cular-menu__social a,
+	.cular-header.is-open .cular-header__toggle-label {
+		transition-duration: 0.01s !important;
+		transition-delay: 0s !important;
 	}
 }
 
@@ -268,14 +317,23 @@
 		opacity: 0;
 		pointer-events: none;
 		background: rgba(255, 255, 255, 0.1);
+		box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+		// `visibility` (not just opacity) so the compositor drops the blur
+		// entirely at the top of the page — a full-width backdrop-filter that is
+		// merely transparent still costs a readback on every scroll frame.
+		visibility: hidden;
+		transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+	}
+
+	&.is-scrolled::before {
+		opacity: 1;
+		visibility: visible;
 		backdrop-filter: blur(14px) saturate(1.3);
 		-webkit-backdrop-filter: blur(14px) saturate(1.3);
-		box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
 		transition: opacity 0.35s ease;
 	}
 
-	&.is-scrolled::before { opacity: 1; }
-	&.is-open::before { opacity: 0; }
+	&.is-open::before { opacity: 0; visibility: hidden; }
 }
 
 // On solid-green pages the green pill and green logo would disappear, so both

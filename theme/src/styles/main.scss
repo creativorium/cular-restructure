@@ -1,15 +1,24 @@
 // Self-hosted brand fonts (ported from the old Elementor custom fonts).
+//
+// Both are WOFF2, subset to Latin + the punctuation we actually set (see
+// `npm run fonts` / tools/build-fonts.mjs). Montserrat went 688KB TTF -> 42KB
+// and keeps its full 100-900 variable weight axis; Luxia went 19KB -> 7KB.
+// unicode-range keeps the browser from downloading them for glyphs they can't
+// render anyway. No TTF fallback: WOFF2 is universal in every browser we
+// support, and offering one invites the 688KB download back.
 @font-face {
 	font-family: "Luxia Display";
-	src: url("../../assets/fonts/LuxiaDisplay.ttf") format("truetype");
+	src: url("../../assets/fonts/LuxiaDisplay.woff2") format("woff2");
 	font-weight: 400 700;
 	font-display: swap;
+	unicode-range: U+0000-00FF, U+0100-017F, U+2000-206F, U+20AC, U+2122;
 }
 @font-face {
 	font-family: "Montserrat";
-	src: url("../../assets/fonts/Montserrat.ttf") format("truetype");
+	src: url("../../assets/fonts/Montserrat.woff2") format("woff2");
 	font-weight: 100 900;
 	font-display: swap;
+	unicode-range: U+0000-00FF, U+0100-017F, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+25CF, U+2605;
 }
 
 // Global base styles. Design tokens live in theme.json (exposed as
@@ -253,4 +262,74 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (prefers-reduced-motion: reduce) {
 	.cular-wa { animation: none; }
+}
+
+// --- Reveal-on-scroll -------------------------------------------------------
+//
+// Formerly gsap.from(...) + ScrollTrigger; now a class toggled by an
+// IntersectionObserver (src/reveal.js) with the transition living here. The
+// easing is GSAP's power3.out, so the motion is unchanged.
+//
+// The hidden state is scoped to `html.cular-js`, set by a tiny inline script in
+// the document head (inc/enqueue.php). That does two jobs: it lands before the
+// first paint so nothing flashes in and then hides again, and it means a
+// visitor whose JS never runs gets a plain, fully visible page instead of a
+// blank one. The same script un-hides everything if the bundle fails to boot.
+
+.cular-js {
+	--cular-reveal-shift: 36px;
+	--cular-reveal-dur: 0.85s;
+	--cular-reveal-stagger: 0.1s;
+
+	@media (max-width: 780px) {
+		--cular-reveal-shift: 18px;
+		--cular-reveal-dur: 0.6s;
+		--cular-reveal-stagger: 0.06s;
+	}
+
+	[data-cular-reveal],
+	[data-cular-reveal-items] > * {
+		opacity: 0;
+		transform: translate3d(0, var(--cular-reveal-shift), 0);
+		transition:
+			opacity var(--cular-reveal-dur) cubic-bezier(0.215, 0.61, 0.355, 1),
+			transform var(--cular-reveal-dur) cubic-bezier(0.215, 0.61, 0.355, 1);
+		// Only while the element is still waiting its turn — a permanent
+		// will-change on every revealable element on the page would keep dozens
+		// of compositor layers alive for nothing.
+		will-change: opacity, transform;
+	}
+
+	[data-cular-reveal].is-revealed,
+	[data-cular-reveal-items].is-revealed > * {
+		opacity: 1;
+		transform: none;
+		will-change: auto;
+	}
+
+	// Children stagger; --reveal-i is set per child by src/reveal.js.
+	[data-cular-reveal-items].is-revealed > * {
+		transition-delay: calc(var(--reveal-i, 0) * var(--cular-reveal-stagger));
+	}
+}
+
+// Failsafe (see inc/enqueue.php) and reduced-motion both land here: show
+// everything, immediately, with no transition to sit through.
+.cular-reveal-all [data-cular-reveal],
+.cular-reveal-all [data-cular-reveal-items] > * {
+	opacity: 1 !important;
+	transform: none !important;
+	transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-js {
+		[data-cular-reveal],
+		[data-cular-reveal-items] > * {
+			opacity: 1;
+			transform: none;
+			transition: none;
+			will-change: auto;
+		}
+	}
 }
