@@ -4,7 +4,9 @@
       "Bash(node reference/run-php.mjs reference/build-portfolio.php --apply --only=mauri)",
       "Bash(node reference/verify-portfolio.mjs)",
       "Bash(node reference/run-php.mjs reference/build-pages.php --apply)",
-      "Bash(node reference/verify-all.mjs)"
+      "Bash(node reference/verify-all.mjs)",
+      "Bash(python -)",
+      "Bash(grep -v \"^Warning\\\\|already defined\\\\|refs$\")"
     ]
   }
 }

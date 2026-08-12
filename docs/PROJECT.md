@@ -444,17 +444,24 @@ Output lands in `reference/media-manifest/` (gitignored):
 (attachments nothing references), `orphans.txt` (files on disk with no
 attachment row), `summary.txt`.
 
-**Current numbers** (all 19 rebuilt URLs crawled):
+**Current numbers** (all 87 rebuilt URLs crawled):
 
 ```
-Uploads on disk:      10,011 files, 5.7 GB
-Referenced (keep):       906 files, 534 MB
-Unused attachments:    8,717 files, 5.0 GB
-Orphan files:            388 files, 120 MB   (mostly Elementor form-submission PDFs)
-Reclaimable:                       5.1 GB
+Uploads on disk:      10,013 files, 5.7 GB
+Referenced (keep):     2,851 files, 2.1 GB
+Unused attachments:    6,811 files, 3.4 GB
+Orphan files:            351 files, 120 MB   (mostly Elementor form-submission PDFs)
+Reclaimable:                       3.5 GB
 ```
 
-Two things to know before trusting a delete list:
+> **Why the keep set tripled.** The first run, against 19 rebuilt URLs, reported
+> 906 files / 534 MB kept and 5.1 GB reclaimable. Converting 94 pages moved their
+> media into the used set, and the figure went to 2,851 files / 2.1 GB. This is
+> the re-run rule in action, not a regression — **convert a page, re-run the
+> manifest**, or the delete list will happily include something a page you just
+> converted now needs.
+
+Three things to know before trusting a delete list:
 
 - **`post_content` of Elementor pages we intend to delete is deliberately
   excluded** from the used set — otherwise every image on every page we are
@@ -467,10 +474,20 @@ Two things to know before trusting a delete list:
   serialized blob full of pixel widths and heights — matches a width of 1024
   against attachment #1024 and marks essentially the entire library as used.
   That bug made the first run report 1,852 files as in use instead of 906.
+- **URL extraction anchors on a known media extension.** Serialized meta stores
+  URLs back to back with no separator, so a greedy "match non-delimiter
+  characters" pattern ran off the end of one filename into the next and produced
+  one joined path (`…/spb.webmhttp:/…/spb-portrait_1.mp4`). A joined key matches
+  nothing on disk, so **both** real files fell out of the used set and onto the
+  delete list — the most dangerous possible failure for this script. Matching
+  "any 2–5 letters" as the extension is not enough either: Instagram rips are
+  named `Snapinsta.app_1234.jpg` and got truncated at `.app`. Hence the explicit
+  extension list. The fix took referenced-but-missing from 53 down to 9.
 
-Sanity checks that the current run passes: the 120MB hero showreel is kept
-while its five duplicate exports are flagged unused; all 24 testimonial and
-portfolio videos are kept; only 4 referenced files are missing from disk.
+Sanity checks that the current run passes: the 120MB hero showreel is kept while
+its five duplicate exports are flagged unused; testimonial and portfolio videos
+are kept; and of 2,851 referenced files only 9 are missing from disk, all of them
+old Elementor kit references to files that really were deleted.
 
 **When the rebuild is done:** compress the used set (WebP/AVIF, correct
 dimensions, strip EXIF), then delete the orphan + unused sets — only after the
