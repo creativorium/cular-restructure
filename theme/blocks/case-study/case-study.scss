@@ -1,0 +1,223 @@
+// Client case study — the body of every /portfolio-cular/<slug>/ page.
+//
+// Layout is deliberately simple and content-led: a centred measure for copy,
+// full-bleed-ish media, and a related-work grid at the end. All colour comes
+// from the tokens in theme.json (§11) — no hardcoded hex.
+
+.cular-cs {
+	--cs-max: 1180px;
+	--cs-measure: 68ch;
+
+	padding: clamp(3rem, 8vh, 6rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 7rem);
+	color: var(--wp--preset--color--contrast, #111);
+
+	> * {
+		max-width: var(--cs-max);
+		margin-inline: auto;
+	}
+
+	// --- Intro: logo beside the lead copy + service chips ---
+	&__intro {
+		display: grid;
+		grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+		gap: clamp(1.5rem, 5vw, 4rem);
+		align-items: center;
+		margin-bottom: clamp(2.5rem, 7vh, 5rem);
+
+		@media (max-width: 860px) {
+			grid-template-columns: 1fr;
+			gap: 1.75rem;
+		}
+	}
+
+	&__logo-img {
+		width: 100%;
+		height: auto;
+		max-height: 190px;
+		object-fit: contain;
+		object-position: left center;
+
+		@media (max-width: 860px) {
+			max-height: 120px;
+		}
+	}
+
+	&__lead {
+		font-size: clamp(1rem, 1.25vw, 1.15rem);
+		line-height: 1.7;
+
+		p { margin: 0 0 1em; }
+		p:last-child { margin-bottom: 0; }
+	}
+
+	&__services-title {
+		margin: 1.75rem 0 0.75rem;
+		font-size: clamp(1.3rem, 2vw, 1.7rem);
+	}
+
+	// Service chips — sage pills, so they read as metadata rather than body copy.
+	&__services {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+
+		li {
+			padding: 0.4em 0.95em;
+			border-radius: 999px;
+			background: var(--cular-sage, #A0B89D);
+			color: #fff;
+			font-size: 0.82rem;
+			font-weight: 600;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+		}
+	}
+
+	// --- Body sections ---
+	&__section {
+		margin-bottom: clamp(2.5rem, 7vh, 5rem);
+
+		&:last-of-type { margin-bottom: 0; }
+	}
+
+	&__section-title {
+		font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+		margin: 0 0 0.6em;
+		color: var(--cular-green, #457F55);
+	}
+
+	&__body {
+		max-width: var(--cs-measure);
+		font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+		line-height: 1.75;
+
+		p { margin: 0 0 1em; }
+		p:last-child { margin-bottom: 0; }
+
+		a {
+			color: var(--cular-green, #457F55);
+			text-underline-offset: 0.2em;
+		}
+
+		ul, ol { padding-left: 1.25rem; }
+		li { margin-bottom: 0.4em; }
+	}
+
+	// --- Media ---
+	//
+	// One item goes full width; two or more share a row and wrap on mobile.
+	// aspect-ratio + object-fit keeps the grid even without cropping surprises,
+	// and reserves the box before the file arrives so nothing shifts.
+	&__media {
+		margin-top: clamp(1.25rem, 3vh, 2rem);
+		display: grid;
+		gap: clamp(0.75rem, 2vw, 1.25rem);
+
+		&--1 { grid-template-columns: 1fr; }
+		&--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		&--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+
+		@media (max-width: 700px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__image,
+	&__video {
+		width: 100%;
+		height: auto;
+		display: block;
+		border-radius: clamp(0.75rem, 1.5vw, 1.25rem);
+		background: var(--wp--preset--color--cream, #eef1ea);
+	}
+
+	&__video {
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+
+		// Portrait reels are common in this content; let them keep their shape.
+		&[data-orientation="portrait"] { aspect-ratio: 9 / 16; }
+	}
+
+	// --- Related work ---
+	&__related {
+		margin-top: clamp(3.5rem, 9vh, 6rem);
+		padding-top: clamp(2rem, 5vh, 3rem);
+		border-top: 1px solid color-mix(in srgb, var(--cular-green, #457F55) 22%, transparent);
+	}
+
+	&__related-title {
+		font-size: clamp(1.5rem, 3vw, 2.2rem);
+		margin: 0 0 clamp(1.25rem, 3vh, 2rem);
+		color: var(--cular-green, #457F55);
+	}
+
+	&__related-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+		gap: clamp(1rem, 2.5vw, 1.75rem);
+	}
+
+	&__related-item a {
+		display: grid;
+		gap: 0.5rem;
+		text-decoration: none;
+		color: inherit;
+
+		&:hover .cular-cs__related-art img,
+		&:focus-visible .cular-cs__related-art img {
+			transform: scale(1.04);
+		}
+
+		&:hover .cular-cs__related-name {
+			color: var(--cular-green, #457F55);
+		}
+	}
+
+	&__related-art {
+		display: block;
+		overflow: hidden;
+		border-radius: clamp(0.6rem, 1.2vw, 1rem);
+		background: var(--wp--preset--color--cream, #eef1ea);
+		aspect-ratio: 4 / 3;
+
+		// Art-less items keep the box so the grid stays on one baseline.
+		&.is-empty {
+			background:
+				linear-gradient(135deg,
+					color-mix(in srgb, var(--cular-sage, #A0B89D) 35%, transparent),
+					color-mix(in srgb, var(--cular-green, #457F55) 18%, transparent));
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform 0.5s var(--cular-ease);
+		}
+	}
+
+	&__related-name {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: 1.15rem;
+		line-height: 1.25;
+		transition: color 0.25s ease;
+	}
+
+	&__related-tags {
+		font-size: 0.78rem;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: color-mix(in srgb, currentColor 62%, transparent);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-cs__related-art img { transition: none; }
+}

@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/case-study",
+	"title": "Case Study",
+	"category": "cular",
+	"icon": "portfolio",
+	"description": "A client case study: logo, intro, service list, and heading-led sections of copy and media.",
+	"keywords": ["case study", "portfolio", "client", "project"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}
