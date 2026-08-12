@@ -3,17 +3,13 @@ import './styles/main.scss';
 import './styles/pages.scss';
 import './styles/single-post.scss';
 
-// Motion stack (ported from the old Elementor custom code: GSAP + Lenis).
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// Motion stack. GSAP + ScrollTrigger used to live here too, at ~117KB minified
+// for a fade-in and one parallax transform; both now run on IntersectionObserver
+// and rAF in ./reveal.js. Lenis stays — it is the smooth-scroll feel and only
+// ~15KB. Nothing in the theme or in any page's content referenced window.gsap.
 import Lenis from 'lenis';
 import { initSliders } from './slider.js';
-
-gsap.registerPlugin(ScrollTrigger);
-
-// Expose for any inline/block scripts that expect globals.
-window.gsap = gsap;
-window.ScrollTrigger = ScrollTrigger;
+import { initReveals, initHeroParallax } from './reveal.js';
 
 // Smooth scroll — replaces the old CDN Lenis snippet.
 const lenis = new Lenis({
@@ -26,10 +22,12 @@ const lenis = new Lenis({
 });
 window.lenis = lenis;
 
-// Keep ScrollTrigger in sync with Lenis.
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add((time) => lenis.raf(time * 1000));
-gsap.ticker.lagSmoothing(0);
+// Lenis needs a rAF pump; GSAP's ticker used to provide it.
+const raf = (time) => {
+	lenis.raf(time);
+	requestAnimationFrame(raf);
+};
+requestAnimationFrame(raf);
 
 // Pull in every block's SCSS + optional view.js automatically.
 const blockStyles = import.meta.glob('../blocks/**/*.scss', { eager: true });
@@ -37,95 +35,62 @@ void blockStyles;
 const blockScripts = import.meta.glob('../blocks/**/view.js', { eager: true });
 void blockScripts;
 
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isMobile = window.matchMedia('(max-width: 780px)').matches;
-
 /**
- * Reveal-on-scroll.
- *  - [data-cular-reveal]        : the element itself eases up
- *  - [data-cular-reveal-items]  : its direct children stagger in
- * Motion is lighter on mobile and skipped entirely for reduced-motion users.
+ * Two bits of scroll-linked chrome, on ONE listener and one rAF:
+ *  - the "waterfall" scroll indicator fades out past the fold (homepage +
+ *    About hero),
+ *  - the fixed header gains its glass plate once the page leaves the top.
+ *
+ * They were two independent scroll handlers, each toggling a class on every
+ * single scroll event. Coalescing them into one rAF-throttled pass that only
+ * touches the DOM when a threshold is actually crossed keeps scrolling cheap.
  */
-function initReveals() {
-	if (reduceMotion) return;
-
-	const shift = isMobile ? 18 : 36;
-	const dur = isMobile ? 0.6 : 0.85;
-
-	document.querySelectorAll('[data-cular-reveal]').forEach((el) => {
-		gsap.from(el, {
-			opacity: 0,
-			y: shift,
-			duration: dur,
-			ease: 'power3.out',
-			scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-		});
-	});
-
-	document.querySelectorAll('[data-cular-reveal-items]').forEach((group) => {
-		const kids = group.children;
-		if (!kids.length) return;
-		gsap.from(kids, {
-			opacity: 0,
-			y: shift,
-			duration: dur,
-			ease: 'power3.out',
-			stagger: isMobile ? 0.06 : 0.1,
-			scrollTrigger: { trigger: group, start: 'top 88%', once: true },
-		});
-	});
-}
-
-// Subtle parallax drift on hero video — desktop only, cheap (transform only).
-function initHeroParallax() {
-	if (reduceMotion || isMobile) return;
-	const video = document.querySelector('.cular-hero__video');
-	if (!video) return;
-	gsap.to(video, {
-		yPercent: 8,
-		ease: 'none',
-		scrollTrigger: {
-			trigger: '.cular-hero',
-			start: 'top top',
-			end: 'bottom top',
-			scrub: true,
-		},
-	});
-}
-
-/**
- * Fade the "waterfall" scroll indicator out once the user leaves the fold.
- * Shared chrome — rendered by the homepage hero and the About hero.
- */
-function initScrollIndicator() {
+function initScrollChrome() {
 	const indicator = document.querySelector('[data-cular-scroll]');
-	if (!indicator) return;
-
-	const HIDE_AFTER = 50;
-	const onScroll = () => {
-		indicator.classList.toggle('is-hidden', window.scrollY > HIDE_AFTER);
-	};
-	window.addEventListener('scroll', onScroll, { passive: true });
-	onScroll();
-}
-
-/** Give the fixed header a glass plate once the page leaves the top. */
-function initHeaderScroll() {
 	const header = document.querySelector('.cular-header');
-	if (!header) return;
+	if (!indicator && !header) return;
 
-	const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
-	window.addEventListener('scroll', onScroll, { passive: true });
-	onScroll();
+	let ticking = false;
+	let hidden = null;
+	let scrolled = null;
+
+	const update = () => {
+		ticking = false;
+		const y = window.scrollY;
+
+		if (indicator) {
+			const next = y > 50;
+			if (next !== hidden) {
+				hidden = next;
+				indicator.classList.toggle('is-hidden', next);
+			}
+		}
+		if (header) {
+			const next = y > 24;
+			if (next !== scrolled) {
+				scrolled = next;
+				header.classList.toggle('is-scrolled', next);
+			}
+		}
+	};
+
+	window.addEventListener(
+		'scroll',
+		() => {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(update);
+		},
+		{ passive: true }
+	);
+	update();
 }
 
 function boot() {
 	initReveals();
 	initHeroParallax();
-	initScrollIndicator();
-	initHeaderScroll();
+	initScrollChrome();
 	initSliders();
-	ScrollTrigger.refresh();
 }
 
 if (document.readyState !== 'loading') boot();

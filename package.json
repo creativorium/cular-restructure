@@ -7,10 +7,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "media:crawl": "node reference/media-crawl.mjs",
+    "media:scan": "node reference/run-php.mjs reference/media-scan.php",
+    "media:manifest": "npm run media:crawl && npm run media:scan",
+    "fonts": "node tools/build-fonts.mjs",
+    "images": "node tools/build-images.mjs"
   },
   "dependencies": {
-    "gsap": "^3.12.5",
     "lenis": "^1.1.14"
   },
   "devDependencies": {

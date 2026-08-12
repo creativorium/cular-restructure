@@ -42,7 +42,7 @@
 		align-items: center;
 		text-align: center;
 		padding: clamp(0.7rem, 1.7vw, 1.5rem) 0 0;
-		background: url("../../assets/img/team-card-bg.jpg") center / cover no-repeat;
+		background: url("../../assets/img/team-card-bg.webp") center / cover no-repeat;
 	}
 
 	&__caption {
@@ -88,6 +88,6 @@
 		transform: translateX(-50%);
 		width: 69%;
 		aspect-ratio: 360 / 315;
-		background: url("../../assets/img/team-soon-mark.png") center / contain no-repeat;
+		background: url("../../assets/img/team-soon-mark.webp") center / contain no-repeat;
 	}
 }

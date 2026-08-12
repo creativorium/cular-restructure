@@ -37,7 +37,8 @@ $year = gmdate( 'Y' );
 <footer class="cular-footer">
 	<div class="cular-footer__grid">
 		<div class="cular-footer__brand">
-			<img class="cular-footer__logo" src="<?php echo esc_url( $logo_url ); ?>" alt="Cular Creative" />
+			<?php // Intrinsic size of assets/img/logo-full.png; always below the fold, so lazy. ?>
+			<img class="cular-footer__logo" src="<?php echo esc_url( $logo_url ); ?>" width="420" height="102" loading="lazy" decoding="async" alt="Cular Creative" />
 			<p class="cular-footer__tagline luxia"><?php echo esc_html( $headline ); ?></p>
 		</div>
 

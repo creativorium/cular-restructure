@@ -53,7 +53,8 @@ $logo_url = ! empty( $logo['url'] ) ? $logo['url'] : CULAR_URI . '/assets/img/lo
 ?>
 <div class="cular-header" data-cular-header>
 	<a class="cular-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-		<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( ! empty( $logo['alt'] ) ? $logo['alt'] : 'Cular Creative' ); ?>" />
+		<?php // Intrinsic size of assets/img/logo-green.png — set so the fixed header doesn't reflow while it loads. ?>
+		<img src="<?php echo esc_url( $logo_url ); ?>" width="350" height="85" decoding="async" alt="<?php echo esc_attr( ! empty( $logo['alt'] ) ? $logo['alt'] : 'Cular Creative' ); ?>" />
 	</a>
 
 	<button class="cular-header__toggle" type="button" data-cular-menu-toggle aria-expanded="false" aria-controls="cular-menu">
