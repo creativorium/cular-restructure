@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/portfolio-archive",
+	"title": "Portfolio Archive",
+	"category": "cular",
+	"icon": "grid-view",
+	"description": "The full portfolio grid, with service filters, built from the portfolio_item CPT.",
+	"keywords": ["portfolio", "archive", "grid", "work"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

@@ -56,6 +56,18 @@ if ( ! empty( $block['className'] ) ) {
 		<source src="<?php echo esc_url( $video_land ); ?>" type="video/webm" />
 	</video>
 
+	<?php if ( ! $heading ) : ?>
+		<?php
+		// The homepage hero is the showreel and nothing else — by design, there is
+		// no visible headline. That left the most important page on the site with
+		// no <h1> at all, which is both an accessibility gap (screen-reader users
+		// get no page title in the heading outline) and the one on-page SEO signal
+		// you never want missing. A visually-hidden h1 supplies it without
+		// touching the design.
+		?>
+		<h1 class="screen-reader-text"><?php echo esc_html( get_bloginfo( 'name' ) . ' — ' . get_bloginfo( 'description' ) ); ?></h1>
+	<?php endif; ?>
+
 	<?php if ( $has_text ) : ?>
 		<div class="cular-hero__inner">
 			<?php if ( $eyebrow ) : ?>

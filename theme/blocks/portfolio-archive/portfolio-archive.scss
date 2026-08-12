@@ -1,0 +1,216 @@
+// Full portfolio grid with service filter chips.
+
+.cular-parch {
+	padding: clamp(2.5rem, 7vh, 5rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 7rem);
+	max-width: 1320px;
+	margin-inline: auto;
+	color: var(--wp--preset--color--contrast, #111);
+
+	&__head {
+		max-width: 62ch;
+		margin-bottom: clamp(1.75rem, 4vh, 2.75rem);
+	}
+
+	&__heading {
+		font-size: clamp(1.8rem, 4vw, 3.1rem);
+		line-height: 1.15;
+		margin: 0 0 0.5em;
+		color: var(--cular-green, #457F55);
+	}
+
+	&__intro {
+		margin: 0;
+		font-size: clamp(0.98rem, 1.2vw, 1.1rem);
+		line-height: 1.7;
+	}
+
+	// --- Filters ---
+	&__filter-label {
+		margin: 0 0 0.85rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	&__filters {
+		margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+	}
+
+	&__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	&__chip {
+		appearance: none;
+		cursor: pointer;
+		font: inherit;
+		font-size: 0.82rem;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45em;
+		padding: 0.5em 1em;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--cular-green, #457F55) 30%, transparent);
+		background: transparent;
+		color: inherit;
+		transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+		&:hover {
+			border-color: var(--cular-green, #457F55);
+			background: color-mix(in srgb, var(--cular-green, #457F55) 8%, transparent);
+		}
+
+		&.is-active {
+			background: var(--cular-green, #457F55);
+			border-color: var(--cular-green, #457F55);
+			color: #fff;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--cular-gold, #F8CE4A);
+			outline-offset: 2px;
+		}
+	}
+
+	&__chip-count {
+		font-size: 0.72em;
+		opacity: 0.7;
+		font-variant-numeric: tabular-nums;
+	}
+
+	// --- Grid ---
+	&__grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+		gap: clamp(1rem, 2.5vw, 1.75rem);
+	}
+
+	&__item[hidden] { display: none; }
+
+	&__card {
+		display: grid;
+		gap: 0.75rem;
+		text-decoration: none;
+		color: inherit;
+		height: 100%;
+
+		&:hover .cular-parch__art > *,
+		&:focus-visible .cular-parch__art > * {
+			transform: scale(1.05);
+		}
+
+		&:hover .cular-parch__name { color: var(--cular-green, #457F55); }
+
+		&:focus-visible {
+			outline: 2px solid var(--cular-gold, #F8CE4A);
+			outline-offset: 4px;
+			border-radius: 0.5rem;
+		}
+	}
+
+	// aspect-ratio reserves the box before the media lands, so the grid never
+	// reflows as images stream in.
+	&__art {
+		display: block;
+		position: relative;
+		overflow: hidden;
+		aspect-ratio: 4 / 3;
+		border-radius: clamp(0.6rem, 1.2vw, 1rem);
+		background: var(--wp--preset--color--cream, #eef1ea);
+
+		> * {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			transition: transform 0.5s var(--cular-ease);
+		}
+
+		&.is-empty {
+			background:
+				linear-gradient(135deg,
+					color-mix(in srgb, var(--cular-sage, #A0B89D) 35%, transparent),
+					color-mix(in srgb, var(--cular-green, #457F55) 18%, transparent));
+		}
+	}
+
+	&__body {
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	&__name {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: 1.25rem;
+		line-height: 1.2;
+		transition: color 0.25s ease;
+	}
+
+	&__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem 0.5rem;
+		font-size: 0.74rem;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: color-mix(in srgb, currentColor 62%, transparent);
+	}
+
+	&__tag:not(:last-child)::after {
+		content: " ·";
+	}
+
+	&__empty {
+		margin: 2rem 0 0;
+		font-size: 1rem;
+	}
+
+	// --- CTA ---
+	&__cta {
+		margin-top: clamp(3rem, 8vh, 5rem);
+		padding-top: clamp(2rem, 5vh, 3rem);
+		border-top: 1px solid color-mix(in srgb, var(--cular-green, #457F55) 22%, transparent);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	&__cta-text {
+		margin: 0;
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: clamp(1.3rem, 2.6vw, 2rem);
+	}
+
+	&__cta-btn {
+		display: inline-block;
+		padding: 0.8em 2em;
+		border-radius: 999px;
+		background: var(--cular-green, #457F55);
+		color: #fff;
+		text-decoration: none;
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		transition: background 0.25s ease;
+
+		&:hover { background: #3b6d49; }
+
+		&:focus-visible {
+			outline: 2px solid var(--cular-gold, #F8CE4A);
+			outline-offset: 3px;
+		}
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-parch__art > * { transition: none; }
+}

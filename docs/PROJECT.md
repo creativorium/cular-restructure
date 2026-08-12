@@ -57,8 +57,10 @@ Redesign/                     git root -> github.com/creativorium/cular-restruct
       nav.php                 reads Appearance > Menus
       media.php               shared gallery/image helpers
       site-chrome.php         global WhatsApp button
-      elementor-offload.php   dequeues Elementor CSS/JS on non-Elementor pages
+      elementor-offload.php   dequeues Elementor CSS/JS by asset source path
       single-post.php         single-post SEO (h1, footnotes, Article JSON-LD)
+      portfolio.php           links portfolio_item <-> its case-study page
+      seo.php                 schema graph, redirects, noindex, h1 hygiene
     templates/                FSE templates: index, page, home (blog), single, front-page
     parts/                    header + footer template parts (render our blocks)
     blocks/<name>/            one folder per component (see §5)
@@ -128,7 +130,9 @@ blocks/<name>/
 `field-notes-archive` (blog index), `cta` (spotlight heading), `about-intro`,
 `team-grid`, `post-share`, `related-posts`, `page-hero` (shared inner-page
 hero), `service-list` (hub page card grid), `service-detail` (child service
-page), `cta-panel`, `faq`, `contact` (intake form).
+page), `cta-panel`, `faq`, `contact` (intake form), `case-study` (client case
+study + dynamic related-work strip), `portfolio-archive` (full grid + service
+filters).
 
 Shared: `src/slider.js` (scroll-snap slider used by testimonials + field notes),
 `src/reveal.js` (IntersectionObserver reveals + hero parallax),
@@ -160,34 +164,83 @@ than trusting this table if it looks stale.
 | ↳ 8 service detail pages | `/activate/` + `social-media`, `seo`, `web-development`, `content-creation`, `graphic-design`, `advertising`, `copywriting`, `branding-identity` |
 | Consultancy (hub) | `/elevate/` |
 | ↳ 3 detail pages | `/elevate/` + `consultacy`, `marketing-audit`, `blueprint-strategy` |
+| **Portfolio listing** | `/portfolio-cular/` and `/cular-portfolio/` — `cular/portfolio-archive` |
+| **47 case studies** | `/portfolio-cular/<slug>/` — `cular/case-study` |
+| **Case study pages** | `/case-study/` + `-test`, `-insurance-platform`, `-pilates-combo`, `-draft` |
+| **10 paid landing pages** | `/ads-pages/*` — WPForms embeds preserved |
+| **Rate card** | `/book-ratecard/`, `/book-ratecard-2/`, `/cular-creative-rate-card/`, `-preview` |
+| **One-offs** | `/hiring/`, `/let-us-know-how-we-did/`, `/mau-omset-.../`, `/cular-business-enquiry-landing-page/`, `/field-note-preview/` |
 
 Note the service pages live **under their hub** (`/activate/seo/`), not at the
 top level — the old `/seo/` URLs in an earlier draft of this doc never existed.
 
+**94 pages are off Elementor.** Run `node reference/verify-all.mjs` to re-check
+them all (see §6a).
+
 ### Still on Elementor ⬜
 
-85 pages. Grouped by what they need, not by count:
+12 pages:
 
 | Group | Count | URL(s) | Notes |
 | --- | --- | --- | --- |
-| **Portfolio single pages** | 47 | `/portfolio-cular/<slug>/` | The content already exists twice: these Elementor pages *and* the 44 `portfolio_item` CPT entries we built the homepage carousel from. Needs one `single-portfolio_item.html` template, then these are redundant → 301 to the CPT. |
-| **Portfolio listing** | 2 | `/portfolio-cular/`, `/cular-portfolio/` | Two competing listings; `/portfolio-cular/` is the one in the nav. |
-| **Paid landing pages** | 10 | `/ads-pages/*` | Live ad traffic — check with the owner before touching. Several are form pages. |
-| **Standalone form pages** | 10 | `/form/*` | All Elementor Pro forms. Blocker for removing Elementor (§13); the `cular/contact` intake form is the pattern to reuse. |
-| **Case study** | 5 | `/case-study/`, `/case-study-test/`, `/case-study-insurance-platform/`, `/case-study-pilates-combo/`, `/case-study-draft/` | Only `/case-study/` is in the nav; the other four look like drafts/experiments — confirm before rebuilding all five. |
-| **Rate card** | 4 | `/book-ratecard/`, `/book-ratecard-2/`, + 2 drafts | Low priority. |
-| **Old homepage** | 1 | `/cular-creative/` | ⚠️ **The "Home" item in the Primary Menu still points here**, not at `/`. Anyone using the menu lands on the old Elementor homepage. Fix in Appearance → Menus. |
-| **Odds and ends** | 6 | `/hiring/`, `/let-us-know-how-we-did/`, `/mau-omset-shopee-anda-naik-hingga-250/`, `/cular-business-enquiry-landing-page/`, `/field-note-preview/`, 1 untitled draft | Mostly disposable — audit for traffic, then delete or 301. |
+| **Standalone form pages** | 10 | `/form/*` | All Elementor Pro forms. **The last hard blocker for removing Elementor** (§13). The `cular/contact` intake form is the pattern to reuse; `/ads-pages/*` shows the WPForms-shortcode route also works. |
+| **Old homepage** | 1 | `/cular-creative/` | Deliberately left. It now **301s to `/`** (`cular_redirects()` in `inc/seo.php`) rather than being rebuilt — rebuilding it would have created a second page serving the homepage's content. |
+| **Untitled draft** | 1 | — | Empty; delete it. |
 
 Not-yet-rebuilt pages keep working on Elementor at their real URL until we
 rebuild them; the nav/footer links then resolve to the new page automatically.
+
+### 6a. How pages get converted
+
+Conversion is scripted, not hand-built. Three pieces:
+
+| File | Job |
+| --- | --- |
+| `reference/elementor-extract.php` | Walks `_elementor_data` and emits presentation-free blocks (`heading`, `text`, `list`, `image`, `gallery`, `video`, `shortcode`, `form`). `--audit [--uri=<fragment>]` reports **unrecognised widget types instead of dropping them**, which is the whole point — run it before converting anything new. |
+| `reference/build-portfolio.php` | The 47 case studies → `page-hero` + `case-study`. |
+| `reference/build-pages.php` | `--group=listing\|case\|ads\|misc\|all` for everything else. |
+
+Both builders are **dry-run by default**; pass `--apply` to write and `--revert`
+to restore from the `_cular_prev_*` backups.
+
+Three traps worth knowing before writing any converted page:
+
+1. **`wp_slash()` the content.** `wp_update_post()` unslashes its input, which
+   eats the `\uXXXX` escapes inside block-attribute JSON and breaks the block
+   delimiter — the page then renders its own block comment as visible text.
+2. **`kses_remove_filters()` first.** From CLI there is no logged-in user, so WP
+   treats the write as untrusted and escapes `<!-- wp:… -->` into plain text.
+3. **The delimiter is `wp:cular/<name>`**, not `wp:acf/cular-<name>`.
+
+And two content traps the audit caught, both of which would have shipped
+silently-broken pages:
+
+- **`shortcode` widgets must not be ignored.** The paid landing pages embed
+  their forms with `[wpforms]` and the rate-card pages are nothing but
+  `[cular_rate_card]`. Ignoring the widget emptied five pages, three of them
+  taking live ad traffic. The case-study block runs `do_shortcode()` *after*
+  kses so these still work.
+- **Elementor Pro `form` widgets are never converted to markup.** A dead HTML
+  copy of a lead-capture form looks right and quietly drops enquiries. The
+  extractor emits a `form` marker and the builder attaches the real
+  `cular/contact` intake form instead.
 
 ## 7. Data sources
 
 - **Menus:** Appearance → Menus, locations **Primary Menu** / **Social Links**
   (`inc/nav.php`); header falls back to ACF then hardcoded defaults.
 - **Portfolio:** `portfolio_item` CPT + `portfolio_tag` taxonomy; card art in
-  meta `card_title`, `video_url`, `overlay_logo_id`, `external_link`.
+  meta `card_title`, `video_url`, `overlay_logo_id`, `portfolio_image_id`,
+  `external_link`.
+
+  There are **two records per project and they are not redundant**: the CPT holds
+  the *card* (art, video, tags, link) and drives the homepage carousel, the
+  archive and every related-work strip; the page at `/portfolio-cular/<slug>/`
+  holds the *long-form case study*. `external_link` on the CPT is what ties them
+  together, and `cular_case_study_item()` / `cular_item_permalink()` in
+  `inc/portfolio.php` walk that link in both directions. Don't "deduplicate"
+  them — deleting the pages would throw away the case-study content and its
+  search history.
 - **Team:** photos in uploads; roster is a default array in `team-grid` (editable
   via ACF repeater).
 - **Brand tokens:** `theme.json` (green `#457F55`, gold `#F8CE4A`, sage
@@ -233,6 +286,30 @@ Done:
   threshold crossing. The header's `backdrop-filter` is now `visibility: hidden`
   at the top of the page rather than merely transparent, so the compositor drops
   the blur readback entirely until it is needed.
+- **Elementor offload rewritten to match on asset source path.** It used to be a
+  hardcoded list of ~20 handle names, and it had quietly rotted: Elementor 3.x
+  registers CSS *per widget type* (`widget-image`, `widget-icon-list`,
+  `widget-spacer`, …) for whatever a page uses, so the portfolio conversions
+  pulled in five stylesheets the list had never heard of, plus
+  `dynamic-content-for-elementor` and `extensions-for-elementor-form` assets.
+  Matching on where a file comes from (`cular_elementor_asset_paths()`) covers
+  new widget handles and add-ons automatically. **Verified: zero Elementor
+  stylesheets on all 87 rebuilt URLs.** The dead `elementor-default` /
+  `elementor-kit-N` body classes are stripped too.
+- **Responsive images everywhere via `cular_img()`.** Blocks were hand-writing
+  single-`src` `<img>` tags, so a phone downloaded a 2000px original to paint it
+  at 380px. The helper routes through `wp_get_attachment_image()` for
+  `srcset`/`sizes`/intrinsic dimensions, and falls back to a plain tag for
+  content ported out of Elementor whose attachment row is gone.
+- **Video posters and `preload` are decided per element.** With a poster,
+  `preload="none"` (a case study can carry 40 clips, and the archive 45 cards).
+  Without one, `preload="none"` paints a dead black box — those fall back to
+  `preload="metadata"` so the first frame shows. Archive card videos only fetch
+  on hover/focus intent.
+- **Portfolio archive filters in the browser, not over the network.** All ~45
+  cards ship once and non-matching ones are hidden, so filtering costs no round
+  trip, the URL stays clean, and every project is in the initial HTML for
+  crawlers.
 
 To do (ordered by impact):
 1. **Uploads → WebP/AVIF + right sizes.** The 906-file keep set is 534 MB and
@@ -254,20 +331,48 @@ To do (ordered by impact):
 7. Lighthouse/PSI pass per page before launch; fix any CLS from late-loading
    images (set width/height or aspect-ratio — mostly done).
 
-**Regression check:** `node reference/verify-light.mjs` drives 7 representative
-pages and asserts that every `[data-cular-reveal]` element ends up visible, that
-the WOFF2 fonts load and no `.ttf` is requested, that the menu opens and closes,
-that rapid double-toggling doesn't strand it, and that no first-party request
-fails. Run it after touching motion, fonts, or assets.
+**Regression checks** — run these after touching motion, fonts, assets or any
+conversion:
+
+| Script | Covers |
+| --- | --- |
+| `node reference/verify-all.mjs` | Every rebuilt URL (87): HTTP 200, one `h1`, zero Elementor stylesheets, no raw block markup leaking as text, every reveal fired, valid JSON-LD, no failing first-party request. Regenerate its path list with the snippet in §6a. |
+| `node reference/verify-light.mjs` | 7 representative pages: fonts are WOFF2 and no `.ttf` is requested, the menu opens/closes, rapid double-toggling doesn't strand it. |
+| `node reference/verify-portfolio.mjs` | The 45 published case studies specifically. |
+
+One gotcha when writing these: **assert on the `is-revealed` class, not on
+computed `opacity`.** The first version of `verify-portfolio.mjs` sampled opacity
+right after scrolling and reported all 45 pages as broken — it was catching
+elements mid-transition.
 
 ## 10. SEO plan
 
 Done:
-- Semantic headings (one `h1` per page; single posts promote the first content
-  `h2` → `h1`).
-- **Structured data:** `BlogPosting` microdata on archive cards; `BlogPosting`
-  JSON-LD in `<head>` on single posts (`inc/single-post.php`).
-- **Internal linking:** related posts on singles; archive cards link to posts.
+- Semantic headings, **verified** — exactly one `h1` on all 87 rebuilt URLs
+  (`reference/verify-all.mjs` asserts it). Two real defects were found and fixed
+  doing this: the **homepage had none at all** (its hero is the showreel with no
+  visible headline, so `cular/hero` now emits a visually-hidden `h1` when no
+  heading is set), and three service pages had **two**, because the intake-forms
+  plugin renders its brand line as an `h1` — `inc/seo.php` wraps that shortcode
+  and demotes it, so a plugin update cannot re-break it.
+- **Structured data** (`inc/seo.php`, complements Yoast rather than duplicating
+  it — every node is suppressed when `WPSEO_VERSION` is defined and Yoast would
+  emit its own):
+  - `CreativeWork` on each of the 47 case studies, with the project's
+    `portfolio_tag` terms as `keywords`/`about`. `CreativeWork` is the honest
+    type for a portfolio piece — it is not an `Article` and not a `Product`.
+  - `ItemList` on the two portfolio listings, naming every project, which is
+    what lets a listing surface as a carousel rather than one blue link.
+  - `BreadcrumbList` sitewide.
+  - `BlogPosting` microdata on archive cards + JSON-LD on single posts
+    (`inc/single-post.php`).
+- **Redirects:** `/cular-creative/` (the old homepage) 301s to `/` instead of
+  being rebuilt, so the homepage's content lives at exactly one URL.
+- **noindex** on the previews, tests and internal one-offs, so converting them
+  didn't add thin pages competing in search.
+- **Internal linking:** related posts on singles; archive cards link to posts;
+  every case study links to four *tag-matched* projects (generated from the CPT,
+  so the links are topical and never go stale).
 - **External links** get `rel="noopener noreferrer"` + a generated **Sources**
   footnote list.
 - Clean URLs preserved (in-place conversion keeps slugs; no redirects needed).
@@ -381,10 +486,10 @@ owner signs off, and keeping a full uploads backup until production is verified.
   Elementor + Elementor Pro + `dynamic-content-for-elementor` +
   `extensions-for-elementor-form` + `pro-elements`. Verify no page 500s
   (all rebuilt pages have `_cular_prev_*` backups if rollback needed).
-- **Contact forms:** the Contact page uses Elementor Pro forms + WPForms. Before
-  dropping Elementor, rebuild the contact form (WPForms is kept active, or a
-  lightweight custom form + a mailer). This is a **blocker** for removing
-  Elementor — do it with the Contact page rebuild.
+- **Contact forms:** ✅ the Contact page runs on our own intake form, and the
+  paid landing pages keep their `[wpforms]` embeds (WPForms stays active). The
+  **only remaining blocker** is the 10 `/form/*` pages, which are still on
+  Elementor Pro forms — see roadmap step 6.
 - **Deactivated on local (for a lighter dev site):** Wordfence, WP Rocket,
   WP-Optimize, Site Kit, PixelYourSite, UpdraftPlus, WP Mail SMTP,
   wpforms-geolocation, wpforms-user-journey, simple-history, Yoast. Original
@@ -402,19 +507,20 @@ owner signs off, and keeping a full uploads backup until production is verified.
 1. ~~Contact page + working form~~ ✅
 2. ~~Marketing Services `/activate/` + Consultancy `/elevate/` hubs and their 11
    child service pages~~ ✅
-3. **Fix the "Home" menu item** — it still points at the old Elementor
-   `/cular-creative/` instead of `/`. One-minute fix, currently sending every
-   menu user to the wrong homepage.
-4. **Single `portfolio_item` template** + **portfolio listing** (`/portfolio-cular/`).
-   Rebuilding the listing on the CPT makes 47 Elementor pages redundant in one
-   move — by far the best ratio of work to Elementor removed.
-5. **Case Study `/case-study/`** (confirm which of the five are real first).
-6. **`/form/*` pages** — 10 Elementor Pro forms. Reuse the `cular/contact`
-   intake pattern. This is the last hard blocker for removing Elementor.
-7. **`/ads-pages/*`** — check with the owner for live ad spend before touching.
-8. **Media cleanup** (§12a) + the remaining **performance work** (§9): uploads to
-   WebP/AVIF, hero video compression, third-party tag deferral.
-9. **SEO pass** (§10): re-enable Yoast, sitemaps, OG, alt-text audit, FAQ schema.
+3. ~~Fix the "Home" menu item~~ ✅ (now points at the front page; the old
+   `/cular-creative/` 301s to `/`)
+4. ~~Portfolio listing + 47 case studies~~ ✅
+5. ~~Case study, ads landing, rate card and one-off pages~~ ✅
+6. **`/form/*` pages** — the last 10 Elementor pages, all Elementor Pro forms.
+   **This is the only remaining blocker for removing Elementor.** Two proven
+   routes: the `cular/contact` intake block, or a `[wpforms]` shortcode in a
+   `case-study` body (WPForms stays active — see `/ads-pages/*`).
+7. **Media cleanup** (§12a) — re-run `npm run media:manifest` first, since 94
+   pages moved off Elementor and that changes the used set substantially.
+8. **Remaining performance work** (§9): uploads to WebP/AVIF, the 120 MB hero
+   video, third-party tag deferral.
+9. **SEO pass** (§10): re-enable Yoast (note `inc/seo.php` already stands down
+   when it is active), sitemaps, OG, alt-text audit, FAQ schema.
 10. **Remove Elementor** + dependencies; final QA + Lighthouse per page.
 11. **Deploy** to Hostinger/DO.
 
