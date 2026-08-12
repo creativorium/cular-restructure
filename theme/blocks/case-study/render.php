@@ -110,7 +110,13 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 				<?php endif; ?>
 
 				<?php if ( $body ) : ?>
-					<div class="cular-cs__body"><?php echo wp_kses_post( $body ); ?></div>
+					<?php
+					// kses first (the body is authored content), THEN shortcodes:
+					// pages ported off Elementor carry [wpforms] and the rate-card
+					// shortcodes in their copy, and running kses over the expanded
+					// output would strip the form markup back out again.
+					?>
+					<div class="cular-cs__body"><?php echo do_shortcode( wp_kses_post( $body ) ); ?></div>
 				<?php endif; ?>
 
 				<?php if ( $media ) : ?>
