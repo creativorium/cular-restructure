@@ -326,3 +326,13 @@
 	.progress > div { background: #fff; }
 	.review-row { border-bottom-color: rgba(255, 255, 255, 0.2); }
 }
+
+// Dedicated form pages: no details column, form takes the full measure.
+// A 37-question intake is hard enough to fill in without doing it through a
+// 40%-width column.
+.cular-contact--form-only {
+	grid-template-columns: minmax(0, 1fr);
+	max-width: 1000px;
+
+	.cular-contact__form { width: 100%; }
+}

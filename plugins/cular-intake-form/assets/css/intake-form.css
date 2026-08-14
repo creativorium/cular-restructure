@@ -1,0 +1,660 @@
+@font-face {
+  font-family: 'Luxia Display';
+  src: url('https://fonts.cdnfonts.com/css/luxia-display') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root{
+  --bg:#f5f5f0;
+  --card:#ffffff;
+  --card2:#fafaf8;
+  --text:#2d3436;
+  --muted:#636e72;
+  --line:#d1d5db;
+  --accent:#498158;
+  --accent2:#2f593a;
+  --accent-light:#6b9e7a;
+  --warn:#fbbf24;
+  --coral:#FF715D;
+  --yellow:#FFE47E;
+  --radius:14px;
+  --shadow: 0 10px 30px rgba(73,129,88,.15);
+  --max: 920px;
+}
+
+.cular-intake-wrap *{box-sizing:border-box}
+.cular-intake-wrap{
+  font-family: 'Montserrat', sans-serif;
+  color:var(--text);
+  font-size: 14px;
+}
+
+@media (min-width: 1024px) {
+  .cular-intake-wrap{
+    font-size: 15px;
+  }
+}
+
+.cular-intake-wrap .wrap{
+  max-width: var(--max);
+  margin: 34px auto;
+  padding: 0 16px 50px;
+}
+
+.cular-intake-wrap header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:16px;
+  flex-wrap: wrap;
+}
+
+.cular-intake-wrap .brand h1{
+  font-family: 'Luxia Display', serif;
+  font-size: 22px;
+  margin:0 0 6px;
+  letter-spacing:.2px;
+  color: var(--accent);
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .brand h1{
+    font-size: 28px;
+  }
+}
+
+.cular-intake-wrap .brand p{
+  margin:0;
+  color:var(--muted);
+  font-size: 13px;
+  line-height:1.45;
+  max-width: 72ch;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .brand p{
+    font-size: 14px;
+  }
+}
+
+/* Neon-green edge on the form container.
+
+   The glow uses --neon, a brightened version of the brand green, NOT --accent
+   itself. Most of these forms sit on the site's green pages, and a mid-green
+   halo on a green background is invisible — the first attempt at this looked
+   like no border at all. A light, saturated core is what makes neon read, so
+   the border is bright and the halo carries the brand hue.
+
+   Intensifies on focus-within, which doubles as a "you are filling this in" cue. */
+:root{
+  --neon:#6FE59A;
+}
+
+.cular-intake-wrap .card{
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--neon);
+  border-radius: var(--radius);
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(111,229,154,.35),
+    0 0 10px rgba(111,229,154,.55),
+    0 0 26px rgba(111,229,154,.32),
+    0 0 60px rgba(73,129,88,.22),
+    inset 0 0 20px rgba(111,229,154,.10),
+    var(--shadow);
+  transition: box-shadow .35s ease, border-color .35s ease;
+}
+
+.cular-intake-wrap .card:focus-within{
+  border-color:#8CFFB4;
+  box-shadow:
+    0 0 0 1px rgba(140,255,180,.55),
+    0 0 14px rgba(140,255,180,.75),
+    0 0 38px rgba(111,229,154,.45),
+    0 0 80px rgba(73,129,88,.28),
+    inset 0 0 24px rgba(111,229,154,.14),
+    var(--shadow);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .cular-intake-wrap .card{ transition: none; }
+}
+
+.cular-intake-wrap .topbar{
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background: var(--card2);
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .topbar{
+    padding: 14px 16px;
+    gap: 14px;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+}
+
+.cular-intake-wrap .stepper{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.cular-intake-wrap .pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  background: var(--card2);
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .pill{
+    gap:8px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+.cular-intake-wrap .pill b{ color: var(--accent); font-weight:600; }
+
+.cular-intake-wrap .progress{
+  flex:1;
+  height: 8px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius:999px;
+  overflow:hidden;
+  min-width: 120px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .progress{
+    height: 9px;
+    min-width: 180px;
+    width: auto;
+  }
+}
+.cular-intake-wrap .progress > div{
+  height:100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  border-radius:999px;
+  transition: width .25s ease;
+}
+
+.cular-intake-wrap .content{
+  padding: 14px 12px 12px;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .content{
+    padding: 18px 16px 14px;
+  }
+}
+
+.cular-intake-wrap .section{
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--card2);
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .section{
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+}
+
+.cular-intake-wrap .section h2{
+  font-family: 'Luxia Display', serif;
+  font-size: 16px;
+  margin:0 0 10px;
+  letter-spacing:.2px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color: var(--accent);
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .section h2{
+    font-size: 18px;
+  }
+}
+
+.cular-intake-wrap .section h2 span{
+  color: var(--muted);
+  font-weight:500;
+  font-size:12px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .section h2 span{
+    font-size:13px;
+  }
+}
+
+.cular-intake-wrap .grid{
+  display:grid;
+  gap: 10px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.cular-intake-wrap .col-12{grid-column: span 12;}
+.cular-intake-wrap .col-8{grid-column: span 8;}
+.cular-intake-wrap .col-6{grid-column: span 6;}
+.cular-intake-wrap .col-4{grid-column: span 4;}
+.cular-intake-wrap .col-3{grid-column: span 3;}
+
+@media (max-width: 720px){
+  .cular-intake-wrap .col-8,.cular-intake-wrap .col-6,.cular-intake-wrap .col-4,.cular-intake-wrap .col-3{grid-column: span 12;}
+  .cular-intake-wrap header{flex-direction:column; align-items:flex-start;}
+  .cular-intake-wrap .wrap{
+    padding: 0 12px 40px;
+    margin: 20px auto;
+  }
+}
+
+.cular-intake-wrap label{
+  display:block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent2);
+  margin: 0 0 6px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap label{
+    font-size: 13px;
+  }
+}
+
+.cular-intake-wrap input, .cular-intake-wrap select, .cular-intake-wrap textarea{
+  width:100%;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--text);
+  outline:none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap input, .cular-intake-wrap select, .cular-intake-wrap textarea{
+    font-size: 14px;
+  }
+}
+.cular-intake-wrap input:focus, .cular-intake-wrap select:focus, .cular-intake-wrap textarea:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(73,129,88,.1);
+}
+
+.cular-intake-wrap textarea{
+  min-height: 92px;
+  resize: vertical;
+  line-height:1.45;
+}
+
+.cular-intake-wrap .help{
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height:1.4;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .help{
+    font-size: 12px;
+  }
+}
+
+.cular-intake-wrap .note{
+  font-size: 12px;
+  color: var(--muted);
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px dashed var(--line);
+  background: rgba(73,129,88,.05);
+}
+
+.cular-intake-wrap .note.note-inline{
+  display:flex;
+  align-items:center;
+  min-height: 44px;
+  margin-top:20px;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .note{
+    font-size: 13px;
+  }
+}
+
+.cular-intake-wrap .choices{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 720px){
+  .cular-intake-wrap .choices{grid-template-columns:1fr;}
+}
+
+.cular-intake-wrap .choice{
+  border: 1px solid var(--line);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  cursor:pointer;
+  transition: transform .08s ease, border-color .15s ease, box-shadow .15s ease;
+  user-select:none;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .choice{
+    border-radius: 14px;
+    padding: 12px;
+    gap:10px;
+  }
+}
+
+.cular-intake-wrap .choice:hover{ transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 4px 12px rgba(73,129,88,.15); }
+.cular-intake-wrap .choice input{ width:auto; margin-top:3px; }
+.cular-intake-wrap .choice h3{
+  margin:0;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--accent2);
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .choice h3{
+    font-size: 14px;
+  }
+}
+
+.cular-intake-wrap .choice p{
+  margin:4px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height:1.35;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .choice p{
+    font-size: 13px;
+  }
+}
+
+.cular-intake-wrap .chk{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  padding: 10px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .chk{
+    gap:10px;
+  }
+}
+
+.cular-intake-wrap .chk input{ width:auto; margin-top:3px; }
+.cular-intake-wrap .chk .txt{
+  font-size:12px;
+  color: var(--muted);
+  line-height:1.35;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .chk .txt{
+    font-size:13px;
+  }
+}
+
+.cular-intake-wrap .actions{
+  display:flex;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 12px 12px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--card2);
+  flex-wrap:wrap;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .actions{
+    padding: 14px 16px 18px;
+  }
+}
+
+.cular-intake-wrap button{
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor:pointer;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap button{
+    font-size: 14px;
+  }
+}
+.cular-intake-wrap button:hover{ background: var(--card2); border-color: var(--accent); }
+.cular-intake-wrap button:active{ transform: translateY(1px); }
+
+.cular-intake-wrap .primary{
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+.cular-intake-wrap .primary:hover{ background: var(--accent2); border-color: var(--accent2); }
+.cular-intake-wrap .ghost{ background: transparent; }
+
+.cular-intake-wrap .hidden{ display:none !important; }
+
+.cular-intake-wrap .badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card2);
+  color: var(--muted);
+  white-space:nowrap;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .badge{
+    font-size: 12px;
+  }
+}
+
+.cular-intake-wrap .badge.warn{ color: var(--coral); border-color: var(--coral); background: rgba(255,113,93,.1); }
+
+.cular-intake-wrap .divider{
+  height:1px;
+  background: var(--line);
+  margin: 10px 0;
+}
+
+.cular-intake-wrap .summary{
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(73,129,88,.08);
+  font-size: 12px;
+  color: var(--muted);
+  line-height:1.45;
+}
+
+@media (min-width: 768px) {
+  .cular-intake-wrap .summary{
+    border-radius: 14px;
+    font-size: 13px;
+  }
+}
+
+.cular-intake-wrap .summary strong{ color: var(--accent2); }
+
+.cular-intake-wrap code.k{
+  background: rgba(73,129,88,.1);
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  color: var(--accent2);
+  font-family: 'Montserrat', monospace;
+}
+
+/* intl-tel-input theme tweak */
+.cular-intake-wrap .iti{ width: 100%; }
+.iti__country-list{
+  background: #ffffff;
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+.iti__divider{ border-color: var(--line); }
+.iti__country.iti__highlight{ background: rgba(73,129,88,.1); }
+
+/* ---------------------------------------------------------------------------
+   Spec-driven forms (templates/partials/render-spec.php)
+
+   The hand-written templates only ever used text/select/textarea, so the
+   choice-group, group-label and review-row markup below had no styles yet.
+   --------------------------------------------------------------------------- */
+
+/* Group label for radio/checkbox sets. A <label for> would be wrong here —
+   there is no single input it belongs to — so it is a <span> styled to match. */
+/* Matches the <label> rule above exactly — same size, weight and colour token —
+   so a group label is indistinguishable from a field label. */
+.cular-intake-wrap .label-text{
+  display:block;
+  margin: 0 0 6px;
+  font-weight:600;
+  font-size:12px;
+  color: var(--accent2);
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px){
+  .cular-intake-wrap .label-text{ font-size:13px }
+}
+
+.cular-intake-wrap .opt-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.cular-intake-wrap .opt{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  cursor:pointer;
+  font-size:.9rem;
+  line-height:1.2;
+  background: var(--card);
+  transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.cular-intake-wrap .opt:hover{
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.cular-intake-wrap .opt input{
+  width:auto;
+  margin:0;
+  accent-color: var(--accent);
+}
+
+/* :has() lets the whole pill reflect the checked state without extra markup or
+   JS. Browsers without it still show the native control, so nothing is lost. */
+.cular-intake-wrap .opt:has(input:checked){
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.cular-intake-wrap .opt:focus-within{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+
+/* Review list on the final step. */
+.cular-intake-wrap .review-row{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  padding:9px 0;
+  border-bottom:1px dashed var(--line);
+  font-size:.9rem;
+}
+
+.cular-intake-wrap .review-row:last-child{ border-bottom:0 }
+
+.cular-intake-wrap .review-row span{
+  color: var(--muted);
+  flex:0 0 45%;
+}
+
+.cular-intake-wrap .review-row b{
+  flex:1;
+  text-align:right;
+  word-break:break-word;
+}
+
+@media (max-width:600px){
+  .cular-intake-wrap .review-row{ flex-direction:column; gap:2px }
+  .cular-intake-wrap .review-row span{ flex:none }
+  .cular-intake-wrap .review-row b{ text-align:left }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .cular-intake-wrap .opt{ transition:none }
+}
+
+/* The review list only has content on the final step; without this it renders
+   as an empty bordered bar under every other step. */
+.cular-intake-wrap #reviewBox:empty{ display:none }

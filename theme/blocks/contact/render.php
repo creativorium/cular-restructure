@@ -20,7 +20,18 @@ $company = get_field( 'company' ) ?: 'PT Cular Creative Studio';
 $address = get_field( 'address' ) ?: 'Jalan Nakula Komplex Nakula Plaza B1, Kel. Legian, Kec. Kuta, Badung 80361, Bali';
 $map_url = get_field( 'map_url' ) ?: 'https://maps.app.goo.gl/';
 $form    = get_field( 'form_type' ) ?: 'contact';
-$form_h  = get_field( 'form_heading' ) ?: 'Book a Call with Us';
+
+// Dedicated /form/* pages are nothing but the form: the questionnaire already
+// carries its own title and intro, so repeating "Book a Call with Us" above it
+// is a duplicate heading, and squeezing a 37-question form into the narrow
+// right-hand column of a two-column contact layout makes it far harder to fill
+// in than it needs to be. `form_only` drops the details column and lets the
+// form use the full width.
+$form_only = (bool) get_field( 'form_only' );
+$form_h    = get_field( 'form_heading' );
+if ( '' === (string) $form_h && ! $form_only ) {
+	$form_h = 'Book a Call with Us';
+}
 
 if ( ! $intro ) {
 	$intro = "Ready to start a project or just have a question? We're passionate about creating ethical and impactful digital experiences. Let's partner to elevate your brand and connect with your audience.";
@@ -38,7 +49,8 @@ if ( empty( $socials ) ) {
 $tel     = preg_replace( '/[^0-9+]/', '', $phone );
 $anchor  = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
 ?>
-<section<?php echo $anchor; // phpcs:ignore ?> class="cular-contact">
+<section<?php echo $anchor; // phpcs:ignore ?> class="cular-contact<?php echo $form_only ? ' cular-contact--form-only' : ''; ?>">
+	<?php if ( ! $form_only ) : ?>
 	<div class="cular-contact__details" data-cular-reveal>
 		<p class="cular-contact__intro"><?php echo esc_html( $intro ); ?></p>
 
@@ -82,9 +94,12 @@ $anchor  = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) 
 			</div>
 		<?php endif; ?>
 	</div>
+	<?php endif; ?>
 
 	<div class="cular-contact__form" id="cular-intake" data-cular-reveal>
-		<h2 class="cular-contact__form-heading"><?php echo esc_html( $form_h ); ?></h2>
+		<?php if ( $form_h ) : ?>
+			<h2 class="cular-contact__form-heading"><?php echo esc_html( $form_h ); ?></h2>
+		<?php endif; ?>
 
 		<?php
 		if ( shortcode_exists( 'cular_intake_form' ) ) {
