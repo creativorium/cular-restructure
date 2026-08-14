@@ -47,6 +47,7 @@ Redesign/                     git root -> github.com/creativorium/cular-restruct
   vite.config.js              Vite config (root = theme/, outputs theme/dist)
   package.json                lenis, sass, vite (+ the scripts in §4)
   tools/                      build-fonts.mjs, build-images.mjs (asset pipelines)
+  plugins/cular-intake-form/  the intake-forms plugin (junctioned into WP, §7a)
   theme/                      the block theme (symlinked into the Local site)
     style.css theme.json      theme header + design tokens (colours, fonts)
     functions.php             bootstraps inc/*
@@ -177,14 +178,15 @@ top level — the old `/seo/` URLs in an earlier draft of this doc never existed
 **94 pages are off Elementor.** Run `node reference/verify-all.mjs` to re-check
 them all (see §6a).
 
+| **10 form pages** | `/form/*` — all on our intake forms (§7a) |
+
 ### Still on Elementor ⬜
 
-12 pages:
+**2 pages, and neither is blocking.** Elementor can now be deactivated — see §13.
 
 | Group | Count | URL(s) | Notes |
 | --- | --- | --- | --- |
-| **Standalone form pages** | 10 | `/form/*` | All Elementor Pro forms. **The last hard blocker for removing Elementor** (§13). The `cular/contact` intake form is the pattern to reuse; `/ads-pages/*` shows the WPForms-shortcode route also works. |
-| **Old homepage** | 1 | `/cular-creative/` | Deliberately left. It now **301s to `/`** (`cular_redirects()` in `inc/seo.php`) rather than being rebuilt — rebuilding it would have created a second page serving the homepage's content. |
+| **Old homepage** | 1 | `/cular-creative/` | Deliberately left. It **301s to `/`** (`cular_redirects()` in `inc/seo.php`) rather than being rebuilt — rebuilding it would have created a second page serving the homepage's content. |
 | **Untitled draft** | 1 | — | Empty; delete it. |
 
 Not-yet-rebuilt pages keep working on Elementor at their real URL until we
@@ -224,6 +226,103 @@ silently-broken pages:
   copy of a lead-capture form looks right and quietly drops enquiries. The
   extractor emits a `form` marker and the builder attaches the real
   `cular/contact` intake form instead.
+
+## 7a. Forms & enquiry tracking
+
+Every form on the site is a **Cular Intake Form**. One pipeline, one admin
+screen, one table — so "how many enquiries did we get, and for what?" has a
+single answer instead of three plugins' worth.
+
+### Where the plugin lives ⚠️
+
+`plugins/cular-intake-form/` **in this repo**, junctioned into the Local site at
+`wp-content/plugins/cular-intake-form` — the same arrangement as the theme.
+
+It used to live only inside WordPress, untracked, which meant every change to a
+form was one `wp-content` wipe away from being gone and invisible in code
+review. If you clone this repo onto a new machine, recreate the link:
+
+```bash
+cmd //c mklink //J "C:\…\wp-content\plugins\cular-intake-form" "C:\…\Redesign\plugins\cular-intake-form"
+```
+
+(Windows junctions, not symlinks — junctions don't need an elevated shell. The
+original folder is preserved as `cular-intake-form.pre-vendor-backup`; delete it
+once you're happy.)
+
+### Form types
+
+Registered in `$form_types` in `cular-intake-form.php`. `[cular_intake_form
+type="…"]`, or set **Intake form type** on a `cular/contact` block.
+
+| Type | Form | Origin |
+| --- | --- | --- |
+| `contact` | Contact / General Enquiry | hand-written |
+| `web`, `web-design`, `web-development` | Web services | hand-written |
+| `ads`, `seo` | Advertising, SEO | hand-written |
+| `social-media` | Social Media Marketing (5 steps) | ported from a 36-question Elementor Pro form |
+| `content-social` | Content Creation — Social Media | ported from Elementor Pro |
+| `content-shoot` | Content Creation — Photo & Video Shoot | ported from Elementor Pro |
+| `brand-identity` | Brand Identity | reshaped from WPForms #11073 |
+| `discovery` | New Client Discovery | reshaped from WPForms #11067 |
+
+### Adding a form
+
+The five ported forms are **spec-driven** — a field list, not markup. Copy
+`templates/intake-form-brand-identity.php`, change the questions, register the
+type. Two pieces do the rest:
+
+- `templates/partials/render-spec.php` renders a spec (steps → sections →
+  fields; supports text/email/tel/textarea/select/radio/checkbox) into the same
+  markup the hand-written templates use.
+- `assets/js/intake-form-generic.js` drives any form marked
+  `data-generic-driver`: stepping, validation, review, submit. It reads step
+  names from `data-step-name`, so the template stays the source of truth and no
+  new form needs its own JS. The four older forms still have bespoke scripts;
+  they work, and there was no reason to rewrite them.
+
+`cular_intake_contact_step()` is **not optional**. `business_name` and
+`contact_email` are indexed columns on the submissions table and are what the
+admin list shows — a form that skips them files enquiries nobody can identify.
+
+### Tracking
+
+**wp-admin → Intake Forms** (All Submissions / Form Types / Settings), reading
+`wp_cular_intake_submissions`. Each row stores the full answer set as JSON plus
+form type, business name, email and timestamp. Submissions also fire an email to
+the recipients in Settings, and a webhook if one is configured.
+
+`reference/check-submissions.php` reports what is in the table from the CLI, and
+`--purge=<needle>` removes rows by business name (used to clear QA rows after a
+test run — be careful, it deletes).
+
+### Verifying
+
+`node reference/verify-forms.mjs` opens every `/form/*` page in a real browser,
+fills the required fields, walks every step and submits — then
+`check-submissions.php` confirms the rows landed. Rendering a form is not the
+same as it working; only this proves the pipeline end to end.
+
+Two things that check caught, neither visible from the markup:
+
+- The legacy `web` template had **no `form_type` input at all** — it relied
+  solely on its JS setting `data.form_type` at submit time, so nothing
+  inspecting the DOM could tell what the form was. Now declared in the markup
+  like every other template.
+- `/form/ads-form/` is a **draft**, so it 404s for anonymous visitors. It is
+  converted and will work when published; the verify script skips it by design.
+
+### Look
+
+Form containers carry a **neon green edge** (`--neon`, a brightened brand
+green) that intensifies on `:focus-within`. It is deliberately *not* built from
+`--accent`: these forms sit on the site's green pages, and a mid-green glow on a
+green background is invisible — the first attempt read as no border at all.
+
+Dedicated `/form/*` pages set **Form only** on the `cular/contact` block, which
+drops the contact-details column and the "Book a Call with Us" heading. A
+37-question intake does not belong in a 40%-wide column under a heading that
+duplicates its own title.
 
 ## 7. Data sources
 
@@ -503,10 +602,16 @@ owner signs off, and keeping a full uploads backup until production is verified.
   Elementor + Elementor Pro + `dynamic-content-for-elementor` +
   `extensions-for-elementor-form` + `pro-elements`. Verify no page 500s
   (all rebuilt pages have `_cular_prev_*` backups if rollback needed).
-- **Contact forms:** ✅ the Contact page runs on our own intake form, and the
-  paid landing pages keep their `[wpforms]` embeds (WPForms stays active). The
-  **only remaining blocker** is the 10 `/form/*` pages, which are still on
-  Elementor Pro forms — see roadmap step 6.
+- **Contact forms:** ✅ done. Every form is a Cular Intake Form (§7a), the paid
+  landing pages keep their `[wpforms]` embeds (WPForms stays active), and no
+  Elementor Pro form remains. **There is no blocker left** — 104 pages are off
+  Elementor and the only two still on it are an empty draft and the old homepage
+  that 301s to `/`.
+
+  Before deactivating, in this order: run `node reference/verify-forms.mjs` (all
+  9 published forms must submit), `node reference/verify-all.mjs`, then
+  deactivate and re-run both. Keep WPForms active — the ads landing pages depend
+  on it.
 - **Deactivated on local (for a lighter dev site):** Wordfence, WP Rocket,
   WP-Optimize, Site Kit, PixelYourSite, UpdraftPlus, WP Mail SMTP,
   wpforms-geolocation, wpforms-user-journey, simple-history, Yoast. Original
@@ -528,10 +633,7 @@ owner signs off, and keeping a full uploads backup until production is verified.
    `/cular-creative/` 301s to `/`)
 4. ~~Portfolio listing + 47 case studies~~ ✅
 5. ~~Case study, ads landing, rate card and one-off pages~~ ✅
-6. **`/form/*` pages** — the last 10 Elementor pages, all Elementor Pro forms.
-   **This is the only remaining blocker for removing Elementor.** Two proven
-   routes: the `cular/contact` intake block, or a `[wpforms]` shortcode in a
-   `case-study` body (WPForms stays active — see `/ads-pages/*`).
+6. ~~`/form/*` pages~~ ✅ all 10 on Cular Intake Forms, tracked in wp-admin (§7a)
 7. **Media cleanup** (§12a) — re-run `npm run media:manifest` first, since 94
    pages moved off Elementor and that changes the used set substantially.
 8. **Remaining performance work** (§9): uploads to WebP/AVIF, the 120 MB hero
