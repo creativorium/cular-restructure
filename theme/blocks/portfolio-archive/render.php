@@ -64,19 +64,6 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 
 	<?php if ( $show_filters && $terms ) : ?>
 		<div class="cular-parch__bar" data-cular-reveal>
-			<div class="cular-parch__search">
-				<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.49 4.49 0 0 1 9.5 14z"/></svg>
-				<label class="screen-reader-text" for="cular-parch-search">Search projects</label>
-				<input
-					type="search"
-					id="cular-parch-search"
-					class="cular-parch__search-input"
-					placeholder="Search projects…"
-					autocomplete="off"
-					data-search
-				/>
-			</div>
-
 			<?php // A disclosure panel, not a <select>: 26 services want room to breathe, and the counts help people pick. ?>
 			<div class="cular-parch__services">
 				<button type="button" class="cular-parch__services-btn" data-services-toggle aria-expanded="false" aria-controls="cular-parch-services">
@@ -100,6 +87,19 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 			</div>
 
 			<p class="cular-parch__count" data-count aria-live="polite"></p>
+			<div class="cular-parch__search">
+				<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.49 4.49 0 0 1 9.5 14z"/></svg>
+				<label class="screen-reader-text" for="cular-parch-search">Search projects</label>
+				<input
+					type="search"
+					id="cular-parch-search"
+					class="cular-parch__search-input"
+					placeholder="Search projects…"
+					autocomplete="off"
+					data-search
+				/>
+			</div>
+
 		</div>
 	<?php endif; ?>
 

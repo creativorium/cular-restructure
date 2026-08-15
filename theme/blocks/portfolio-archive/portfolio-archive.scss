@@ -3,10 +3,16 @@
 .cular-parch {
 	max-width: 1320px;
 	margin-inline: auto;
-	// No horizontal padding: the parent band already insets the content, and
-	// doubling it pushed the grid in from the page's own left edge.
-	padding: clamp(2.5rem, 7vh, 5rem) 0 clamp(4rem, 10vh, 7rem);
+	// Mobile keeps its own gutter — nothing else is providing one at that size,
+	// and edge-to-edge cards on a phone look like a rendering fault. On desktop
+	// the parent band already insets the content, so the archive adds none and
+	// the grid lines up with the hero above it.
+	padding: clamp(2.5rem, 7vh, 5rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 7rem);
 	color: var(--wp--preset--color--contrast, #111);
+
+	@media (min-width: 900px) {
+		padding-inline: 0;
+	}
 
 	&__head {
 		max-width: 62ch;
@@ -27,22 +33,32 @@
 	}
 
 	// --- Search + filter bar ---
+	// Services left, count centred, search right. Grid rather than flex so the
+	// count is centred against the BAR, not against whatever space the other two
+	// happen to leave — with flex it drifts as the service label changes length.
 	&__bar {
 		position: relative;
 		z-index: 5;
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: 0.75rem 1rem;
 		margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+
+		@media (max-width: 760px) {
+			grid-template-columns: 1fr;
+			justify-items: stretch;
+		}
 	}
 
 	&__search {
 		position: relative;
 		display: inline-flex;
 		align-items: center;
-		flex: 1 1 16rem;
-		max-width: 24rem;
+		justify-self: end;
+		width: min(24rem, 100%);
+
+		@media (max-width: 760px) { justify-self: stretch; }
 
 		svg {
 			position: absolute;
@@ -76,7 +92,7 @@
 		&::-webkit-search-cancel-button { -webkit-appearance: none; }
 	}
 
-	&__services { position: relative; }
+	&__services { position: relative; justify-self: start; }
 
 	&__services-btn {
 		appearance: none;
@@ -180,10 +196,12 @@
 
 	&__count {
 		margin: 0;
-		margin-left: auto;
+		text-align: center;
 		font-size: 0.85rem;
 		opacity: 0.7;
 		font-variant-numeric: tabular-nums;
+
+		@media (max-width: 760px) { text-align: left; }
 	}
 
 	// --- Grid: one feature card, then a pair, repeating ---
