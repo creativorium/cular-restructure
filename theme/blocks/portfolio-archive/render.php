@@ -159,7 +159,7 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 						<?php endif; ?>
 
 						<span class="cular-parch__view" aria-hidden="true">
-							View case study
+							View details
 							<svg viewBox="0 0 24 24" width="15" height="15" focusable="false"><path fill="currentColor" d="M13.2 5.2 12 6.4l4.8 4.8H4v1.6h12.8L12 17.6l1.2 1.2 7-7z"/></svg>
 						</span>
 					</span>

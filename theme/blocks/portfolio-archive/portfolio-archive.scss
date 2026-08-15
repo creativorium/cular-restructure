@@ -3,7 +3,9 @@
 .cular-parch {
 	max-width: 1320px;
 	margin-inline: auto;
-	padding: clamp(2.5rem, 7vh, 5rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 7rem);
+	// No horizontal padding: the parent band already insets the content, and
+	// doubling it pushed the grid in from the page's own left edge.
+	padding: clamp(2.5rem, 7vh, 5rem) 0 clamp(4rem, 10vh, 7rem);
 	color: var(--wp--preset--color--contrast, #111);
 
 	&__head {
