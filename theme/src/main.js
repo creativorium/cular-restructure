@@ -86,7 +86,32 @@ function initScrollChrome() {
 	update();
 }
 
+/**
+ * Publish the fixed header's real height as --cular-header-h.
+ *
+ * Sticky elements that should park *below* the header (the portfolio filter
+ * bar) need its height, and it changes with viewport width because the header's
+ * padding is a clamp(). Measuring beats hardcoding a number that is only right
+ * at one breakpoint.
+ */
+function initHeaderHeight() {
+	const header = document.querySelector('.cular-header');
+	if (!header) return;
+
+	const set = () => {
+		document.documentElement.style.setProperty(
+			'--cular-header-h',
+			`${Math.round(header.getBoundingClientRect().height)}px`
+		);
+	};
+
+	set();
+	if ('ResizeObserver' in window) new ResizeObserver(set).observe(header);
+	else window.addEventListener('resize', set, { passive: true });
+}
+
 function boot() {
+	initHeaderHeight();
 	initReveals();
 	initSplitText();
 	initHeroParallax();
