@@ -1,0 +1,41 @@
+// Shared SCSS mixins.
+//
+// Vite compiles every block stylesheet as its own root (see the glob import in
+// src/main.js), so anything defined in main.scss is NOT in scope inside
+// blocks/<name>/<name>.scss. Shared mixins live here and each consumer pulls
+// them in explicitly with `@use "../../src/styles/mixins" as *;`.
+
+// A 1px rule that wipes in from the left on hover.
+//
+// `text-decoration: underline` on :hover has no in-between state — it snaps on
+// and off. This is the treatment the header panel's social links use, lifted
+// here so every link that wants it shares one definition.
+//
+// The element is made inline-block so the pseudo-element has a box to sit in.
+@mixin cular-wipe-underline($offset: -2px) {
+	position: relative;
+	display: inline-block;
+	text-decoration: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: $offset;
+		width: 100%;
+		height: 1px;
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		transform: scaleX(1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&::after { transition: none; }
+	}
+}

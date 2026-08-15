@@ -106,7 +106,7 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 			?>
 			<div class="cular-cs__section" data-cular-reveal>
 				<?php if ( $title ) : ?>
-					<h2 class="cular-cs__section-title"><?php echo esc_html( $title ); ?></h2>
+					<h2 class="cular-cs__section-title" data-cular-split><?php echo esc_html( $title ); ?></h2>
 				<?php endif; ?>
 
 				<?php if ( $body ) : ?>
@@ -136,10 +136,13 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 								// browser to show the first frame, still far short
 								// of pulling the whole file.
 								$has_poster = ! empty( $image['url'] );
+								// #t=0.1 makes a posterless video paint its first
+								// frame instead of a black rectangle.
+								$video_src = $has_poster ? $video : $video . '#t=0.1';
 								?>
 								<video
 									class="cular-cs__video"
-									src="<?php echo esc_url( $video ); ?>"
+									src="<?php echo esc_url( $video_src ); ?>"
 									<?php if ( $has_poster ) : ?>poster="<?php echo esc_url( $image['url'] ); ?>"<?php endif; ?>
 									preload="<?php echo $has_poster ? 'none' : 'metadata'; ?>"
 									controls

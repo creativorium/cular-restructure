@@ -77,3 +77,103 @@ export function initHeroParallax() {
 	window.addEventListener('resize', onScroll, { passive: true });
 	update();
 }
+
+/**
+ * Line-by-line text reveal — the "each line slides up from behind a mask"
+ * effect, on any element marked [data-cular-split].
+ *
+ * Done with Range + getClientRects() rather than a wrapper-per-word: the browser
+ * has already worked out where the real line breaks are after wrapping, so we
+ * read them back instead of guessing. That means it stays correct at any width
+ * and with any font, which a word-count heuristic does not.
+ *
+ * Deliberately not GSAP/SplitText: this is ~60 lines and a CSS transition, where
+ * the library was 117KB. See docs/PROJECT.md §9.
+ *
+ * Accessibility and SEO: the original text is restored into an aria-hidden-free
+ * structure — the element keeps its exact text content, so screen readers and
+ * crawlers see the same string as before. Reduced-motion users skip the whole
+ * thing.
+ */
+export function initSplitText() {
+	const targets = document.querySelectorAll('[data-cular-split]');
+	if (!targets.length) return;
+
+	if (reduceMotion || !('IntersectionObserver' in window)) {
+		targets.forEach((el) => el.classList.add('is-revealed'));
+		return;
+	}
+
+	const split = (el) => {
+		const text = el.textContent.replace(/\s+/g, ' ').trim();
+		if (!text) return false;
+
+		// Measure the real line boxes of the existing text.
+		const node = el.firstChild;
+		if (!node || node.nodeType !== Node.TEXT_NODE) return false;
+
+		const range = document.createRange();
+		const lines = [];
+		let start = 0;
+		let lastBottom = null;
+
+		for (let i = 1; i <= node.length; i++) {
+			range.setStart(node, start);
+			range.setEnd(node, i);
+			const rects = range.getClientRects();
+			if (!rects.length) continue;
+
+			const bottom = Math.round(rects[rects.length - 1].bottom);
+			if (lastBottom === null) lastBottom = bottom;
+
+			if (bottom !== lastBottom) {
+				// i-1 is the first character of the new line.
+				lines.push(node.data.slice(start, i - 1).trim());
+				start = i - 1;
+				lastBottom = bottom;
+			}
+		}
+		lines.push(node.data.slice(start).trim());
+
+		const usable = lines.filter(Boolean);
+		if (usable.length < 1) return false;
+
+		el.textContent = '';
+		usable.forEach((line, i) => {
+			const mask = document.createElement('span');
+			mask.className = 'cular-split__line';
+			const inner = document.createElement('span');
+			inner.className = 'cular-split__inner';
+			inner.style.setProperty('--line-i', i);
+			inner.textContent = line;
+			mask.appendChild(inner);
+			el.appendChild(mask);
+			// A space between lines keeps the accessible text readable as prose.
+			if (i < usable.length - 1) el.appendChild(document.createTextNode(' '));
+		});
+		el.classList.add('is-split');
+		return true;
+	};
+
+	const io = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				entry.target.classList.add('is-revealed');
+				io.unobserve(entry.target);
+			}
+		},
+		{ rootMargin: '0px 0px -10% 0px', threshold: 0 }
+	);
+
+	targets.forEach((el) => {
+		// Split after fonts land: line breaks measured against a fallback face
+		// are wrong the moment the real font swaps in.
+		const run = () => {
+			split(el);
+			io.observe(el);
+		};
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+		else run();
+	});
+}

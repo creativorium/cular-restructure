@@ -1,3 +1,5 @@
+@use "../../src/styles/mixins" as *;
+
 // Service list — a gradient card of service rows, each with a pill button.
 
 .cular-svc {
@@ -11,7 +13,7 @@
 		width: 100%;
 		border-radius: clamp(1rem, 2vw, 1.75rem);
 		overflow: hidden;
-		padding: clamp(1.75rem, 4vw, 3.5rem) clamp(1.25rem, 3vw, 3rem);
+		padding: clamp(1.75rem, 4vw, 3.5rem) var(--cular-inset);
 		background: url("../../assets/img/service-card-bg.webp") center / cover no-repeat;
 	}
 
@@ -70,7 +72,7 @@
 			color: inherit;
 			text-decoration: none;
 
-			&:hover { text-decoration: underline; }
+			@include cular-wipe-underline;
 		}
 	}
 

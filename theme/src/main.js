@@ -9,7 +9,7 @@ import './styles/single-post.scss';
 // ~15KB. Nothing in the theme or in any page's content referenced window.gsap.
 import Lenis from 'lenis';
 import { initSliders } from './slider.js';
-import { initReveals, initHeroParallax } from './reveal.js';
+import { initReveals, initHeroParallax, initSplitText } from './reveal.js';
 
 // Smooth scroll — replaces the old CDN Lenis snippet.
 const lenis = new Lenis({
@@ -88,6 +88,7 @@ function initScrollChrome() {
 
 function boot() {
 	initReveals();
+	initSplitText();
 	initHeroParallax();
 	initScrollChrome();
 	initSliders();

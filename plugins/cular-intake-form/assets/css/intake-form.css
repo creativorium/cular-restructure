@@ -79,48 +79,12 @@
   }
 }
 
-/* Neon-green edge on the form container.
-
-   The glow uses --neon, a brightened version of the brand green, NOT --accent
-   itself. Most of these forms sit on the site's green pages, and a mid-green
-   halo on a green background is invisible — the first attempt at this looked
-   like no border at all. A light, saturated core is what makes neon read, so
-   the border is bright and the halo carries the brand hue.
-
-   Intensifies on focus-within, which doubles as a "you are filling this in" cue. */
-:root{
-  --neon:#6FE59A;
-}
-
 .cular-intake-wrap .card{
-  position: relative;
   background: var(--card);
-  border: 1px solid var(--neon);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
   overflow:hidden;
-  box-shadow:
-    0 0 0 1px rgba(111,229,154,.35),
-    0 0 10px rgba(111,229,154,.55),
-    0 0 26px rgba(111,229,154,.32),
-    0 0 60px rgba(73,129,88,.22),
-    inset 0 0 20px rgba(111,229,154,.10),
-    var(--shadow);
-  transition: box-shadow .35s ease, border-color .35s ease;
-}
-
-.cular-intake-wrap .card:focus-within{
-  border-color:#8CFFB4;
-  box-shadow:
-    0 0 0 1px rgba(140,255,180,.55),
-    0 0 14px rgba(140,255,180,.75),
-    0 0 38px rgba(111,229,154,.45),
-    0 0 80px rgba(73,129,88,.28),
-    inset 0 0 24px rgba(111,229,154,.14),
-    var(--shadow);
-}
-
-@media (prefers-reduced-motion: reduce){
-  .cular-intake-wrap .card{ transition: none; }
 }
 
 .cular-intake-wrap .topbar{
@@ -658,3 +622,7 @@
 /* The review list only has content on the final step; without this it renders
    as an empty bordered bar under every other step. */
 .cular-intake-wrap #reviewBox:empty{ display:none }
+
+/* Single stepper pill: "Step 1 of 4 · Your details". */
+.cular-intake-wrap .pill-of{ opacity:.75 }
+.cular-intake-wrap .pill-sep{ opacity:.45 }

@@ -132,8 +132,9 @@ blocks/<name>/
 `team-grid`, `post-share`, `related-posts`, `page-hero` (shared inner-page
 hero), `service-list` (hub page card grid), `service-detail` (child service
 page), `cta-panel`, `faq`, `contact` (intake form), `case-study` (client case
-study + dynamic related-work strip), `portfolio-archive` (full grid + service
-filters).
+study + dynamic related-work strip), `portfolio-archive` (search + service
+panel, feature/pair rhythm, progressive reveal), `form-index` (the /form/
+landing page).
 
 Shared: `src/slider.js` (scroll-snap slider used by testimonials + field notes),
 `src/reveal.js` (IntersectionObserver reveals + hero parallax),
@@ -430,6 +431,33 @@ To do (ordered by impact):
 7. Lighthouse/PSI pass per page before launch; fix any CLS from late-loading
    images (set width/height or aspect-ratio — mostly done).
 
+### Motion & interaction notes
+
+- **No GSAP.** It was removed (§9) and should stay removed: GSAP + ScrollTrigger
+  is ~117KB minified against a 28KB bundle. Everything currently on the site —
+  scroll reveals, the line-by-line heading reveal, hero parallax, the portfolio's
+  progressive load — is IntersectionObserver plus CSS transforms, which run on
+  the compositor exactly as a tweening library would.
+- **Line-by-line text reveal**: `[data-cular-split]` (`src/reveal.js`). Measures
+  the *real* line boxes with `Range.getClientRects()` and wraps each in a mask,
+  so it is correct at any width and font rather than guessing at word counts. It
+  waits for `document.fonts.ready` — lines measured against a fallback face are
+  wrong the moment the real font swaps in. The element keeps its exact text, so
+  crawlers and screen readers are unaffected.
+- **Page transitions**: the native View Transitions API (`@view-transition` in
+  `main.scss`), not a JS router. Zero bytes, degrades to a normal navigation.
+  The header and WhatsApp button are named view-transition elements so they stay
+  put instead of cross-fading against themselves.
+- **Wipe underline**: `@include cular-wipe-underline` from
+  `src/styles/_mixins.scss`. Note that Vite compiles each block stylesheet as
+  its own root, so mixins are **not** inherited from `main.scss` — a consuming
+  block must `@use "../../src/styles/mixins" as *;` explicitly.
+- **`--cular-inset`** is the shared horizontal inset for full-width bands whose
+  content must line up. Page-hero and the service-list card both use it; they
+  previously derived their own (4vw vs 3vw) and drifted apart by 5px on desktop.
+  The page-hero "Flush left" toggle opts a page out of it entirely (used on
+  `/activate/` and `/elevate/`, where the title sits on the card's outer edge).
+
 **Regression checks** — run these after touching motion, fonts, assets or any
 conversion:
 
@@ -438,6 +466,7 @@ conversion:
 | `node reference/verify-all.mjs` | Every rebuilt URL (87): HTTP 200, one `h1`, zero Elementor stylesheets, no raw block markup leaking as text, every reveal fired, valid JSON-LD, no failing first-party request. Regenerate its path list with the snippet in §6a. |
 | `node reference/verify-light.mjs` | 7 representative pages: fonts are WOFF2 and no `.ttf` is requested, the menu opens/closes, rapid double-toggling doesn't strand it. |
 | `node reference/verify-portfolio.mjs` | The 45 published case studies specifically. |
+| `node reference/verify-forms.mjs` | Drives and submits every `/form/*` page (§7a). |
 
 One gotcha when writing these: **assert on the `is-revealed` class, not on
 computed `opacity`.** The first version of `verify-portfolio.mjs` sampled opacity

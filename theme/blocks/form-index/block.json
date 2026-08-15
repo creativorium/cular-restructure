@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cular/form-index",
+	"title": "Form Index",
+	"category": "cular",
+	"icon": "feedback",
+	"description": "Lists every published intake form page, with the description of the form each one carries.",
+	"keywords": ["form", "index", "intake", "list"],
+	"supports": { "anchor": true, "html": false },
+	"acf": { "mode": "preview", "renderTemplate": "render.php" }
+}

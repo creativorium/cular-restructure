@@ -36,6 +36,7 @@ class Cular_Intake_Form {
         'contact' => array(
             'name' => 'Contact / General Enquiry Form',
             'description' => 'General "Book a Call with Us" form — Contact page and any service page without its own form',
+            'public' => 'A general enquiry — tell us what you need and we will point you to the right place.',
             'template' => 'intake-form-contact.php',
             'script' => 'intake-form-contact.js',
             'enabled' => true
@@ -43,6 +44,7 @@ class Cular_Intake_Form {
         'web-design' => array(
             'name' => 'Web Design Form',
             'description' => 'Intake form for website design (new sites & redesigns), plus strategy and maintenance',
+            'public' => 'For a new website design or a redesign of an existing one.',
             'template' => 'intake-form-web-design.php',
             'script' => 'intake-form.js',
             'enabled' => true
@@ -50,6 +52,7 @@ class Cular_Intake_Form {
         'web-development' => array(
             'name' => 'Web Development Form',
             'description' => 'Intake form for website development / builds, plus strategy and maintenance',
+            'public' => 'For building or rebuilding a website, plus ongoing maintenance.',
             'template' => 'intake-form-web-development.php',
             'script' => 'intake-form.js',
             'enabled' => true
@@ -57,6 +60,7 @@ class Cular_Intake_Form {
         'ads' => array(
             'name' => 'Advertising (Ads) Form',
             'description' => 'Intake form for paid advertising campaign management',
+            'public' => 'For paid advertising campaigns on Google, Meta and beyond.',
             'template' => 'intake-form-ads.php',
             'script' => 'intake-form-ads.js',
             'enabled' => true
@@ -64,6 +68,7 @@ class Cular_Intake_Form {
         'seo' => array(
             'name' => 'SEO Form',
             'description' => 'Intake form for SEO / organic search optimisation',
+            'public' => 'For growing your visibility in organic search.',
             'template' => 'intake-form-seo.php',
             'script' => 'intake-form-seo.js',
             'enabled' => true
@@ -74,6 +79,7 @@ class Cular_Intake_Form {
         'social-media' => array(
             'name' => 'Social Media Marketing Form',
             'description' => 'Full social media strategy intake — was the 36-question Elementor form on /form/social-media-marketing/',
+            'public' => 'The full social media strategy brief — goals, platforms, audience and content direction.',
             'template' => 'intake-form-social-media.php',
             'script' => 'intake-form-generic.js',
             'enabled' => true
@@ -81,6 +87,7 @@ class Cular_Intake_Form {
         'content-social' => array(
             'name' => 'Content Creation — Social Media',
             'description' => 'Brief for social content production',
+            'public' => 'A brief for social content production: goals, style, platforms and volume.',
             'template' => 'intake-form-content-social.php',
             'script' => 'intake-form-generic.js',
             'enabled' => true
@@ -88,6 +95,7 @@ class Cular_Intake_Form {
         'content-shoot' => array(
             'name' => 'Content Creation — Photo & Video Shoot',
             'description' => 'Brief for a photo/video shoot: look, mood and deliverables',
+            'public' => 'A brief for a photo or video shoot: look, mood, locations and deliverables.',
             'template' => 'intake-form-content-shoot.php',
             'script' => 'intake-form-generic.js',
             'enabled' => true
@@ -95,13 +103,15 @@ class Cular_Intake_Form {
         'brand-identity' => array(
             'name' => 'Brand Identity Form',
             'description' => 'Brand meaning, audience and positioning — was WPForms #11073',
+            'public' => 'For brand identity work — the meaning, audience and positioning behind the visuals.',
             'template' => 'intake-form-brand-identity.php',
             'script' => 'intake-form-generic.js',
             'enabled' => true
         ),
         'discovery' => array(
-            'name' => 'New Client Discovery',
+            'name' => 'Client Discovery',
             'description' => 'Broad first-conversation form, before a service is chosen — was WPForms #11067',
+            'public' => 'Not sure where to start? This broad first-conversation form covers the essentials.',
             'template' => 'intake-form-discovery.php',
             'script' => 'intake-form-generic.js',
             'enabled' => true
@@ -111,8 +121,9 @@ class Cular_Intake_Form {
         // [cular_intake_form type="web"] keep working. Prefer the
         // Web Design / Web Development forms for new pages.
         'web' => array(
-            'name' => 'Web Services Form (legacy)',
+            'name' => 'Web Development/Design Form',
             'description' => 'Original combined web form — use Web Design / Web Development instead',
+            'public' => 'For website work of any kind.',
             'template' => 'intake-form-web.php',
             'script' => 'intake-form.js',
             'enabled' => true
@@ -350,7 +361,7 @@ class Cular_Intake_Form {
             'content-social'  => 'Content — Social Media',
             'content-shoot'   => 'Content — Photo & Video Shoot',
             'brand-identity'  => 'Brand Identity',
-            'discovery'       => 'New Client Discovery',
+            'discovery'       => 'Client Discovery',
         );
         // Fall back to the registered form name before ucfirst()-ing the slug,
         // so a new type reads as "Brand Identity" rather than "Brand-identity"
