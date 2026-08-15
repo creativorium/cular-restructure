@@ -39,8 +39,8 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 		</div>
 	<?php endif; ?>
 
-	<div class="cular-phero__inner">
-		<h1 class="cular-phero__title"><?php echo esc_html( $title ); ?></h1>
+	<div class="cular-phero__inner<?php echo get_field( 'flush' ) ? ' cular-phero__inner--flush' : ''; ?>">
+		<h1 class="cular-phero__title" data-cular-split><?php echo esc_html( $title ); ?></h1>
 
 		<?php if ( $lead ) : ?>
 			<p class="cular-phero__lead"><?php echo esc_html( $lead ); ?></p>
@@ -54,4 +54,14 @@ $anchor = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) .
 			</div>
 		<?php endif; ?>
 	</div>
+
+	<?php if ( get_field( 'show_scroll' ) ) : ?>
+		<?php // Same shared chrome the homepage and About heroes render (main.scss). ?>
+		<div class="cular-scroll" data-cular-scroll aria-hidden="true">
+			<div class="cular-scroll__bar">
+				<div class="cular-scroll__bar-inner"></div>
+			</div>
+			<span class="cular-scroll__text">Scroll Down</span>
+		</div>
+	<?php endif; ?>
 </section>

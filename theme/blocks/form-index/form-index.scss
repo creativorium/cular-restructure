@@ -1,0 +1,96 @@
+// /form/ — index of every published intake form page.
+
+.cular-fidx {
+	max-width: 1000px;
+	margin-inline: auto;
+	padding: clamp(2rem, 6vh, 4rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 10vh, 7rem);
+	color: var(--wp--preset--color--contrast, #111);
+
+	// Sits on the green gradient, not on a card — white, like every other
+	// intro that runs directly on the page background.
+	&__intro {
+		margin: 0 0 clamp(1.5rem, 4vh, 2.5rem);
+		max-width: 62ch;
+		font-size: clamp(0.98rem, 1.2vw, 1.1rem);
+		line-height: 1.7;
+		color: #fff;
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+		gap: clamp(0.85rem, 2vw, 1.25rem);
+	}
+
+	&__card {
+		display: grid;
+		gap: 0.5rem;
+		height: 100%;
+		padding: clamp(1.1rem, 2.5vw, 1.6rem);
+		border-radius: clamp(0.75rem, 1.5vw, 1.15rem);
+		background: #fff;
+		border: 1px solid color-mix(in srgb, var(--cular-green, #457F55) 18%, transparent);
+		text-decoration: none;
+		color: inherit;
+		transition: transform 0.25s var(--cular-ease), border-color 0.25s ease, box-shadow 0.25s ease;
+
+		&:hover,
+		&:focus-visible {
+			transform: translateY(-3px);
+			border-color: var(--cular-green, #457F55);
+			box-shadow: 0 12px 28px rgba(69, 127, 85, 0.16);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--cular-gold, #F8CE4A);
+			outline-offset: 3px;
+		}
+
+		&:hover .cular-fidx__go svg,
+		&:focus-visible .cular-fidx__go svg {
+			transform: translateX(4px);
+		}
+	}
+
+	&__title {
+		font-family: "Luxia Display", Georgia, serif;
+		font-size: clamp(1.15rem, 2vw, 1.45rem);
+		line-height: 1.2;
+		color: var(--cular-green, #457F55);
+	}
+
+	&__desc {
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: color-mix(in srgb, currentColor 72%, transparent);
+	}
+
+	&__go {
+		margin-top: auto;
+		padding-top: 0.35rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4em;
+		font-size: 0.74rem;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--cular-green, #457F55);
+
+		svg { transition: transform 0.25s var(--cular-ease); }
+	}
+
+	&__empty {
+		margin: 0;
+		font-size: 1rem;
+		color: #fff;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-fidx__card,
+	.cular-fidx__go svg { transition: none; }
+}

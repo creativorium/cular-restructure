@@ -1,3 +1,5 @@
+@use "../../src/styles/mixins" as *;
+
 // Contact page: details column beside the Book a Call intake form.
 
 .cular-contact {
@@ -56,7 +58,7 @@
 			text-decoration: none;
 			font-size: clamp(0.92rem, 1.1vw, 1.05rem);
 
-			&:hover { text-decoration: underline; }
+			@include cular-wipe-underline;
 		}
 	}
 
@@ -96,7 +98,7 @@
 		text-transform: uppercase;
 		text-decoration: none;
 
-		&:hover { text-decoration: underline; }
+		@include cular-wipe-underline;
 	}
 
 	&__social {
@@ -335,4 +337,24 @@
 	max-width: 1000px;
 
 	.cular-contact__form { width: 100%; }
+}
+
+// The intake form's own header (title + intro) sits OUTSIDE the white card,
+// directly on the page's green gradient, where the plugin's default green
+// heading and grey body text are close to unreadable. The plugin ships neutral
+// defaults because it can't know its background; theming it for our pages is
+// the theme's job, so the override lives here rather than in the plugin.
+// Note `h2` as well as `h1`: inc/seo.php demotes the intake form's own <h1> to
+// an <h2> so the page keeps a single top-level heading, so a selector matching
+// only h1 silently misses the rendered title.
+.cular-contact .cular-intake-wrap {
+	.brand h1,
+	.brand h2,
+	.brand p {
+		color: #fff;
+	}
+
+	.brand p {
+		opacity: 0.92;
+	}
 }

@@ -1,3 +1,5 @@
+@use "mixins" as *;
+
 // Self-hosted brand fonts (ported from the old Elementor custom fonts).
 //
 // Both are WOFF2, subset to Latin + the punctuation we actually set (see
@@ -31,6 +33,13 @@
 	--cular-sage: var(--wp--preset--color--secondary, #A0B89D);
 	--cular-coral: var(--wp--preset--color--orange, #E9765B);
 	--cular-peach: #ff8c62; // warm accent used on blog cards + the mesh base
+
+	// Shared horizontal inset for full-width bands whose content must line up
+	// with each other. The page hero and the service-list card used to derive
+	// their own (4vw vs 3vw, both capped at 3rem), so they agreed at narrow
+	// widths and drifted apart by 5px on desktop — visible as the hero title
+	// sitting proud of the service cards below it.
+	--cular-inset: clamp(1.25rem, 4vw, 3rem);
 }
 
 *,
@@ -173,7 +182,9 @@ h1, h2, h3, h4, h5, h6 {
 	position: fixed;
 	top: var(--cular-scroll-top);
 	bottom: var(--cular-scroll-bottom);
-	right: 1rem;
+	// Nudged clear of the viewport edge so the rail sits in its own space rather
+	// than hugging the border.
+	right: calc(1rem + 30px);
 	z-index: 90;
 	display: flex;
 	flex-direction: column;
@@ -186,38 +197,51 @@ h1, h2, h3, h4, h5, h6 {
 
 	&.is-hidden { opacity: 0; }
 
+	// Sleeker: a hairline rail rather than a 2px bar, and a softer track so the
+	// travelling highlight is what you notice.
 	&__bar {
 		position: relative;
 		flex: 1 1 auto;
 		min-height: 0;
-		width: 2px;
+		width: 1px;
 		overflow: hidden;
-		background: hsla(0, 0%, 100%, 0.4);
+		border-radius: 999px;
+		background: hsla(0, 0%, 100%, 0.28);
 	}
 
 	&__bar-inner {
 		width: 100%;
 		height: 100%;
-		background: hsla(0, 0%, 100%, 1);
-		animation: cular-scroll-bar 2s linear infinite;
+		// Fades at both ends instead of a hard block, so the highlight reads as
+		// a drip running down the rail.
+		background: linear-gradient(
+			to bottom,
+			hsla(0, 0%, 100%, 0) 0%,
+			hsla(0, 0%, 100%, 0.95) 45%,
+			hsla(0, 0%, 100%, 0.95) 55%,
+			hsla(0, 0%, 100%, 0) 100%
+		);
+		animation: cular-scroll-bar 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 	}
 
 	&__text {
 		flex: none;
 		color: #fff;
 		font-family: "Luxia Display", Georgia, serif;
-		font-size: 1.2rem;
+		font-size: 1rem;
 		font-weight: 400;
+		letter-spacing: 0.06em;
+		opacity: 0.82;
 		writing-mode: vertical-rl;
 		-webkit-font-smoothing: antialiased;
 	}
 
 	@media (max-width: 600px) {
-		right: 3px;
+		right: 11px;
 		--cular-scroll-top: 5.5rem;
 		--cular-scroll-bottom: 6.5rem;
 
-		&__text { font-size: 0.9rem; }
+		&__text { font-size: 0.82rem; }
 	}
 }
 
@@ -332,4 +356,87 @@ h1, h2, h3, h4, h5, h6 {
 			will-change: auto;
 		}
 	}
+}
+
+// --- Line-by-line text reveal ([data-cular-split], src/reveal.js) -----------
+//
+// Each measured line gets a mask with overflow:hidden and an inner span that
+// starts pushed below it, so the line appears to rise out of the one above.
+// Only applied once JS has split the element (`.is-split`), so a page whose JS
+// never runs shows plain, fully visible text.
+
+.cular-split__line {
+	display: block;
+	overflow: hidden;
+	// The mask has to clear descenders and any glyph overshoot, or the tops of
+	// letters get sliced. Padding + a matching negative margin buys that room
+	// without changing the element's layout height.
+	padding-block: 0.12em;
+	margin-block: -0.12em;
+}
+
+.cular-split__inner {
+	display: block;
+	transform: translate3d(0, 105%, 0);
+	// Slight skew on the way in reads as momentum rather than a flat slide.
+	will-change: transform;
+}
+
+.is-split.is-revealed .cular-split__inner {
+	transform: translate3d(0, 0, 0);
+	transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)
+		calc(var(--line-i, 0) * 0.085s);
+	will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cular-split__inner {
+		transform: none;
+		transition: none;
+	}
+}
+
+// --- Cross-document page transitions ---------------------------------------
+//
+// The native View Transitions API, not a JS router. One at-rule, zero bytes of
+// JavaScript, and it degrades to an ordinary navigation in browsers that do not
+// support it yet. A JS page-transition library would mean intercepting every
+// link, managing history and re-running scripts on each "page" — a large amount
+// of machinery, and a real accessibility and SEO risk, for an effect the
+// browser now does natively.
+@view-transition {
+	navigation: auto;
+}
+
+// The default cross-fade, slowed slightly and eased so it reads as intentional
+// rather than as a flash.
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.42s;
+	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// The header and the WhatsApp button are fixed chrome that persists across
+// pages — naming them keeps them still while the content behind them changes,
+// instead of cross-fading them against themselves.
+.cular-header { view-transition-name: cular-header; }
+.cular-wa { view-transition-name: cular-wa; }
+
+::view-transition-old(cular-header),
+::view-transition-new(cular-header),
+::view-transition-old(cular-wa),
+::view-transition-new(cular-wa) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+	}
+}
+
+.cular-underline {
+	@include cular-wipe-underline;
 }

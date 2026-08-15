@@ -190,8 +190,13 @@ if ( ! function_exists( 'cular_intake_render_form' ) ) {
 				<div class="card" id="app">
 					<div class="topbar">
 						<div class="stepper">
-							<div class="pill"><b id="stepLabel">Step 1</b><span id="stepName"><?php echo esc_html( $steps[0]['name'] ?? '' ); ?></span></div>
-							<div class="pill">of <b><?php echo (int) $total; ?></b></div>
+							<?php // One pill, not three: "Step 1 of 4 · Your details" reads as a single fact. ?>
+							<div class="pill">
+								<b id="stepLabel">Step 1</b>
+								<span class="pill-of">of <?php echo (int) $total; ?></span>
+								<span class="pill-sep" aria-hidden="true">·</span>
+								<span id="stepName"><?php echo esc_html( $steps[0]['name'] ?? '' ); ?></span>
+							</div>
 						</div>
 						<div class="progress" aria-label="progress">
 							<div id="bar"></div>

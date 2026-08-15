@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
   <div class="wrap">
     <header>
       <div class="brand">
-        <h1>Website Services Form</h1>
+        <h1>Web Development/Design Form</h1>
         <p>
           Please fill in this form to help us understand your needs and provide you with the best possible service for your website project.
         </p>

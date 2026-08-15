@@ -16,7 +16,7 @@ require_once CULAR_INTAKE_PLUGIN_DIR . 'templates/partials/render-spec.php';
 cular_intake_render_form(
 	array(
 		'type'  => 'discovery',
-		'title' => 'New Client Discovery',
+		'title' => 'Client Discovery Form',
 		'intro' => 'A broad first look at your business, so we arrive at the call already understanding what you do and where you want to go.',
 		'steps' => array(
 			cular_intake_contact_step(),
