@@ -68,20 +68,61 @@ jobs:
           for v in SSH_HOST SSH_USER WP_PATH; do
             [ -n "${!v}" ] || { echo "::error::Secret $v is not set on this environment."; exit 1; }
           done
+
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
+          # tr -d '\r': a key pasted from Windows carries CRLF line endings,
+          # which makes OpenSSH reject it as malformed.
+          printf '%s\n' "${{ secrets.SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
-          # Trust-on-first-use. Pin SSH_KNOWN_HOSTS as a secret instead if you
-          # want the host key verified rather than accepted.
+
+          # Fail here, with a clear reason, rather than 20 lines later as an
+          # opaque "Permission denied".
+          if ! head -1 ~/.ssh/id_deploy | grep -q 'BEGIN .*PRIVATE KEY'; then
+            echo "::error::SSH_KEY is not a private key. Paste the whole private key file (the one WITHOUT .pub), including the BEGIN/END lines."
+            exit 1
+          fi
+          if ! ssh-keygen -y -f ~/.ssh/id_deploy > ~/.ssh/id_deploy.pub 2>/dev/null; then
+            echo "::error::SSH_KEY could not be parsed. It is either truncated or passphrase-protected — generate a passphrase-less deploy key."
+            exit 1
+          fi
+          echo "Deploy public key (this must be in the server's ~/.ssh/authorized_keys):"
+          cat ~/.ssh/id_deploy.pub
+
           ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           chmod 644 ~/.ssh/known_hosts
+
+          # IdentitiesOnly stops ssh offering every key it can find (which is
+          # what triggers "Too many authentication failures"), and BatchMode
+          # stops it falling back to an interactive password prompt — that
+          # fallback is why the failure read as "Permission denied, please try
+          # again" instead of naming the real problem.
+          # printf, not a heredoc: a heredoc inside a YAML block scalar carries
+          # the block's indentation into the file.
+          {
+            printf 'Host deploy-target\n'
+            printf '  HostName %s\n' "$SSH_HOST"
+            printf '  User %s\n' "$SSH_USER"
+            printf '  Port %s\n' "$SSH_PORT"
+            printf '  IdentityFile ~/.ssh/id_deploy\n'
+            printf '  IdentitiesOnly yes\n'
+            printf '  BatchMode yes\n'
+            printf '  StrictHostKeyChecking accept-new\n'
+          } >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Verify SSH authentication
+        run: |
+          if ! ssh -o ConnectTimeout=15 deploy-target 'echo connected as $(whoami)'; then
+            echo "::error::SSH key was rejected. Add the public key printed above to ~/.ssh/authorized_keys on the server (chmod 700 ~/.ssh, chmod 600 authorized_keys)."
+            exit 1
+          fi
 
       - name: Preflight — confirm the target really is a WordPress install
         # rsync runs with --delete so files removed from the repo also disappear
         # from the server. That is what we want, and it is exactly why the path
         # is checked first: --delete pointed at the wrong directory empties it.
         run: |
-          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
+          ssh deploy-target "
             set -e
             test -f '$WP_PATH/wp-config.php'      || { echo 'No wp-config.php at $WP_PATH'; exit 1; }
             test -d '$WP_PATH/wp-content/themes'  || { echo 'No wp-content/themes at $WP_PATH'; exit 1; }
@@ -92,21 +133,21 @@ jobs:
       - name: Deploy theme
         run: |
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/id_deploy -p $SSH_PORT" \
+            -e ssh \
             --exclude '.git*' \
             --exclude 'node_modules/' \
             --exclude '*.map' \
             --exclude 'assets/fonts/src/' \
             --exclude 'assets/img/src/' \
-            theme/ "$SSH_USER@$SSH_HOST:$WP_PATH/wp-content/themes/cular/"
+            theme/ "deploy-target:$WP_PATH/wp-content/themes/cular/"
 
       - name: Deploy intake-forms plugin
         run: |
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/id_deploy -p $SSH_PORT" \
+            -e ssh \
             --exclude '.git*' \
             plugins/cular-intake-form/ \
-            "$SSH_USER@$SSH_HOST:$WP_PATH/wp-content/plugins/cular-intake-form/"
+            "deploy-target:$WP_PATH/wp-content/plugins/cular-intake-form/"
 
       - name: Summary
         run: |
