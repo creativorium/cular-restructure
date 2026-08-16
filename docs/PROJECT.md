@@ -710,6 +710,49 @@ from GitHub" deploys were not used: most cannot run `npm run build`.
 4. On the dev site, activate the **Cular** theme and make sure **ACF PRO** is
    installed — the blocks do not render without it.
 
+### The deploy key must have **no passphrase**
+
+This is the one thing that reliably goes wrong, so it is worth stating plainly:
+CI runs unattended and cannot type a passphrase. The workflow uses
+`BatchMode yes` specifically so a passphrase-protected key fails immediately
+with a clear message instead of hanging on a hidden prompt or falling back to
+password auth (which reports the useless "Permission denied, please try again").
+
+**cPanel's "Generate a New Key" cannot be used on Bluehost** — it forces a
+password, and the private key it hands back begins:
+
+```
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,...
+```
+
+`Proc-Type: 4,ENCRYPTED` means CI cannot open it. Use **Import Key** instead:
+
+1. Generate locally, `-N ""` being the part that matters:
+   ```bash
+   ssh-keygen -t ed25519 -C "cular-dev-deploy" -f ~/.ssh/cular_deploy -N ""
+   ```
+   (Run this in **Git Bash**, not `cmd` — `cmd` does not expand `~` and the
+   command fails with "No such file or directory".)
+2. Check it the same way the workflow does. If this prints a public key, the
+   deploy will authenticate:
+   ```bash
+   ssh-keygen -y -f ~/.ssh/cular_deploy
+   ```
+3. cPanel → SSH Access → Manage SSH Keys → **Import Key**: paste only the
+   **public** key, leave the private box and passphrase empty — then
+   **Manage → Authorize**. Importing without authorising does nothing.
+4. `type "%USERPROFILE%\.ssh\cular_deploy" | clip` and paste into `SSH_KEY`.
+   Use the clipboard rather than selecting the text: a private key copied out of
+   a browser or terminal often arrives wrapped or truncated, and a private key
+   pasted into any chat, ticket or textarea should be revoked and regenerated.
+
+Generate a **separate key for production**. A dev key should never be able to
+reach the live site.
+
+`SSH_PORT` on Bluehost shared hosting is usually **2222**, not 22.
+
 ### Preflight, and why `--delete` is safe here
 
 rsync runs with `--delete`, so a file deleted from the repo also disappears from
