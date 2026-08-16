@@ -34,3 +34,9 @@ Thumbs.db
 uploads/
 wp-content/uploads/
 _quarantine-bluehost/
+
+# Project guide — LOCAL-ONLY, same reasoning as reference/.
+# The repo is public; PROJECT.md documents server paths, local DB credentials,
+# the deploy layout and client/plugin internals. None of that belongs in a
+# public repo. Keep editing it locally; back it up somewhere private.
+docs/
