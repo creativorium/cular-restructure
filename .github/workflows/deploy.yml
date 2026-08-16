@@ -1,0 +1,121 @@
+name: Deploy
+
+# Dev follows main automatically; production is always a deliberate, manual run.
+#
+# What ships is the BUILT theme. `theme/dist/` is gitignored, so a plain
+# `git pull` on the server would give you a site with no CSS or JS — the build
+# has to happen here and its output has to be part of what we copy.
+#
+# Per-site settings come from GitHub *Environments* (`dev` and `production`),
+# each holding the same five secret names. That keeps the workflow free of
+# per-target branching, and it lets you put a required-reviewer rule on the
+# production environment in repo settings so a production deploy needs a human
+# to approve it.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Which site to deploy to
+        required: true
+        default: dev
+        type: choice
+        options: [dev, production]
+
+concurrency:
+  # Never let two deploys write to the same server at once.
+  group: deploy-${{ inputs.target || 'dev' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target || 'dev' }}
+
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+      WP_PATH: ${{ secrets.WP_PATH }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build theme assets
+        run: npm run build
+
+      - name: Verify the build produced something
+        # A build that fails quietly but still exits 0 would otherwise deploy an
+        # empty dist/ and take the site's styling with it.
+        run: |
+          test -f theme/dist/.vite/manifest.json \
+            || { echo "::error::No Vite manifest — the build did not run."; exit 1; }
+          count=$(find theme/dist/assets -type f | wc -l)
+          echo "dist/assets: $count file(s)"
+          [ "$count" -gt 0 ] || { echo "::error::dist/assets is empty."; exit 1; }
+
+      - name: Configure SSH
+        run: |
+          for v in SSH_HOST SSH_USER WP_PATH; do
+            [ -n "${!v}" ] || { echo "::error::Secret $v is not set on this environment."; exit 1; }
+          done
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          # Trust-on-first-use. Pin SSH_KNOWN_HOSTS as a secret instead if you
+          # want the host key verified rather than accepted.
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Preflight — confirm the target really is a WordPress install
+        # rsync runs with --delete so files removed from the repo also disappear
+        # from the server. That is what we want, and it is exactly why the path
+        # is checked first: --delete pointed at the wrong directory empties it.
+        run: |
+          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "
+            set -e
+            test -f '$WP_PATH/wp-config.php'      || { echo 'No wp-config.php at $WP_PATH'; exit 1; }
+            test -d '$WP_PATH/wp-content/themes'  || { echo 'No wp-content/themes at $WP_PATH'; exit 1; }
+            mkdir -p '$WP_PATH/wp-content/themes/cular'
+            mkdir -p '$WP_PATH/wp-content/plugins/cular-intake-form'
+          "
+
+      - name: Deploy theme
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_deploy -p $SSH_PORT" \
+            --exclude '.git*' \
+            --exclude 'node_modules/' \
+            --exclude '*.map' \
+            --exclude 'assets/fonts/src/' \
+            --exclude 'assets/img/src/' \
+            theme/ "$SSH_USER@$SSH_HOST:$WP_PATH/wp-content/themes/cular/"
+
+      - name: Deploy intake-forms plugin
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_deploy -p $SSH_PORT" \
+            --exclude '.git*' \
+            plugins/cular-intake-form/ \
+            "$SSH_USER@$SSH_HOST:$WP_PATH/wp-content/plugins/cular-intake-form/"
+
+      - name: Summary
+        run: |
+          {
+            echo "### Deployed to \`${{ inputs.target || 'dev' }}\`"
+            echo
+            echo "| What | Where |"
+            echo "| --- | --- |"
+            echo "| theme | \`wp-content/themes/cular\` |"
+            echo "| plugin | \`wp-content/plugins/cular-intake-form\` |"
+            echo "| commit | \`${GITHUB_SHA::7}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

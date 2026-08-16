@@ -653,6 +653,89 @@ owner signs off, and keeping a full uploads backup until production is verified.
   cularcreative.com` (serialized-safe), sync uploads (post-cleanup),
   deploy the theme (run `npm run build`, commit `dist/` or build on server).
 
+## 13a. Deployment
+
+Two sites, one repo:
+
+| | URL | Deploys |
+| --- | --- | --- |
+| Dev | `dev.cularcreative.com/cular` | **automatically** on every push to `main` |
+| Production | `cularcreative.com` | **manually** — Actions → Deploy → Run workflow → `production` |
+
+`.github/workflows/deploy.yml` builds the theme and rsyncs it over SSH.
+
+### What gets deployed — and what does not
+
+| Path | Deployed? | Why |
+| --- | --- | --- |
+| `theme/` | ✅ → `wp-content/themes/cular` | including the built `dist/` |
+| `plugins/cular-intake-form/` | ✅ → `wp-content/plugins/cular-intake-form` | §7a |
+| `tools/` | ❌ | build-time only; never executed on the server |
+| `reference/` | ❌ | gitignored, local-only |
+| `theme/assets/*/src/` | ❌ | font/image **originals**, inputs to `npm run fonts` / `npm run images`. The built WOFF2 and WebP ship; the 1.1MB of sources have no business on a web server |
+| uploads, database | ❌ | never touched by a deploy — content lives on each site |
+
+**The build must run in CI.** `theme/dist/` is gitignored, so a plain `git pull`
+on the server produces a site with no CSS or JS. This is why host-native "pull
+from GitHub" deploys were not used: most cannot run `npm run build`.
+
+### One-time setup
+
+1. **Create two GitHub Environments** (repo → Settings → Environments): `dev`
+   and `production`. Give each the *same five secret names* — the workflow has
+   no per-target branching, GitHub swaps the values:
+
+   | Secret | Example |
+   | --- | --- |
+   | `SSH_HOST` | `dev.cularcreative.com` |
+   | `SSH_USER` | your SSH username |
+   | `SSH_PORT` | `22` (omit if 22; some hosts use 65002) |
+   | `SSH_KEY` | the **private** key, whole file including the BEGIN/END lines |
+   | `WP_PATH` | absolute path to the WP root, e.g. `/home/USER/domains/dev.cularcreative.com/public_html/cular` |
+
+   `WP_PATH` is the directory containing `wp-config.php` — for the dev site that
+   includes the `/cular` subdirectory.
+
+2. **Make a deploy key pair** and put the public half on the server:
+
+   ```bash
+   ssh-keygen -t ed25519 -C "github-deploy" -f ~/.ssh/cular_deploy -N ""
+   ssh-copy-id -i ~/.ssh/cular_deploy.pub USER@dev.cularcreative.com
+   # paste the contents of ~/.ssh/cular_deploy (no .pub) into the SSH_KEY secret
+   ```
+
+3. **Protect production**: on the `production` environment, add yourself under
+   *Required reviewers*. A production deploy then waits for an approval click.
+
+4. On the dev site, activate the **Cular** theme and make sure **ACF PRO** is
+   installed — the blocks do not render without it.
+
+### Preflight, and why `--delete` is safe here
+
+rsync runs with `--delete`, so a file deleted from the repo also disappears from
+the server — without it the server slowly accumulates orphans that no longer
+exist in git. The risk is the same flag pointed at the wrong directory, so the
+workflow first SSHes in and refuses to continue unless `WP_PATH` contains
+`wp-config.php` and `wp-content/themes`. It also fails the build if `dist/` came
+out empty, rather than shipping an unstyled site.
+
+### Things a deploy deliberately does NOT do
+
+- **No database sync.** Dev and production have separate content. Moving a DB
+  between them needs `wp search-replace` for the domain **and** the `/cular`
+  subdirectory, and would overwrite whatever the other site has — so it stays a
+  manual, considered operation (§13).
+- **No uploads sync.** See §12a; the media cleanup should happen before any
+  bulk upload transfer, not after.
+- **No plugin installs.** ACF PRO, WPForms and the rest are installed per site.
+
+### Local → dev
+
+The local site renders the checked-out branch through a symlink, so "deploy" is
+just the normal workflow (§8): branch → merge to `main` → push. The push is what
+triggers dev. Run `npm run build` locally only to see changes locally; CI builds
+its own copy.
+
 ## 14. Roadmap (suggested order)
 
 1. ~~Contact page + working form~~ ✅
